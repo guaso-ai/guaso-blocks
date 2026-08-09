@@ -1,8 +1,10 @@
-// TODO(guaso-ui-builder): tokenized BlockZone UI polish if needed.
-// Logic is canonical (no draftMode — pass isOwner from host wrapper).
 import type { Block } from "./types";
 import { getBlockComponent } from "./registry";
 
+/**
+ * Renders enabled schema-bound blocks. Unknown types → ignored.
+ * Pass `isOwner` from the host (⛔ no draftMode inside the kit).
+ */
 export default function BlockZone({
   blocks,
   isOwner = false,
