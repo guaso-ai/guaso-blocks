@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "gallery",
+  "title": "Gallery",
+  "description": "Canonical Gallery block — tokenized baseline.",
+  "registryDependencies": [
+    "@guaso/block-zone"
+  ],
+  "files": [
+    {
+      "path": "registry/gallery/gallery.tsx",
+      "content": "import type { GalleryData, GalleryImage } from \"../block-zone/types\";\n\ntype GalleryProps = {\n  data: GalleryData;\n  isOwner?: boolean;\n};\n\nfunction GalleryPlaceholder() {\n  return (\n    <section\n      aria-label=\"Galería de imágenes\"\n      className=\"mx-auto max-w-6xl px-6 py-16 md:py-20\"\n    >\n      <div className=\"rounded-lg border border-border bg-card px-8 py-12 text-center\">\n        <p className=\"font-heading text-sm text-muted-foreground\">\n          Galería de imágenes — agregá las fotos por chat\n        </p>\n      </div>\n    </section>\n  );\n}\n\nfunction hasImageUrl(image: GalleryImage): boolean {\n  return typeof image.url === \"string\" && Boolean(image.url.trim());\n}\n\nexport default function Gallery({ data, isOwner = false }: GalleryProps) {\n  const raw = Array.isArray(data.images) ? data.images : [];\n  const images = raw.filter(hasImageUrl);\n\n  if (images.length === 0) {\n    return isOwner ? <GalleryPlaceholder /> : null;\n  }\n\n  return (\n    <section\n      aria-label={data.title ?? \"Galería de imágenes\"}\n      className=\"mx-auto max-w-6xl px-6 py-16 md:py-20\"\n    >\n      {data.title ? (\n        <h2 className=\"mb-10 font-heading text-3xl font-semibold tracking-tight text-foreground text-balance md:text-4xl\">\n          {data.title}\n        </h2>\n      ) : null}\n\n      <div className=\"grid gap-6 sm:grid-cols-2 lg:grid-cols-3\">\n        {images.map((image, i) => (\n          <figure key={`${image.url}-${i}`} className=\"min-w-0\">\n            <div className=\"relative aspect-[4/3] w-full overflow-hidden rounded-lg border border-border bg-card\">\n              <img\n                src={image.url.trim()}\n                alt={image.alt ?? `Imagen ${i + 1}`}\n                width={800}\n                height={600}\n                loading=\"lazy\"\n                decoding=\"async\"\n                className=\"size-full object-cover\"\n              />\n            </div>\n            {image.caption ? (\n              <figcaption className=\"mt-2 text-sm text-muted-foreground break-words\">\n                {image.caption}\n              </figcaption>\n            ) : null}\n          </figure>\n        ))}\n      </div>\n    </section>\n  );\n}\n",
+      "type": "registry:component",
+      "target": "@components/gallery/gallery.tsx"
+    }
+  ],
+  "type": "registry:component"
+}

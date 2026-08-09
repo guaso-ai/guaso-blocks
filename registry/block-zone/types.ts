@@ -24,6 +24,41 @@ export type CTAData = {
   button_url?: string;
 };
 
+export type GalleryImage = {
+  url: string; // runtime/upload; not in repeatable schema (alt/caption only) — same as templates
+  alt?: string;
+  caption?: string;
+};
+
+export type GalleryData = {
+  title?: string;
+  images?: GalleryImage[];
+};
+
+export type CardItem = {
+  heading?: string;
+  text?: string;
+  link_label?: string;
+  link_url?: string;
+};
+
+export type CardsData = {
+  title?: string;
+  subtitle?: string;
+  cards?: CardItem[];
+};
+
+export type TestimonialItem = {
+  author?: string;
+  role?: string;
+  quote?: string;
+};
+
+export type TestimonialsData = {
+  title?: string;
+  items?: TestimonialItem[];
+};
+
 /**
  * Safe href for block CTAs / links.
  * Allows http(s)/mailto/tel and relative paths starting with `/`.

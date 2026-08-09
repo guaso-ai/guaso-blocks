@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "cards",
+  "title": "Cards",
+  "description": "Canonical Cards block — tokenized baseline.",
+  "registryDependencies": [
+    "@guaso/block-zone"
+  ],
+  "files": [
+    {
+      "path": "registry/cards/cards.tsx",
+      "content": "import type { CardsData } from \"../block-zone/types\";\nimport { safeHref } from \"../block-zone/types\";\n\ntype CardsProps = {\n  data: CardsData;\n  isOwner?: boolean;\n};\n\nfunction CardsPlaceholder() {\n  return (\n    <section\n      aria-label=\"Tarjetas de contenido\"\n      className=\"mx-auto max-w-6xl px-6 py-16 md:py-20\"\n    >\n      <div className=\"rounded-lg border border-border bg-card px-8 py-12 text-center\">\n        <p className=\"font-heading text-sm text-muted-foreground\">\n          Tarjetas de contenido — agregá los ítems por chat\n        </p>\n      </div>\n    </section>\n  );\n}\n\nexport default function Cards({ data, isOwner = false }: CardsProps) {\n  const cards = Array.isArray(data.cards) ? data.cards : [];\n\n  if (cards.length === 0) {\n    return isOwner ? <CardsPlaceholder /> : null;\n  }\n\n  return (\n    <section\n      aria-label={data.title ?? \"Tarjetas de contenido\"}\n      className=\"mx-auto max-w-6xl px-6 py-16 md:py-20\"\n    >\n      {(data.title || data.subtitle) && (\n        <div className=\"mb-10 flex flex-col gap-3\">\n          {data.title ? (\n            <h2 className=\"font-heading text-3xl font-semibold tracking-tight text-foreground text-balance md:text-4xl\">\n              {data.title}\n            </h2>\n          ) : null}\n          {data.subtitle ? (\n            <p className=\"max-w-2xl text-base leading-relaxed text-muted-foreground break-words\">\n              {data.subtitle}\n            </p>\n          ) : null}\n        </div>\n      )}\n\n      <div className=\"grid gap-6 sm:grid-cols-2 lg:grid-cols-3\">\n        {cards.map((card, i) => {\n          const linkHref = safeHref(card.link_url);\n\n          return (\n            <article\n              key={i}\n              className=\"flex flex-col gap-4 rounded-lg border border-border bg-card p-6\"\n            >\n              {card.heading ? (\n                <h3 className=\"font-heading text-xl font-semibold tracking-tight text-foreground text-balance\">\n                  {card.heading}\n                </h3>\n              ) : null}\n\n              {card.text ? (\n                <p className=\"flex-1 text-sm leading-relaxed text-muted-foreground break-words\">\n                  {card.text}\n                </p>\n              ) : null}\n\n              {linkHref && card.link_label ? (\n                <a\n                  href={linkHref}\n                  className=\"mt-auto inline-flex items-center text-sm font-medium text-primary transition-opacity duration-200 hover:opacity-80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary motion-reduce:transition-none\"\n                >\n                  {card.link_label}\n                </a>\n              ) : null}\n            </article>\n          );\n        })}\n      </div>\n    </section>\n  );\n}\n",
+      "type": "registry:component",
+      "target": "@components/cards/cards.tsx"
+    }
+  ],
+  "type": "registry:component"
+}
