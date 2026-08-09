@@ -60,6 +60,48 @@
           "target": "@components/cta/cta.tsx"
         }
       ]
+    },
+    {
+      "name": "gallery",
+      "type": "registry:component",
+      "title": "Gallery",
+      "description": "Canonical Gallery block — tokenized baseline.",
+      "registryDependencies": ["@guaso/block-zone"],
+      "files": [
+        {
+          "path": "registry/gallery/gallery.tsx",
+          "type": "registry:component",
+          "target": "@components/gallery/gallery.tsx"
+        }
+      ]
+    },
+    {
+      "name": "cards",
+      "type": "registry:component",
+      "title": "Cards",
+      "description": "Canonical Cards block — tokenized baseline.",
+      "registryDependencies": ["@guaso/block-zone"],
+      "files": [
+        {
+          "path": "registry/cards/cards.tsx",
+          "type": "registry:component",
+          "target": "@components/cards/cards.tsx"
+        }
+      ]
+    },
+    {
+      "name": "testimonials",
+      "type": "registry:component",
+      "title": "Testimonials",
+      "description": "Canonical Testimonials block — tokenized baseline.",
+      "registryDependencies": ["@guaso/block-zone"],
+      "files": [
+        {
+          "path": "registry/testimonials/testimonials.tsx",
+          "type": "registry:component",
+          "target": "@components/testimonials/testimonials.tsx"
+        }
+      ]
     }
   ]
 }

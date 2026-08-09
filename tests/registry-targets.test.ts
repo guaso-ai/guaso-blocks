@@ -1,6 +1,6 @@
 /**
  * Guard: every registry file must declare an explicit `target` so shadcn add
- * preserves the sibling tree (components/block-zone/*, rich-section/*, cta/*).
+ * preserves the sibling tree (components/block-zone/*, rich-section/*, …).
  * Without targets the CLI flattens by type and relative imports break (review #3063).
  */
 import { readFileSync } from "node:fs";
@@ -32,9 +32,21 @@ const REQUIRED_TARGETS = [
   "@components/block-zone/blocks-from-entry.ts",
   "@components/rich-section/rich-section.tsx",
   "@components/cta/cta.tsx",
+  "@components/gallery/gallery.tsx",
+  "@components/cards/cards.tsx",
+  "@components/testimonials/testimonials.tsx",
 ] as const;
 
-describe("registry install targets (#3063)", () => {
+const BUILT_ITEM_NAMES = [
+  "block-zone",
+  "rich-section",
+  "cta",
+  "gallery",
+  "cards",
+  "testimonials",
+] as const;
+
+describe("registry install targets (#3063/#3091)", () => {
   it("every files[] entry has an explicit target", () => {
     const registry = JSON.parse(
       readFileSync(join(ROOT, "registry.json"), "utf8"),
@@ -70,7 +82,7 @@ describe("registry install targets (#3063)", () => {
   });
 
   it("built r/*.json carries the same targets", () => {
-    for (const name of ["block-zone", "rich-section", "cta"] as const) {
+    for (const name of BUILT_ITEM_NAMES) {
       const item = JSON.parse(
         readFileSync(join(ROOT, "r", `${name}.json`), "utf8"),
       ) as RegistryItem;

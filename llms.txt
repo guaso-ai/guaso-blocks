@@ -1,0 +1,43 @@
+# Guaso blocks registry (@guaso)
+
+> Source: https://github.com/guaso-ai/guaso-blocks
+> Content data plane (not UI): https://github.com/guaso-ai/guaso-content (`@guaso-ai/content`)
+
+## Install
+
+```bash
+npx shadcn@latest add @guaso/block-zone @guaso/rich-section @guaso/cta @guaso/gallery @guaso/cards @guaso/testimonials
+```
+
+Configure `components.json` registries:
+
+```json
+{ "registries": { "@guaso": "https://raw.githubusercontent.com/guaso-ai/guaso-blocks/main/r/{name}.json" } }
+```
+
+## Canonical block types (5)
+
+| Registry item | Block `type` | Role |
+|---------------|--------------|------|
+| `@guaso/block-zone` | — | Zone + registry map + `blocksFromEntry` + `safeHref` |
+| `@guaso/rich-section` | `RichSection` | Title/body markdown + optional CTA/image |
+| `@guaso/gallery` | `Gallery` | Image grid (`url`/`alt`/`caption`) |
+| `@guaso/cards` | `Cards` | Card grid with optional safe links |
+| `@guaso/testimonials` | `Testimonials` | Quote/author/role grid |
+| `@guaso/cta` | `CTA` | Headline/subtext/button |
+
+Unknown `type` → ignored (forward-compat). Empty content + `isOwner` → placeholder; public empty → null.
+
+## Data shapes
+
+Aligned to Guaso `_CANONICAL_BLOCKS` (backend). Do not invent props outside that schema.
+
+## Tokens
+
+CROSS_TEMPLATE semantic tokens only (`text-foreground`, `text-primary`, `bg-primary`, `font-heading`, `border-border`, `bg-card`, `text-muted-foreground`, `text-primary-foreground`). No hex, lucide, or template skins — skins live in `guaso-template-*` (#3065).
+
+## Docs
+
+- README.md — human install + layout
+- CROSS_TEMPLATE.md — unified vs skin
+- Issue guaso-ai/guaso-app#3091 (kit complete)

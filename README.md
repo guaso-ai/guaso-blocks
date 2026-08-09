@@ -19,10 +19,10 @@ In your Next app `components.json`:
 }
 ```
 
-Smoke (v1 trio — **always add together**; zone-alone without renderers is unsupported):
+Smoke (full kit — **always add together**; zone-alone without renderers is unsupported):
 
 ```bash
-npx shadcn@latest add @guaso/block-zone @guaso/rich-section @guaso/cta
+npx shadcn@latest add @guaso/block-zone @guaso/rich-section @guaso/cta @guaso/gallery @guaso/cards @guaso/testimonials
 ```
 
 Fallback without namespace: `guaso-ai/guaso-blocks/block-zone`.
@@ -52,9 +52,27 @@ components/
     rich-section.tsx
   cta/
     cta.tsx
+  gallery/
+    gallery.tsx
+  cards/
+    cards.tsx
+  testimonials/
+    testimonials.tsx
 ```
 
-Relative imports (`./types`, `../rich-section/rich-section`, `../block-zone/types`) resolve after `shadcn add`. ⛔ do not flatten into `lib/`.
+Relative imports (`./types`, `../gallery/gallery`, `../block-zone/types`) resolve after `shadcn add`. ⛔ do not flatten into `lib/`.
+
+## Canonical block types
+
+| Registry item | `type` (PascalCase) |
+|---------------|---------------------|
+| `@guaso/rich-section` | `RichSection` |
+| `@guaso/gallery` | `Gallery` |
+| `@guaso/cards` | `Cards` |
+| `@guaso/testimonials` | `Testimonials` |
+| `@guaso/cta` | `CTA` |
+
+Plus `@guaso/block-zone` (zone + map). Unknown `type` → ignored (forward-compat).
 
 ## Usage sketch
 
@@ -84,7 +102,8 @@ npm run assert-no-hex
 ## Docs
 
 - `CROSS_TEMPLATE.md` — what is unified vs template skin (#3065)
-- Issue: guaso-ai/guaso-app#3063 · fleet adoption: #3065
+- `llms.txt` — machine-readable kit index (5 types)
+- Issue: guaso-ai/guaso-app#3091 (kit complete) · #3063 (v1 partial) · fleet adoption: #3065
 
 ## Disclaimers
 

@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "testimonials",
+  "title": "Testimonials",
+  "description": "Canonical Testimonials block — tokenized baseline.",
+  "registryDependencies": [
+    "@guaso/block-zone"
+  ],
+  "files": [
+    {
+      "path": "registry/testimonials/testimonials.tsx",
+      "content": "import type { TestimonialItem, TestimonialsData } from \"../block-zone/types\";\n\ntype TestimonialsProps = {\n  data: TestimonialsData;\n  isOwner?: boolean;\n};\n\nfunction TestimonialsPlaceholder() {\n  return (\n    <section\n      aria-label=\"Testimonios\"\n      className=\"mx-auto max-w-6xl px-6 py-16 md:py-20\"\n    >\n      <div className=\"rounded-lg border border-border bg-card px-8 py-12 text-center\">\n        <p className=\"font-heading text-sm text-muted-foreground\">\n          Testimonios — agregá las reseñas por chat\n        </p>\n      </div>\n    </section>\n  );\n}\n\nfunction isUsefulItem(item: TestimonialItem): boolean {\n  const quote = typeof item.quote === \"string\" && item.quote.trim();\n  const author = typeof item.author === \"string\" && item.author.trim();\n  return Boolean(quote || author);\n}\n\nexport default function Testimonials({\n  data,\n  isOwner = false,\n}: TestimonialsProps) {\n  const raw = Array.isArray(data.items) ? data.items : [];\n  const items = raw.filter(isUsefulItem);\n\n  if (items.length === 0) {\n    return isOwner ? <TestimonialsPlaceholder /> : null;\n  }\n\n  return (\n    <section\n      aria-label={data.title ?? \"Testimonios\"}\n      className=\"mx-auto max-w-6xl px-6 py-16 md:py-20\"\n    >\n      {data.title ? (\n        <h2 className=\"mb-10 font-heading text-3xl font-semibold tracking-tight text-foreground text-balance md:text-4xl\">\n          {data.title}\n        </h2>\n      ) : null}\n\n      <div className=\"grid gap-6 sm:grid-cols-2 lg:grid-cols-3\">\n        {items.map((item, i) => (\n          <blockquote\n            key={i}\n            className=\"flex flex-col gap-4 rounded-lg border border-border bg-card p-6\"\n          >\n            {item.quote ? (\n              <p className=\"flex-1 text-base leading-relaxed text-foreground break-words\">\n                {item.quote}\n              </p>\n            ) : null}\n\n            {(item.author || item.role) && (\n              <footer className=\"mt-auto flex flex-col gap-0.5\">\n                {item.author ? (\n                  <cite className=\"not-italic font-heading text-sm font-semibold text-foreground\">\n                    {item.author}\n                  </cite>\n                ) : null}\n                {item.role ? (\n                  <p className=\"text-sm text-muted-foreground\">{item.role}</p>\n                ) : null}\n              </footer>\n            )}\n          </blockquote>\n        ))}\n      </div>\n    </section>\n  );\n}\n",
+      "type": "registry:component",
+      "target": "@components/testimonials/testimonials.tsx"
+    }
+  ],
+  "type": "registry:component"
+}
