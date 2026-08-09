@@ -2,7 +2,7 @@
   "name": "@guaso-ai/guaso-blocks",
   "version": "0.1.0",
   "private": true,
-  "description": "Guaso shadcn blocks registry (@guaso) — BlockZone + canonical schema-bound types",
+  "description": "Guaso shadcn blocks registry (@guaso) \u2014 BlockZone + canonical schema-bound types",
   "homepage": "https://github.com/guaso-ai/guaso-blocks",
   "repository": {
     "type": "git",
@@ -34,5 +34,6 @@
   },
   "dependencies": {
     "react-markdown": "^9.1.0"
-  }
+  },
+  "license": "MIT"
 }
