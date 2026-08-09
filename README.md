@@ -31,7 +31,7 @@ Fallback without namespace: `guaso-ai/guaso-blocks/block-zone`.
 
 | Peer | Version |
 |------|---------|
-| Next.js | 15.x |
+| Next.js | 15.x \|\| 16.x (apps Guaso = 16; templates fleet = 15.5.x) |
 | React | 19.x |
 | Tailwind | semantic tokens (`@guaso/tailwind-config` or equivalent CSS vars) |
 
