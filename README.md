@@ -35,11 +35,30 @@ Fallback without namespace: `guaso-ai/guaso-blocks/block-zone`.
 
 npm dependency of `block-zone`: **`@guaso-ai/content`** (package name — not `@guaso/content`).
 
+## Post-install layout
+
+`files[].target` keeps a sibling tree under the project's components alias (e.g. `src/components/`):
+
+```
+components/
+  block-zone/
+    block-zone.tsx
+    registry.ts
+    types.ts
+    blocks-from-entry.ts
+  rich-section/
+    rich-section.tsx
+  cta/
+    cta.tsx
+```
+
+Relative imports (`./types`, `../rich-section/rich-section`, `../block-zone/types`) resolve after `shadcn add`. ⛔ do not flatten into `lib/`.
+
 ## Usage sketch
 
 ```tsx
 import { createClient } from "@guaso-ai/content";
-import { blocksFromEntry } from "@/components/block-zone/blocks-from-entry"; // path after add
+import { blocksFromEntry } from "@/components/block-zone/blocks-from-entry";
 import BlockZone from "@/components/block-zone/block-zone";
 
 const entry = await createClient({…}).getEntry("pages/home");

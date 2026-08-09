@@ -10,22 +10,26 @@
     {
       "path": "registry/block-zone/block-zone.tsx",
       "content": "import type { Block } from \"./types\";\nimport { getBlockComponent } from \"./registry\";\n\n/**\n * Renders enabled schema-bound blocks. Unknown types → ignored.\n * Pass `isOwner` from the host (⛔ no draftMode inside the kit).\n */\nexport default function BlockZone({\n  blocks,\n  isOwner = false,\n}: {\n  blocks?: Block[] | null;\n  isOwner?: boolean;\n}) {\n  if (!Array.isArray(blocks) || blocks.length === 0) return null;\n  const rendered = blocks\n    .filter((b) => b.enabled)\n    .map((b, i) => {\n      const Component = getBlockComponent(b.type);\n      if (!Component) return null;\n      const key = b.id ? b.id : `blk-${i}`;\n      return <Component key={key} data={b.data} isOwner={isOwner} />;\n    });\n  if (!rendered.some((r) => r !== null)) return null;\n  return <>{rendered}</>;\n}\n",
-      "type": "registry:component"
+      "type": "registry:component",
+      "target": "@components/block-zone/block-zone.tsx"
     },
     {
       "path": "registry/block-zone/registry.ts",
       "content": "import type { ComponentType } from \"react\";\nimport type { CTAData, RichSectionData } from \"./types\";\n\n// v1 smoke contract: install trio together (`@guaso/block-zone` + `rich-section` + `cta`).\n// Zone-alone without the two renderers is unsupported — paths assume sibling files\n// after `npx shadcn add @guaso/block-zone @guaso/rich-section @guaso/cta`.\nimport RichSection from \"../rich-section/rich-section\";\nimport CTABlock from \"../cta/cta\";\n\nexport type BlockRenderer = ComponentType<{ data: unknown; isOwner?: boolean }>;\n\ntype RegistryEntry = {\n  // eslint-disable-next-line @typescript-eslint/no-explicit-any\n  Component: ComponentType<{ data: any; isOwner?: boolean }>;\n};\n\nconst REGISTRY_RAW: Record<string, RegistryEntry> = {\n  RichSection: {\n    Component: RichSection as ComponentType<{ data: RichSectionData }>,\n  },\n  CTA: {\n    Component: CTABlock as ComponentType<{ data: CTAData }>,\n  },\n};\n\n/** Lookup by block `type` (PascalCase). Unknown → undefined (forward-compat). */\nexport function getBlockComponent(type: string): BlockRenderer | undefined {\n  const entry = REGISTRY_RAW[type];\n  if (!entry) return undefined;\n  return entry.Component as ComponentType<{ data: unknown; isOwner?: boolean }>;\n}\n\nexport const SUPPORTED_BLOCK_TYPES = Object.keys(REGISTRY_RAW) as Array<\n  \"RichSection\" | \"CTA\"\n>;\n",
-      "type": "registry:lib"
+      "type": "registry:component",
+      "target": "@components/block-zone/registry.ts"
     },
     {
       "path": "registry/block-zone/types.ts",
       "content": "// Types aligned to `_CANONICAL_BLOCKS` in guaso-app content_editor_service.py.\n// Backend validates lengths; here we model fields + defensive helpers only.\n\nexport type Block = {\n  id: string;\n  type: string;\n  enabled: boolean;\n  data: Record<string, unknown>;\n};\n\nexport type RichSectionData = {\n  title?: string;\n  body?: string;\n  cta_label?: string;\n  cta_url?: string;\n  align?: \"left\" | \"center\";\n  image_url?: string;\n};\n\nexport type CTAData = {\n  headline?: string;\n  subtext?: string;\n  button_label?: string;\n  button_url?: string;\n};\n\n/**\n * Safe href for block CTAs / links.\n * Allows http(s)/mailto/tel and relative paths starting with `/`.\n * Rejects javascript:, data:, protocol-relative, and empty.\n */\nexport function safeHref(url?: string): string | undefined {\n  if (!url || typeof url !== \"string\") return undefined;\n  const trimmed = url.trim();\n  if (!trimmed) return undefined;\n\n  if (\n    trimmed.startsWith(\"/\") &&\n    !trimmed.startsWith(\"//\") &&\n    !trimmed.startsWith(\"/\\\\\")\n  ) {\n    return trimmed;\n  }\n\n  const lower = trimmed.toLowerCase();\n  if (\n    lower.startsWith(\"http://\") ||\n    lower.startsWith(\"https://\") ||\n    lower.startsWith(\"mailto:\") ||\n    lower.startsWith(\"tel:\")\n  ) {\n    return trimmed;\n  }\n\n  return undefined;\n}\n",
-      "type": "registry:lib"
+      "type": "registry:component",
+      "target": "@components/block-zone/types.ts"
     },
     {
       "path": "registry/block-zone/blocks-from-entry.ts",
       "content": "import type { Block } from \"./types\";\n\n/**\n * Map a Guaso Content SDK entry (`getEntry`) to blocks[].\n * Empty-clear: `empty: true` or null data → null (do not invent sections).\n */\nexport function blocksFromEntry(entry: {\n  empty: boolean;\n  data: unknown;\n}): Block[] | null {\n  if (entry.empty || entry.data == null) return null;\n  const blocks = (entry.data as { blocks?: unknown }).blocks;\n  return Array.isArray(blocks) ? (blocks as Block[]) : null;\n}\n",
-      "type": "registry:lib"
+      "type": "registry:component",
+      "target": "@components/block-zone/blocks-from-entry.ts"
     }
   ],
   "type": "registry:component"
