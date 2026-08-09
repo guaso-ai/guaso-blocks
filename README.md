@@ -2,6 +2,8 @@
 
 Public [shadcn registry](https://ui.shadcn.com/docs/registry) for Guaso schema-bound blocks.
 
+[![license](https://img.shields.io/github/license/guaso-ai/guaso-blocks.svg)](./LICENSE)
+
 **Source of truth:** this repo (`guaso-ai/guaso-blocks`).  
 **Content data plane:** [`@guaso-ai/content`](https://github.com/guaso-ai/guaso-content) (npm) — not UI.
 
@@ -83,3 +85,16 @@ npm run assert-no-hex
 
 - `CROSS_TEMPLATE.md` — what is unified vs template skin (#3065)
 - Issue: guaso-ai/guaso-app#3063 · fleet adoption: #3065
+
+## Disclaimers
+
+- This repo distributes **UI source** via the shadcn registry (copied into your app). It is not a hosted Guaso service.
+- Data plane is separate: use `@guaso-ai/content` + a Guaso-issued content token. This registry does **not** grant Neon access or HTTP write APIs.
+- Block `data` must match Guaso’s canonical content schema. ⛔ invent props outside that schema / hardcode sections as a substitute for content.
+- Software is provided **AS IS**, without warranty or SLA for the registry or installed components.
+- “Guaso” is a trademark; nominative use is OK and does not imply endorsement.
+- The MIT license of this repository is **not** Guaso’s Terms of Service or the Guaso Content capability contract. See https://guaso.link/legal.
+
+## License
+
+MIT — see `LICENSE` and `NOTICE`.

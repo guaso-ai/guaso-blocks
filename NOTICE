@@ -1,0 +1,14 @@
+@guaso blocks registry — notices and disclaimers
+========================================
+
+1. This repo distributes UI source via the shadcn registry (copied into your app).
+   It is not a hosted Guaso service and does not publish a runtime npm UI package.
+2. Data plane is separate: use @guaso-ai/content + a Guaso-issued content token.
+   This registry does not grant Neon access or HTTP write APIs.
+3. Block `data` must match Guaso’s canonical content schema. Do not invent props
+   outside that schema or hardcode sections as a substitute for content.
+4. Software is provided AS IS, without warranty or SLA for the registry or the
+   components installed into your project.
+5. “Guaso” is a trademark; nominative use is OK and does not imply endorsement.
+6. The MIT license of this repository is not Guaso’s Terms of Service or the Guaso
+   Content capability contract. See https://guaso.link/legal.
