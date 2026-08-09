@@ -12,19 +12,23 @@
       "files": [
         {
           "path": "registry/block-zone/block-zone.tsx",
-          "type": "registry:component"
+          "type": "registry:component",
+          "target": "@components/block-zone/block-zone.tsx"
         },
         {
           "path": "registry/block-zone/registry.ts",
-          "type": "registry:lib"
+          "type": "registry:component",
+          "target": "@components/block-zone/registry.ts"
         },
         {
           "path": "registry/block-zone/types.ts",
-          "type": "registry:lib"
+          "type": "registry:component",
+          "target": "@components/block-zone/types.ts"
         },
         {
           "path": "registry/block-zone/blocks-from-entry.ts",
-          "type": "registry:lib"
+          "type": "registry:component",
+          "target": "@components/block-zone/blocks-from-entry.ts"
         }
       ]
     },
@@ -38,7 +42,8 @@
       "files": [
         {
           "path": "registry/rich-section/rich-section.tsx",
-          "type": "registry:component"
+          "type": "registry:component",
+          "target": "@components/rich-section/rich-section.tsx"
         }
       ]
     },
@@ -51,7 +56,8 @@
       "files": [
         {
           "path": "registry/cta/cta.tsx",
-          "type": "registry:component"
+          "type": "registry:component",
+          "target": "@components/cta/cta.tsx"
         }
       ]
     }
