@@ -1,0 +1,17 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "cta",
+  "title": "CTA",
+  "description": "Canonical CTA block — tokenized baseline.",
+  "registryDependencies": [
+    "@guaso/block-zone"
+  ],
+  "files": [
+    {
+      "path": "registry/cta/cta.tsx",
+      "content": "// TODO(guaso-ui-builder): tokenized CTA baseline (headline/subtext/button + safeHref).\n// Empty guard = clinic∪store. ⛔ mesh-hero / grain / orbs / lucide skins.\nimport type { CTAData } from \"../block-zone/types\";\n\nexport default function CTA({\n  data,\n  isOwner = false,\n}: {\n  data: CTAData;\n  isOwner?: boolean;\n}) {\n  if (!data.headline && !data.subtext && !data.button_label) {\n    return isOwner ? (\n      <section className=\"text-muted-foreground px-6 py-8 text-center\">\n        <p className=\"font-heading text-sm\">\n          Sección de llamado a la acción — completá el texto desde el chat\n        </p>\n      </section>\n    ) : null;\n  }\n  // Placeholder until ui-builder ships the baseline UI.\n  return null;\n}\n",
+      "type": "registry:component"
+    }
+  ],
+  "type": "registry:component"
+}

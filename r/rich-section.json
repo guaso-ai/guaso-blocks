@@ -1,0 +1,20 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "rich-section",
+  "title": "RichSection",
+  "description": "Canonical RichSection block — tokenized baseline.",
+  "dependencies": [
+    "react-markdown"
+  ],
+  "registryDependencies": [
+    "@guaso/block-zone"
+  ],
+  "files": [
+    {
+      "path": "registry/rich-section/rich-section.tsx",
+      "content": "// TODO(guaso-ui-builder): tokenized RichSection (markdown, align, image_url, cta).\n// Props/empty-guard contract only — skin/layout owned by ui-builder.\nimport type { RichSectionData } from \"../block-zone/types\";\n\nexport default function RichSection({\n  data,\n  isOwner = false,\n}: {\n  data: RichSectionData;\n  isOwner?: boolean;\n}) {\n  if (!data.title && !data.body) {\n    return isOwner ? (\n      <section className=\"text-muted-foreground px-6 py-8 text-center\">\n        <p className=\"font-heading text-sm\">\n          Sección de texto — agregá el contenido por chat\n        </p>\n      </section>\n    ) : null;\n  }\n  // Placeholder until ui-builder ships the baseline UI.\n  return null;\n}\n",
+      "type": "registry:component"
+    }
+  ],
+  "type": "registry:component"
+}

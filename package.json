@@ -1,0 +1,35 @@
+{
+  "name": "@guaso-ai/guaso-blocks",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Guaso shadcn blocks registry (@guaso) — BlockZone + canonical schema-bound types",
+  "homepage": "https://github.com/guaso-ai/guaso-blocks",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/guaso-ai/guaso-blocks.git"
+  },
+  "scripts": {
+    "registry:validate": "npx --yes shadcn@latest registry validate ./registry.json",
+    "registry:build": "npx --yes shadcn@latest build registry.json --output r",
+    "test": "vitest run",
+    "assert-no-hex": "bash scripts/assert-no-hex.sh"
+  },
+  "peerDependencies": {
+    "next": "^15.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@testing-library/react": "^16.2.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "jsdom": "^26.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "typescript": "^5.7.0",
+    "vitest": "^3.0.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

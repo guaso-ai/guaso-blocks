@@ -1,0 +1,59 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "guaso",
+  "homepage": "https://github.com/guaso-ai/guaso-blocks",
+  "items": [
+    {
+      "name": "block-zone",
+      "type": "registry:component",
+      "title": "BlockZone",
+      "description": "Renders schema-bound blocks; unknown types ignored; empty → null. Includes Block type + blocksFromEntry (empty-clear).",
+      "dependencies": ["@guaso-ai/content"],
+      "files": [
+        {
+          "path": "registry/block-zone/block-zone.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/block-zone/registry.ts",
+          "type": "registry:lib"
+        },
+        {
+          "path": "registry/block-zone/types.ts",
+          "type": "registry:lib"
+        },
+        {
+          "path": "registry/block-zone/blocks-from-entry.ts",
+          "type": "registry:lib"
+        }
+      ]
+    },
+    {
+      "name": "rich-section",
+      "type": "registry:component",
+      "title": "RichSection",
+      "description": "Canonical RichSection block — tokenized baseline.",
+      "dependencies": ["react-markdown"],
+      "registryDependencies": ["@guaso/block-zone"],
+      "files": [
+        {
+          "path": "registry/rich-section/rich-section.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "cta",
+      "type": "registry:component",
+      "title": "CTA",
+      "description": "Canonical CTA block — tokenized baseline.",
+      "registryDependencies": ["@guaso/block-zone"],
+      "files": [
+        {
+          "path": "registry/cta/cta.tsx",
+          "type": "registry:component"
+        }
+      ]
+    }
+  ]
+}
