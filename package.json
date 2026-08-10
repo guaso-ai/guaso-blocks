@@ -15,11 +15,13 @@
     "assert-no-hex": "bash scripts/assert-no-hex.sh"
   },
   "peerDependencies": {
+    "@guaso-ai/content": ">=0.3.0",
     "next": "^15.0.0 || ^16.0.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
+    "@guaso-ai/content": ">=0.3.0",
     "@testing-library/react": "^16.2.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",

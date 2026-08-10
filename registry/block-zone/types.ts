@@ -1,62 +1,33 @@
-// Types aligned to `_CANONICAL_BLOCKS` in guaso-app content_editor_service.py.
-// Backend validates lengths; here we model fields + defensive helpers only.
+// Types from `@guaso-ai/content/schemas/blocks` (Python SoT mirrored in content SDK).
+// Backend validates lengths; Block + safeHref stay local (UI helpers).
+
+import type {
+  RichSectionData,
+  GalleryData,
+  GalleryImage,
+  CardsData,
+  CardItem,
+  TestimonialsData,
+  TestimonialItem,
+  CTAData,
+} from "@guaso-ai/content/schemas/blocks";
+
+export type {
+  RichSectionData,
+  GalleryData,
+  GalleryImage,
+  CardsData,
+  CardItem,
+  TestimonialsData,
+  TestimonialItem,
+  CTAData,
+};
 
 export type Block = {
   id: string;
   type: string;
   enabled: boolean;
   data: Record<string, unknown>;
-};
-
-export type RichSectionData = {
-  title?: string;
-  body?: string;
-  cta_label?: string;
-  cta_url?: string;
-  align?: "left" | "center";
-  image_url?: string;
-};
-
-export type CTAData = {
-  headline?: string;
-  subtext?: string;
-  button_label?: string;
-  button_url?: string;
-};
-
-export type GalleryImage = {
-  url: string; // runtime/upload; not in repeatable schema (alt/caption only) — same as templates
-  alt?: string;
-  caption?: string;
-};
-
-export type GalleryData = {
-  title?: string;
-  images?: GalleryImage[];
-};
-
-export type CardItem = {
-  heading?: string;
-  text?: string;
-  link_label?: string;
-  link_url?: string;
-};
-
-export type CardsData = {
-  title?: string;
-  subtitle?: string;
-  cards?: CardItem[];
-};
-
-export type TestimonialItem = {
-  author?: string;
-  role?: string;
-  quote?: string;
-};
-
-export type TestimonialsData = {
-  title?: string;
-  items?: TestimonialItem[];
 };
 
 /**
