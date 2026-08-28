@@ -19,10 +19,16 @@ In your Next app `components.json`:
 }
 ```
 
-Smoke (full kit — **always add together**; zone-alone without renderers is unsupported):
+Smoke (UI kit — **always add together**; zone-alone without renderers is unsupported). Does **not** install `@guaso-ai/content`:
 
 ```bash
 npx shadcn@latest add @guaso/block-zone @guaso/rich-section @guaso/cta @guaso/gallery @guaso/cards @guaso/testimonials
+```
+
+Adapter (maps a Content SDK `getEntry` result to `blocks[]`). This is the item that installs **`@guaso-ai/content@^0.3.0`** (package name — not `@guaso/content`):
+
+```bash
+npx shadcn@latest add @guaso/blocks-from-entry
 ```
 
 Fallback without namespace: `guaso-ai/guaso-blocks/block-zone`.
@@ -35,7 +41,7 @@ Fallback without namespace: `guaso-ai/guaso-blocks/block-zone`.
 | React | 19.x |
 | Tailwind | semantic tokens (`@guaso/tailwind-config` or equivalent CSS vars) |
 
-npm dependency of `block-zone`: **`@guaso-ai/content`** (package name — not `@guaso/content`).
+npm of the **adapter** item (`@guaso/blocks-from-entry`): **`@guaso-ai/content@^0.3.0`**. The UI kit (`block-zone` + skins) has no content npm dependency. `BlockZone` receives `blocks` already mapped.
 
 ## Post-install layout
 
@@ -47,7 +53,7 @@ components/
     block-zone.tsx
     registry.ts
     types.ts
-    blocks-from-entry.ts
+    blocks-from-entry.ts   # from @guaso/blocks-from-entry, not from block-zone
   rich-section/
     rich-section.tsx
   cta/
@@ -72,9 +78,11 @@ Relative imports (`./types`, `../gallery/gallery`, `../block-zone/types`) resolv
 | `@guaso/testimonials` | `Testimonials` |
 | `@guaso/cta` | `CTA` |
 
-Plus `@guaso/block-zone` (zone + map). Unknown `type` → ignored (forward-compat).
+Plus `@guaso/block-zone` (zone + map; receives `blocks`). Adapter `@guaso/blocks-from-entry` (`blocksFromEntry`). Unknown `type` → ignored (forward-compat).
 
 ## Usage sketch
+
+`createClient` is host + the **adapter** add (npm). `BlockZone` does not install the SDK.
 
 ```tsx
 import { createClient } from "@guaso-ai/content";
@@ -102,13 +110,13 @@ npm run assert-no-hex
 ## Docs
 
 - `CROSS_TEMPLATE.md` — what is unified vs template skin (#3065)
-- `llms.txt` — machine-readable kit index (5 types)
-- Issue: guaso-ai/guaso-app#3091 (kit complete) · #3063 (v1 partial) · fleet adoption: #3065
+- `llms.txt` — machine-readable kit index (5 types + adapter)
+- Issue: guaso-ai/guaso-app#3091 (kit complete) · #3063 (v1 partial) · fleet adoption: #3065 · adapter npm: #3579
 
 ## Disclaimers
 
 - This repo distributes **UI source** via the shadcn registry (copied into your app). It is not a hosted Guaso service.
-- Data plane is separate: use `@guaso-ai/content` + a Guaso-issued content token. This registry does **not** grant Neon access or HTTP write APIs.
+- Data plane is separate: use `@guaso-ai/content` + a Guaso-issued content token. This registry does **not** grant Neon access or HTTP write APIs. Adding BlockZone does **not** connect your site to content.
 - Block `data` must match Guaso’s canonical content schema. ⛔ invent props outside that schema / hardcode sections as a substitute for content.
 - Software is provided **AS IS**, without warranty or SLA for the registry or installed components.
 - “Guaso” is a trademark; nominative use is OK and does not imply endorsement.

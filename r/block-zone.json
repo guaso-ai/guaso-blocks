@@ -2,10 +2,7 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "block-zone",
   "title": "BlockZone",
-  "description": "Renders schema-bound blocks; unknown types ignored; empty → null. Includes Block type + blocksFromEntry (empty-clear).",
-  "dependencies": [
-    "@guaso-ai/content"
-  ],
+  "description": "Renders schema-bound blocks; unknown types ignored; empty → null. Includes Block type + safeHref.",
   "files": [
     {
       "path": "registry/block-zone/block-zone.tsx",
@@ -21,15 +18,9 @@
     },
     {
       "path": "registry/block-zone/types.ts",
-      "content": "// Types from `@guaso-ai/content/schemas/blocks` (Python SoT mirrored in content SDK).\n// Backend validates lengths; Block + safeHref stay local (UI helpers).\n\nimport type {\n  RichSectionData,\n  GalleryData,\n  GalleryImage,\n  CardsData,\n  CardItem,\n  TestimonialsData,\n  TestimonialItem,\n  CTAData,\n} from \"@guaso-ai/content/schemas/blocks\";\n\nexport type {\n  RichSectionData,\n  GalleryData,\n  GalleryImage,\n  CardsData,\n  CardItem,\n  TestimonialsData,\n  TestimonialItem,\n  CTAData,\n};\n\nexport type Block = {\n  id: string;\n  type: string;\n  enabled: boolean;\n  data: Record<string, unknown>;\n};\n\n/**\n * Safe href for block CTAs / links.\n * Allows http(s)/mailto/tel and relative paths starting with `/`.\n * Rejects javascript:, data:, protocol-relative, and empty.\n */\nexport function safeHref(url?: string): string | undefined {\n  if (!url || typeof url !== \"string\") return undefined;\n  const trimmed = url.trim();\n  if (!trimmed) return undefined;\n\n  if (\n    trimmed.startsWith(\"/\") &&\n    !trimmed.startsWith(\"//\") &&\n    !trimmed.startsWith(\"/\\\\\")\n  ) {\n    return trimmed;\n  }\n\n  const lower = trimmed.toLowerCase();\n  if (\n    lower.startsWith(\"http://\") ||\n    lower.startsWith(\"https://\") ||\n    lower.startsWith(\"mailto:\") ||\n    lower.startsWith(\"tel:\")\n  ) {\n    return trimmed;\n  }\n\n  return undefined;\n}\n",
+      "content": "// UI structural types for BlockZone + skins. Backend validates lengths.\n// Block + safeHref stay local. Zone-only install must typecheck without\n// the content npm package (#3579).\n\nexport type Block = {\n  id: string;\n  type: string;\n  enabled: boolean;\n  data: Record<string, unknown>;\n};\n\nexport type RichSectionData = {\n  title?: string;\n  body?: string;\n  cta_label?: string;\n  cta_url?: string;\n  align?: \"left\" | \"center\";\n  image_url?: string;\n};\n\nexport type CTAData = {\n  headline?: string;\n  subtext?: string;\n  button_label?: string;\n  button_url?: string;\n};\n\nexport type GalleryImage = {\n  url: string; // runtime/upload; not in repeatable schema (alt/caption only) — same as templates\n  alt?: string;\n  caption?: string;\n};\n\nexport type GalleryData = {\n  title?: string;\n  images?: GalleryImage[];\n};\n\nexport type CardItem = {\n  heading?: string;\n  text?: string;\n  link_label?: string;\n  link_url?: string;\n};\n\nexport type CardsData = {\n  title?: string;\n  subtitle?: string;\n  cards?: CardItem[];\n};\n\nexport type TestimonialItem = {\n  author?: string;\n  role?: string;\n  quote?: string;\n};\n\nexport type TestimonialsData = {\n  title?: string;\n  items?: TestimonialItem[];\n};\n\n/**\n * Safe href for block CTAs / links.\n * Allows http(s)/mailto/tel and relative paths starting with `/`.\n * Rejects javascript:, data:, protocol-relative, and empty.\n */\nexport function safeHref(url?: string): string | undefined {\n  if (!url || typeof url !== \"string\") return undefined;\n  const trimmed = url.trim();\n  if (!trimmed) return undefined;\n\n  if (\n    trimmed.startsWith(\"/\") &&\n    !trimmed.startsWith(\"//\") &&\n    !trimmed.startsWith(\"/\\\\\")\n  ) {\n    return trimmed;\n  }\n\n  const lower = trimmed.toLowerCase();\n  if (\n    lower.startsWith(\"http://\") ||\n    lower.startsWith(\"https://\") ||\n    lower.startsWith(\"mailto:\") ||\n    lower.startsWith(\"tel:\")\n  ) {\n    return trimmed;\n  }\n\n  return undefined;\n}\n",
       "type": "registry:component",
       "target": "@components/block-zone/types.ts"
-    },
-    {
-      "path": "registry/block-zone/blocks-from-entry.ts",
-      "content": "import type { Block } from \"./types\";\n\n/**\n * Map a Guaso Content SDK entry (`getEntry`) to blocks[].\n * Empty-clear: `empty: true` or null data → null (do not invent sections).\n */\nexport function blocksFromEntry(entry: {\n  empty: boolean;\n  data: unknown;\n}): Block[] | null {\n  if (entry.empty || entry.data == null) return null;\n  const blocks = (entry.data as { blocks?: unknown }).blocks;\n  return Array.isArray(blocks) ? (blocks as Block[]) : null;\n}\n",
-      "type": "registry:component",
-      "target": "@components/block-zone/blocks-from-entry.ts"
     }
   ],
   "type": "registry:component"
