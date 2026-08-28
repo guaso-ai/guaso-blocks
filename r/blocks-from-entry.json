@@ -1,0 +1,21 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "blocks-from-entry",
+  "title": "blocksFromEntry",
+  "description": "Maps a Guaso Content SDK entry (getEntry) to blocks[]. Empty-clear. CLI installs @guaso-ai/content (npm); does not copy HTTP client source.",
+  "dependencies": [
+    "@guaso-ai/content@^0.3.0"
+  ],
+  "registryDependencies": [
+    "@guaso/block-zone"
+  ],
+  "files": [
+    {
+      "path": "registry/block-zone/blocks-from-entry.ts",
+      "content": "import type { Block } from \"./types\";\n\n/**\n * Map a Guaso Content SDK entry (`getEntry`) to blocks[].\n * Empty-clear: `empty: true` or null data → null (do not invent sections).\n */\nexport function blocksFromEntry(entry: {\n  empty: boolean;\n  data: unknown;\n}): Block[] | null {\n  if (entry.empty || entry.data == null) return null;\n  const blocks = (entry.data as { blocks?: unknown }).blocks;\n  return Array.isArray(blocks) ? (blocks as Block[]) : null;\n}\n",
+      "type": "registry:component",
+      "target": "@components/block-zone/blocks-from-entry.ts"
+    }
+  ],
+  "type": "registry:component"
+}

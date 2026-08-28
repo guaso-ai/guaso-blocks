@@ -5,8 +5,16 @@
 
 ## Install
 
+UI kit (no content npm):
+
 ```bash
 npx shadcn@latest add @guaso/block-zone @guaso/rich-section @guaso/cta @guaso/gallery @guaso/cards @guaso/testimonials
+```
+
+Adapter (installs `@guaso-ai/content@^0.3.0`):
+
+```bash
+npx shadcn@latest add @guaso/blocks-from-entry
 ```
 
 Configure `components.json` registries:
@@ -19,7 +27,8 @@ Configure `components.json` registries:
 
 | Registry item | Block `type` | Role |
 |---------------|--------------|------|
-| `@guaso/block-zone` | — | Zone + registry map + `blocksFromEntry` + `safeHref` |
+| `@guaso/block-zone` | — | Zone + registry map + `safeHref`. Receives `blocks` already mapped. No content npm. |
+| `@guaso/blocks-from-entry` | — | `blocksFromEntry` adapter. CLI installs `@guaso-ai/content@^0.3.0`. Does not copy HTTP client. |
 | `@guaso/rich-section` | `RichSection` | Title/body markdown + optional CTA/image |
 | `@guaso/gallery` | `Gallery` | Image grid (`url`/`alt`/`caption`) |
 | `@guaso/cards` | `Cards` | Card grid with optional safe links |
@@ -40,4 +49,4 @@ CROSS_TEMPLATE semantic tokens only (`text-foreground`, `text-primary`, `bg-prim
 
 - README.md — human install + layout
 - CROSS_TEMPLATE.md — unified vs skin
-- Issue guaso-ai/guaso-app#3091 (kit complete)
+- Issue guaso-ai/guaso-app#3091 (kit complete) · #3579 (adapter npm dep)

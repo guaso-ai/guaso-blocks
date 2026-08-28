@@ -7,8 +7,7 @@
       "name": "block-zone",
       "type": "registry:component",
       "title": "BlockZone",
-      "description": "Renders schema-bound blocks; unknown types ignored; empty → null. Includes Block type + blocksFromEntry (empty-clear).",
-      "dependencies": ["@guaso-ai/content"],
+      "description": "Renders schema-bound blocks; unknown types ignored; empty → null. Includes Block type + safeHref.",
       "files": [
         {
           "path": "registry/block-zone/block-zone.tsx",
@@ -24,7 +23,17 @@
           "path": "registry/block-zone/types.ts",
           "type": "registry:component",
           "target": "@components/block-zone/types.ts"
-        },
+        }
+      ]
+    },
+    {
+      "name": "blocks-from-entry",
+      "type": "registry:component",
+      "title": "blocksFromEntry",
+      "description": "Maps a Guaso Content SDK entry (getEntry) to blocks[]. Empty-clear. CLI installs @guaso-ai/content (npm); does not copy HTTP client source.",
+      "dependencies": ["@guaso-ai/content@^0.3.0"],
+      "registryDependencies": ["@guaso/block-zone"],
+      "files": [
         {
           "path": "registry/block-zone/blocks-from-entry.ts",
           "type": "registry:component",

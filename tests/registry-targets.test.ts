@@ -18,6 +18,7 @@ type RegistryFile = {
 
 type RegistryItem = {
   name?: string;
+  dependencies?: string[];
   files?: RegistryFile[];
 };
 
@@ -39,12 +40,24 @@ const REQUIRED_TARGETS = [
 
 const BUILT_ITEM_NAMES = [
   "block-zone",
+  "blocks-from-entry",
   "rich-section",
   "cta",
   "gallery",
   "cards",
   "testimonials",
 ] as const;
+
+const UI_ITEM_NAMES = [
+  "block-zone",
+  "rich-section",
+  "cta",
+  "gallery",
+  "cards",
+  "testimonials",
+] as const;
+
+const CONTENT_DEP = "@guaso-ai/content@^0.3.0";
 
 describe("registry install targets (#3063/#3091)", () => {
   it("every files[] entry has an explicit target", () => {
@@ -93,5 +106,71 @@ describe("registry install targets (#3063/#3091)", () => {
         ).toBeTruthy();
       }
     }
+  });
+});
+
+describe("npm content dep lives on the adapter item (#3579)", () => {
+  it("blocks-from-entry declares @guaso-ai/content@^0.3.0; zone + skins do not", () => {
+    const registry = JSON.parse(
+      readFileSync(join(ROOT, "registry.json"), "utf8"),
+    ) as Registry;
+    const byName = new Map(
+      (registry.items ?? []).map((item) => [item.name, item]),
+    );
+
+    const adapter = byName.get("blocks-from-entry");
+    expect(adapter, "missing item blocks-from-entry").toBeTruthy();
+    expect(adapter?.dependencies).toEqual([CONTENT_DEP]);
+    expect(
+      (byName.get("block-zone")?.files ?? []).map((f) => f.path),
+    ).not.toContain("registry/block-zone/blocks-from-entry.ts");
+    expect((adapter?.files ?? []).map((f) => f.path)).toContain(
+      "registry/block-zone/blocks-from-entry.ts",
+    );
+
+    for (const name of UI_ITEM_NAMES) {
+      const deps = byName.get(name)?.dependencies ?? [];
+      expect(
+        deps.some((d) => d.includes("@guaso-ai/content")),
+        `${name} must not declare @guaso-ai/content`,
+      ).toBe(false);
+    }
+  });
+
+  it("zone + skins source does not import createClient", () => {
+    const registry = JSON.parse(
+      readFileSync(join(ROOT, "registry.json"), "utf8"),
+    ) as Registry;
+    const hits: string[] = [];
+    for (const item of registry.items ?? []) {
+      if (!UI_ITEM_NAMES.includes(item.name as (typeof UI_ITEM_NAMES)[number])) {
+        continue;
+      }
+      for (const file of item.files ?? []) {
+        if (!file.path) continue;
+        const src = readFileSync(join(ROOT, file.path), "utf8");
+        if (src.includes("createClient")) {
+          hits.push(`${item.name}:${file.path}`);
+        }
+      }
+    }
+    expect(hits, `createClient in UI items: ${hits.join(", ")}`).toEqual([]);
+  });
+
+  it("adapter source does not import the content package", () => {
+    const src = readFileSync(
+      join(ROOT, "registry/block-zone/blocks-from-entry.ts"),
+      "utf8",
+    );
+    expect(src).not.toMatch(/@guaso-ai\/content/);
+    expect(src).not.toMatch(/createClient/);
+  });
+
+  it("types.ts does not import @guaso-ai/content", () => {
+    const src = readFileSync(
+      join(ROOT, "registry/block-zone/types.ts"),
+      "utf8",
+    );
+    expect(src).not.toMatch(/from\s+["']@guaso-ai\/content/);
   });
 });
