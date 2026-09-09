@@ -36,6 +36,11 @@ const REQUIRED_TARGETS = [
   "@components/gallery/gallery.tsx",
   "@components/cards/cards.tsx",
   "@components/testimonials/testimonials.tsx",
+  "@components/gondola/types.ts",
+  "@components/gondola/store-products.ts",
+  "@components/gondola/product-card.tsx",
+  "@components/gondola/store-catalog.tsx",
+  "@components/gondola/product-detail.tsx",
 ] as const;
 
 const BUILT_ITEM_NAMES = [
@@ -46,6 +51,7 @@ const BUILT_ITEM_NAMES = [
   "gallery",
   "cards",
   "testimonials",
+  "gondola",
 ] as const;
 
 const UI_ITEM_NAMES = [
@@ -55,6 +61,7 @@ const UI_ITEM_NAMES = [
   "gallery",
   "cards",
   "testimonials",
+  "gondola",
 ] as const;
 
 const CONTENT_DEP = "@guaso-ai/content@^0.3.0";
