@@ -1,0 +1,13 @@
+[
+  {
+    "slug": "oxido",
+    "name": "Óxido",
+    "description": "Pintura",
+    "price": 180000,
+    "quantity": 2,
+    "images": ["https://example.com/cover.jpg"],
+    "category": "Obra",
+    "tags": [],
+    "featured": true
+  }
+]

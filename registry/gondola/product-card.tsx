@@ -1,19 +1,10 @@
 import Link from "next/link";
-import { firstImageSrc, type Product } from "./types";
+import { firstImageSrc, priceLabel, quantityLabel, type Product } from "./types";
 
 type ProductCardProps = {
   product: Product;
   currencySymbol: string;
 };
-
-function priceLabel(price: number, symbol: string): string {
-  const hasCents = !Number.isInteger(price);
-  const formatted = price.toLocaleString("es-AR", {
-    minimumFractionDigits: hasCents ? 2 : 0,
-    maximumFractionDigits: 2,
-  });
-  return `${symbol}${formatted}`;
-}
 
 export function ProductCard({ product, currencySymbol }: ProductCardProps) {
   const image = firstImageSrc(product.images);
@@ -54,6 +45,9 @@ export function ProductCard({ product, currencySymbol }: ProductCardProps) {
             </span>
           ) : null}
         </div>
+        <p className="mt-1 text-sm text-muted-foreground">
+          {quantityLabel(product.quantity)}
+        </p>
       </div>
     </article>
   );

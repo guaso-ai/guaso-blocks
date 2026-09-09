@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
-import { firstImageSrc, type Product } from "./types";
+import { firstImageSrc, priceLabel, quantityLabel, type Product } from "./types";
 
 type ProductDetailProps = {
   product: Product;
@@ -8,15 +8,6 @@ type ProductDetailProps = {
   storeNav?: string;
   children?: ReactNode;
 };
-
-function priceLabel(price: number, symbol: string): string {
-  const hasCents = !Number.isInteger(price);
-  const formatted = price.toLocaleString("es-AR", {
-    minimumFractionDigits: hasCents ? 2 : 0,
-    maximumFractionDigits: 2,
-  });
-  return `${symbol}${formatted}`;
-}
 
 export function ProductDetail({
   product,
@@ -86,6 +77,9 @@ export function ProductDetail({
           </h1>
           <p className="mt-5 text-3xl font-semibold text-primary">
             {priceLabel(product.price, currencySymbol)}
+          </p>
+          <p className="mt-2 text-sm text-muted-foreground">
+            {quantityLabel(product.quantity)}
           </p>
           {product.description ? (
             <p className="mt-6 max-w-prose leading-relaxed text-muted-foreground">
