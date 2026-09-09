@@ -12,6 +12,7 @@ Source of truth for what this kit unifies vs what stays in `guaso-template-*` (#
 | Cards | title/subtitle/cards + safeHref links + empty | hairline “Servicios”, índices 01/02, next/link, grid px |
 | Testimonials | title/items (quote/author/role) + empty/filter útiles | hairline “Lo que dicen”, comillas decorativas, divide-y |
 | CTA | headline/subtext/button + safeHref + empty (unión clinic/store) | mesh-hero, grain, orbs, Smile/lucide, bg treatments |
+| Gondola (#3812) | `Product` + getter `products/products` (Drizzle/`unstable_cache`) + `ProductCard` / `StoreCatalog` / `ProductDetail` | chrome home (`catalogTitle`/`emptyState`/headings), `getBranding`, cart/checkout/`AddToCartButton`, `formatPrice`/`discountPercent` del host, `TitleWithAccent`/grain |
 
 ## Aesthetic tokens (intersección)
 

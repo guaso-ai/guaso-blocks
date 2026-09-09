@@ -111,6 +111,39 @@
           "target": "@components/testimonials/testimonials.tsx"
         }
       ]
+    },
+    {
+      "name": "gondola",
+      "type": "registry:component",
+      "title": "Gondola",
+      "description": "Vitrina products/products: getter Drizzle + ProductCard, StoreCatalog, ProductDetail. Sin cart ni chrome de home.",
+      "files": [
+        {
+          "path": "registry/gondola/types.ts",
+          "type": "registry:component",
+          "target": "@components/gondola/types.ts"
+        },
+        {
+          "path": "registry/gondola/store-products.ts",
+          "type": "registry:component",
+          "target": "@components/gondola/store-products.ts"
+        },
+        {
+          "path": "registry/gondola/product-card.tsx",
+          "type": "registry:component",
+          "target": "@components/gondola/product-card.tsx"
+        },
+        {
+          "path": "registry/gondola/store-catalog.tsx",
+          "type": "registry:component",
+          "target": "@components/gondola/store-catalog.tsx"
+        },
+        {
+          "path": "registry/gondola/product-detail.tsx",
+          "type": "registry:component",
+          "target": "@components/gondola/product-detail.tsx"
+        }
+      ]
     }
   ]
 }
