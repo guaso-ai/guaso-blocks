@@ -1,0 +1,15 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "coming-soon",
+  "title": "ComingSoon",
+  "description": "Chrome de sistema: página unpublished (no es bloque de catálogo).",
+  "files": [
+    {
+      "path": "registry/coming-soon/coming-soon.tsx",
+      "content": "import type { ReactNode } from \"react\";\n\ntype ComingSoonProps = {\n  siteName?: string | null;\n};\n\nexport default function ComingSoon({ siteName }: ComingSoonProps): ReactNode {\n  const name = (siteName ?? \"\").trim() || \"Este sitio\";\n  return (\n    <main className=\"flex min-h-screen flex-col items-center justify-center gap-5 bg-background px-5 py-8 text-center font-sans text-foreground\">\n      <p className=\"m-0 text-2xl font-semibold\">{name}</p>\n      <p className=\"m-0 text-base text-muted-foreground\">Próximamente</p>\n      <p className=\"mt-8 flex items-center gap-1.5 text-sm text-muted-foreground\">\n        <span\n          aria-hidden\n          className=\"inline-block size-2.5 rounded-full bg-current\"\n        />\n        Hecho con Guaso\n      </p>\n    </main>\n  );\n}\n",
+      "type": "registry:component",
+      "target": "@components/coming-soon/coming-soon.tsx"
+    }
+  ],
+  "type": "registry:component"
+}
