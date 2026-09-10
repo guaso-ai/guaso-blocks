@@ -3,7 +3,8 @@ import { draftMode } from "next/headers";
 import { eq, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { contentEntries } from "@/db/schema";
-import { type Product } from "./types";
+import { normalizeProducts, type Product } from "./types";
+import productsJson from "../../../content/products/products.json";
 
 export type { Product } from "./types";
 export { firstImageSrc } from "./types";
@@ -42,10 +43,10 @@ async function isDraftEnabled(): Promise<boolean> {
 }
 
 async function loadProducts(draft: boolean): Promise<Product[]> {
-  if (!getDb()) return [];
+  if (!getDb()) return normalizeProducts(productsJson);
   const data = await getContentEntry("products/products", draft);
   if (!data || !Array.isArray(data)) return [];
-  return data as Product[];
+  return normalizeProducts(data);
 }
 
 const getProductsCached = unstable_cache(
