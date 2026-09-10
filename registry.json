@@ -113,6 +113,19 @@
       ]
     },
     {
+      "name": "coming-soon",
+      "type": "registry:component",
+      "title": "ComingSoon",
+      "description": "Chrome de sistema: página unpublished (no es bloque de catálogo).",
+      "files": [
+        {
+          "path": "registry/coming-soon/coming-soon.tsx",
+          "type": "registry:component",
+          "target": "@components/coming-soon/coming-soon.tsx"
+        }
+      ]
+    },
+    {
       "name": "gondola",
       "type": "registry:component",
       "title": "Gondola",
