@@ -1,4 +1,6 @@
-import type { ReactNode } from "react";
+"use client";
+
+import { useState, type ReactNode } from "react";
 import Link from "next/link";
 import { firstImageSrc, priceLabel, quantityLabel, type Product } from "./types";
 
@@ -16,9 +18,12 @@ export function ProductDetail({
   children,
 }: ProductDetailProps) {
   const cover = firstImageSrc(product.images);
-  const gallery = (product.images ?? []).slice(1).filter(function (img): img is string {
+  const images = (product.images ?? []).filter(function (img): img is string {
     return typeof img === "string" && img.trim().length !== 0;
   });
+  // Destacada = images[0] (#3888). Tap en una miniatura cambia la grande.
+  const [selected, setSelected] = useState(0);
+  const current = images[Math.min(selected, images.length - 1)] ?? cover;
 
   return (
     <section className="mx-auto max-w-7xl px-6 py-12 md:py-16">
@@ -36,9 +41,9 @@ export function ProductDetail({
       <div className="mt-8 grid gap-12 md:grid-cols-2">
         <div className="space-y-4">
           <div className="relative aspect-square overflow-hidden rounded-2xl bg-card">
-            {cover ? (
+            {current ? (
               <img
-                src={cover}
+                src={current}
                 alt={product.name}
                 width={1200}
                 height={1200}
@@ -46,21 +51,27 @@ export function ProductDetail({
               />
             ) : null}
           </div>
-          {gallery.length > 0 ? (
+          {images.length > 1 ? (
             <div className="grid grid-cols-4 gap-3">
-              {gallery.map((img, i) => (
-                <div
+              {images.map((img, i) => (
+                <button
                   key={`${img}-${i}`}
-                  className="relative aspect-square overflow-hidden rounded-xl bg-card"
+                  type="button"
+                  onClick={() => setSelected(i)}
+                  aria-label={`Ver foto ${i + 1} de ${product.name}`}
+                  aria-current={i === selected}
+                  className={`relative aspect-square overflow-hidden rounded-xl bg-card ${
+                    i === selected ? "ring-2 ring-primary ring-offset-2" : ""
+                  }`}
                 >
                   <img
                     src={img}
-                    alt={`${product.name} ${i + 2}`}
+                    alt={`${product.name} ${i + 1}`}
                     width={240}
                     height={240}
                     className="size-full object-cover"
                   />
-                </div>
+                </button>
               ))}
             </div>
           ) : null}
