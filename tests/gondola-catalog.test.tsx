@@ -160,3 +160,33 @@ describe("gondola getter fallback JSON", () => {
     expect(src).not.toMatch(/if\s*\(\s*!getDb\(\)\s*\)\s*return\s*\[\]/);
   });
 });
+
+describe("gondola ProductDetail gallery (#3888)", () => {
+  it("tap en miniatura cambia la foto grande; destacada = images[0]", async () => {
+    const { fireEvent } = await import("@testing-library/react");
+    const { container } = render(
+      <ProductDetail product={sample} currencySymbol="$" />,
+    );
+    const main = container.querySelector(
+      ".aspect-square.overflow-hidden.rounded-2xl img",
+    ) as HTMLImageElement | null;
+    expect(main?.getAttribute("src")).toBe("https://example.com/cover.jpg");
+    const thumbs = screen.getAllByRole("button");
+    expect(thumbs).toHaveLength(2);
+    fireEvent.click(thumbs[1]);
+    const mainAfter = container.querySelector(
+      ".aspect-square.overflow-hidden.rounded-2xl img",
+    ) as HTMLImageElement | null;
+    expect(mainAfter?.getAttribute("src")).toBe("https://example.com/g2.jpg");
+  });
+
+  it("una sola foto no pinta grilla de miniaturas", () => {
+    render(
+      <ProductDetail
+        product={{ ...sample, images: ["https://example.com/only.jpg"] }}
+        currencySymbol="$"
+      />,
+    );
+    expect(screen.queryByRole("button")).toBeNull();
+  });
+});
