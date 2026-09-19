@@ -25,6 +25,9 @@ export type CTAData = {
   subtext?: string;
   button_label?: string;
   button_url?: string;
+  style?: CtaStyle | string;
+  align?: CtaAlign | string;
+  image_url?: string;
 };
 
 export type GalleryImage = {
@@ -68,7 +71,7 @@ export type TestimonialsData = {
   layout?: TestimonialsLayout | string;
 };
 
-// ─── Variantes de bloque kit-once (#3882 WS1, #3883 WS2) ─────────────────────
+// ─── Variantes de bloque kit-once (#3882 WS1, #3883 WS2, #3884 WS3) ───────────
 // Closed-sets declarados UNA vez acá. El backend los espeja en
 // `_CANONICAL_BLOCKS` + `_validate_block_variant` (default + logger.warning);
 // las skins solo resuelven a defaults (divergencia estética, nunca
@@ -80,6 +83,8 @@ export type GalleryColumns = "2" | "3" | "4";
 export type GalleryStyle = "grilla" | "masonry" | "carrusel";
 export type RichImageSide = "left" | "right";
 export type RichMode = "split" | "centrado" | "checklist";
+export type CtaStyle = "banda" | "foto" | "split";
+export type CtaAlign = "left" | "center" | "right";
 
 export const DEFAULT_CARDS_COLUMNS: CardsColumns = "3";
 export const DEFAULT_CARDS_STYLE: CardsStyle = "grid";
@@ -88,6 +93,8 @@ export const DEFAULT_GALLERY_COLUMNS: GalleryColumns = "3";
 export const DEFAULT_GALLERY_STYLE: GalleryStyle = "grilla";
 export const DEFAULT_RICH_IMAGE_SIDE: RichImageSide = "right";
 export const DEFAULT_RICH_MODE: RichMode = "split";
+export const DEFAULT_CTA_STYLE: CtaStyle = "banda";
+export const DEFAULT_CTA_ALIGN: CtaAlign = "center";
 
 export function resolveCardsColumns(value: unknown): CardsColumns {
   return value === "2" || value === "3" || value === "4"
@@ -130,6 +137,18 @@ export function resolveRichMode(value: unknown): RichMode {
   return value === "split" || value === "centrado" || value === "checklist"
     ? value
     : DEFAULT_RICH_MODE;
+}
+
+export function resolveCtaStyle(value: unknown): CtaStyle {
+  return value === "banda" || value === "foto" || value === "split"
+    ? value
+    : DEFAULT_CTA_STYLE;
+}
+
+export function resolveCtaAlign(value: unknown): CtaAlign {
+  return value === "left" || value === "center" || value === "right"
+    ? value
+    : DEFAULT_CTA_ALIGN;
 }
 
 /**

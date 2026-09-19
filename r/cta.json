@@ -2,7 +2,7 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "cta",
   "title": "CTA",
-  "description": "Canonical CTA block — tokenized baseline.",
+  "description": "Canonical CTA block — tokenized baseline. Variants: style banda|foto|split (default banda); align left|center|right (default center).",
   "registryDependencies": [
     "@guaso/block-zone"
   ],
