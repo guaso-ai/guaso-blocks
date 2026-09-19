@@ -16,6 +16,8 @@ export type RichSectionData = {
   cta_url?: string;
   align?: "left" | "center";
   image_url?: string;
+  image_side?: RichImageSide | string;
+  mode?: RichMode | string;
 };
 
 export type CTAData = {
@@ -34,6 +36,8 @@ export type GalleryImage = {
 export type GalleryData = {
   title?: string;
   images?: GalleryImage[];
+  columns?: GalleryColumns | string;
+  style?: GalleryStyle | string;
 };
 
 export type CardItem = {
@@ -64,7 +68,7 @@ export type TestimonialsData = {
   layout?: TestimonialsLayout | string;
 };
 
-// ─── Variantes de bloque WS1 (#3882, kit-once) ──────────────────────────────
+// ─── Variantes de bloque kit-once (#3882 WS1, #3883 WS2) ─────────────────────
 // Closed-sets declarados UNA vez acá. El backend los espeja en
 // `_CANONICAL_BLOCKS` + `_validate_block_variant` (default + logger.warning);
 // las skins solo resuelven a defaults (divergencia estética, nunca
@@ -72,10 +76,18 @@ export type TestimonialsData = {
 export type CardsColumns = "2" | "3" | "4";
 export type CardsStyle = "grid" | "feature" | "minimal";
 export type TestimonialsLayout = "grilla" | "destacado" | "carrusel" | "minimal";
+export type GalleryColumns = "2" | "3" | "4";
+export type GalleryStyle = "grilla" | "masonry" | "carrusel";
+export type RichImageSide = "left" | "right";
+export type RichMode = "split" | "centrado" | "checklist";
 
 export const DEFAULT_CARDS_COLUMNS: CardsColumns = "3";
 export const DEFAULT_CARDS_STYLE: CardsStyle = "grid";
 export const DEFAULT_TESTIMONIALS_LAYOUT: TestimonialsLayout = "grilla";
+export const DEFAULT_GALLERY_COLUMNS: GalleryColumns = "3";
+export const DEFAULT_GALLERY_STYLE: GalleryStyle = "grilla";
+export const DEFAULT_RICH_IMAGE_SIDE: RichImageSide = "right";
+export const DEFAULT_RICH_MODE: RichMode = "split";
 
 export function resolveCardsColumns(value: unknown): CardsColumns {
   return value === "2" || value === "3" || value === "4"
@@ -96,6 +108,28 @@ export function resolveTestimonialsLayout(value: unknown): TestimonialsLayout {
     value === "minimal"
     ? value
     : DEFAULT_TESTIMONIALS_LAYOUT;
+}
+
+export function resolveGalleryColumns(value: unknown): GalleryColumns {
+  return value === "2" || value === "3" || value === "4"
+    ? value
+    : DEFAULT_GALLERY_COLUMNS;
+}
+
+export function resolveGalleryStyle(value: unknown): GalleryStyle {
+  return value === "grilla" || value === "masonry" || value === "carrusel"
+    ? value
+    : DEFAULT_GALLERY_STYLE;
+}
+
+export function resolveRichImageSide(value: unknown): RichImageSide {
+  return value === "left" || value === "right" ? value : DEFAULT_RICH_IMAGE_SIDE;
+}
+
+export function resolveRichMode(value: unknown): RichMode {
+  return value === "split" || value === "centrado" || value === "checklist"
+    ? value
+    : DEFAULT_RICH_MODE;
 }
 
 /**

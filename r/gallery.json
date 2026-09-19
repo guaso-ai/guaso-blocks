@@ -2,7 +2,7 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "gallery",
   "title": "Gallery",
-  "description": "Canonical Gallery block — tokenized baseline.",
+  "description": "Canonical Gallery block — tokenized baseline. Variants: columns 2|3|4 (default 3); style grilla|masonry|carrusel (default grilla).",
   "registryDependencies": [
     "@guaso/block-zone"
   ],

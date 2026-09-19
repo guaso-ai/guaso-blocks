@@ -45,7 +45,7 @@
       "name": "rich-section",
       "type": "registry:component",
       "title": "RichSection",
-      "description": "Canonical RichSection block — tokenized baseline.",
+      "description": "Canonical RichSection block — tokenized baseline. Variants: image_side left|right (default right); mode split|centrado|checklist (default split).",
       "dependencies": ["react-markdown"],
       "registryDependencies": ["@guaso/block-zone"],
       "files": [
@@ -74,7 +74,7 @@
       "name": "gallery",
       "type": "registry:component",
       "title": "Gallery",
-      "description": "Canonical Gallery block — tokenized baseline.",
+      "description": "Canonical Gallery block — tokenized baseline. Variants: columns 2|3|4 (default 3); style grilla|masonry|carrusel (default grilla).",
       "registryDependencies": ["@guaso/block-zone"],
       "files": [
         {

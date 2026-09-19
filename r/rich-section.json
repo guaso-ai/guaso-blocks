@@ -2,7 +2,7 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "rich-section",
   "title": "RichSection",
-  "description": "Canonical RichSection block — tokenized baseline.",
+  "description": "Canonical RichSection block — tokenized baseline. Variants: image_side left|right (default right); mode split|centrado|checklist (default split).",
   "dependencies": [
     "react-markdown"
   ],
