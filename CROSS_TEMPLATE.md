@@ -11,7 +11,7 @@ Source of truth for what this kit unifies vs what stays in `guaso-template-*` (#
 | Gallery | title/images (url/alt/caption) + `columns` 2\|3\|4 (default 3) + `style` grilla\|masonry\|carrusel (default grilla) + empty/filter sin url | marcos dobles, next/image, eyebrows “Galería”. ⛔ masonry CSS `columns-*` hardcoded |
 | Cards | title/subtitle/cards + `columns`/`style` WS1 + safeHref links + empty | hairline “Servicios”, índices 01/02, next/link, grid px |
 | Testimonials | title/items (quote/author/role) + `layout`/`rating` WS1 + empty/filter útiles | hairline “Lo que dicen”, comillas decorativas, divide-y |
-| CTA | headline/subtext/button + safeHref + empty (unión clinic/store) | mesh-hero, grain, orbs, Smile/lucide, bg treatments |
+| CTA | headline/subtext/button + `style` banda\|foto\|split (default banda) + `align` left\|center\|right (default center) + safeHref `button_url`/`image_url` + empty (unión clinic/store). `foto` sin URL pinta `banda`; `split` sin URL deja panel `bg-card` | mesh-hero, grain, orbs, Smile/lucide, bg treatments. ⛔ reimplementar banda/foto/split × template |
 | Gondola (#3812) | `Product` + getter `products/products` (Drizzle/`unstable_cache`) + `ProductCard` / `StoreCatalog` / `ProductDetail` | chrome home (`catalogTitle`/`emptyState`/headings), `getBranding`, cart/checkout/`AddToCartButton`, `formatPrice`/`discountPercent` del host, `TitleWithAccent`/grain |
 
 ## Aesthetic tokens (intersección)
