@@ -63,6 +63,7 @@ export type TestimonialItem = {
   role?: string;
   quote?: string;
   rating?: string;
+  avatar?: string; // máx 500; URL https pintada, si no placeholder/inicial
 };
 
 export type TestimonialsData = {
@@ -75,7 +76,7 @@ export type TestimonialsData = {
 // Closed-sets declarados UNA vez acá. El backend los espeja en
 // `_CANONICAL_BLOCKS` + `_validate_block_variant` (default + logger.warning);
 // las skins solo resuelven a defaults (divergencia estética, nunca
-// comportamiento). Sin avatar: DIFERIDO al diseño `array_image_fields`.
+// comportamiento). Avatar: `TestimonialItem.avatar` (#3950, array_image_fields).
 export type CardsColumns = "2" | "3" | "4";
 export type CardsStyle = "grid" | "feature" | "minimal";
 export type TestimonialsLayout = "grilla" | "destacado" | "carrusel" | "minimal";

@@ -2,6 +2,7 @@ import type { TestimonialItem, TestimonialsData } from "../block-zone/types";
 import {
   resolveTestimonialRating,
   resolveTestimonialsLayout,
+  safeHref,
 } from "../block-zone/types";
 
 type TestimonialsProps = {
@@ -52,6 +53,55 @@ function RatingStars({ rating }: { rating: 1 | 2 | 3 | 4 | 5 }) {
   );
 }
 
+function avatarHref(item: TestimonialItem): string | undefined {
+  const href = safeHref(item.avatar);
+  return href && href.toLowerCase().startsWith("https://") ? href : undefined;
+}
+
+function TestimonialIdentity({
+  item,
+  className,
+}: {
+  item: TestimonialItem;
+  className?: string;
+}) {
+  const url = avatarHref(item);
+  const author = typeof item.author === "string" ? item.author.trim() : "";
+  const initial = author ? author.charAt(0).toUpperCase() : "";
+  const showAvatar = Boolean(url || initial);
+  if (!showAvatar && !author && !item.role) return null;
+  return (
+    <footer className={["flex items-center gap-3", className].filter(Boolean).join(" ")}>
+      {url ? (
+        <img
+          src={url}
+          alt=""
+          className="size-10 shrink-0 rounded-full object-cover"
+        />
+      ) : showAvatar ? (
+        <span
+          aria-hidden
+          className="flex size-10 shrink-0 items-center justify-center rounded-full bg-muted font-heading text-sm font-semibold text-muted-foreground"
+        >
+          {initial}
+        </span>
+      ) : null}
+      {(author || item.role) && (
+        <div className="flex min-w-0 flex-col gap-0.5">
+          {author ? (
+            <cite className="not-italic font-heading text-sm font-semibold text-foreground">
+              {author}
+            </cite>
+          ) : null}
+          {item.role ? (
+            <p className="text-sm text-muted-foreground">{item.role}</p>
+          ) : null}
+        </div>
+      )}
+    </footer>
+  );
+}
+
 function TestimonialQuote({ item }: { item: TestimonialItem }) {
   const rating = resolveTestimonialRating(item.rating);
 
@@ -69,18 +119,7 @@ function TestimonialQuote({ item }: { item: TestimonialItem }) {
         </div>
       ) : null}
 
-      {(item.author || item.role) && (
-        <footer className="mt-auto flex flex-col gap-0.5">
-          {item.author ? (
-            <cite className="not-italic font-heading text-sm font-semibold text-foreground">
-              {item.author}
-            </cite>
-          ) : null}
-          {item.role ? (
-            <p className="text-sm text-muted-foreground">{item.role}</p>
-          ) : null}
-        </footer>
-      )}
+      <TestimonialIdentity item={item} className="mt-auto" />
     </>
   );
 }
@@ -132,18 +171,7 @@ export default function Testimonials({
                 <RatingStars rating={firstRating} />
               </div>
             ) : null}
-            {(first.author || first.role) && (
-              <footer className="mt-2 flex flex-col gap-0.5">
-                {first.author ? (
-                  <cite className="not-italic font-heading text-sm font-semibold text-foreground">
-                    {first.author}
-                  </cite>
-                ) : null}
-                {first.role ? (
-                  <p className="text-sm text-muted-foreground">{first.role}</p>
-                ) : null}
-              </footer>
-            )}
+            <TestimonialIdentity item={first} className="mt-2" />
           </blockquote>
 
           {rest.length > 0 ? (

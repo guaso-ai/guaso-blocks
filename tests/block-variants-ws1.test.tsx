@@ -53,7 +53,7 @@ describe("resolvers kit-once (#3882)", () => {
     expect(resolveTestimonialsLayout(undefined)).toBe("grilla");
   });
 
-  it("rating acepta dígitos 1–5, resto → undefined (sin avatar)", () => {
+  it("rating acepta dígitos 1–5, resto → undefined", () => {
     expect(resolveTestimonialRating("1")).toBe(1);
     expect(resolveTestimonialRating("5")).toBe(5);
     expect(resolveTestimonialRating("0")).toBeUndefined();
@@ -137,6 +137,43 @@ describe("Testimonials variants (#3882)", () => {
     );
     expect(screen.queryByRole("img")).toBeNull();
     expect(screen.getByText("Sin rating")).toBeTruthy();
+  });
+
+  it("pinta URL https y placeholder si no hay avatar", () => {
+    const { container } = render(
+      <Testimonials
+        data={{
+          items: [
+            {
+              quote: "Con foto",
+              author: "Ana",
+              avatar: "https://cdn.example/a.jpg",
+            },
+            { quote: "Sin foto", author: "Beto" },
+          ],
+        }}
+      />,
+    );
+    expect(
+      container.querySelector("img[src='https://cdn.example/a.jpg']"),
+    ).toBeTruthy();
+    expect(container.textContent).toContain("B");
+  });
+
+  it("URL vacía o no-https no rompe el render", () => {
+    render(
+      <Testimonials
+        data={{
+          items: [
+            { quote: "Vacia", author: "Ana", avatar: "" },
+            { quote: "Js", author: "Beto", avatar: "javascript:alert(1)" },
+          ],
+        }}
+      />,
+    );
+    expect(screen.getByText("Vacia")).toBeTruthy();
+    expect(screen.getByText("Js")).toBeTruthy();
+    expect(screen.queryByRole("img")).toBeNull();
   });
 
   it("layout=destacado abre el primero grande y el resto en grilla", () => {
