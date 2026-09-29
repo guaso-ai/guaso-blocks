@@ -4,7 +4,7 @@ Source of truth for what this kit unifies vs what stays in `guaso-template-*` (#
 
 | Área | Unificado en registry | Queda skin (#3065 / templates) |
 |------|----------------------|--------------------------------|
-| `registry.ts` | byte-idéntico lookup + unknown→undefined (5 tipos) | — |
+| `registry.ts` | byte-idéntico lookup + unknown→undefined (8 tipos) | — |
 | `types.ts` / fields | = `_CANONICAL_BLOCKS` + `safeHref` | comentarios locales |
 | `BlockZone` | filter enabled + ignore unknown; `isOwner` prop (no `draftMode`) | import `Block` desde `@/lib/products` (store) vs content; draftMode wrapper |
 | RichSection | title/body/cta/align/image + `image_side` left\|right (default right) + `mode` split\|centrado\|checklist (default split) + empty guard | TitleWithAccent, hairline, eyebrow, radii/sombras por vertical. ⛔ layout split/order hardcoded |
@@ -12,6 +12,9 @@ Source of truth for what this kit unifies vs what stays in `guaso-template-*` (#
 | Cards | title/subtitle/cards + `columns`/`style` WS1 + safeHref links + empty | hairline “Servicios”, índices 01/02, next/link, grid px |
 | Testimonials | title/items (quote/author/role) + `layout`/`rating` WS1 + empty/filter útiles | hairline “Lo que dicen”, comillas decorativas, divide-y |
 | CTA | headline/subtext/button + `style` banda\|foto\|split (default banda) + `align` left\|center\|right (default center) + safeHref `button_url`/`image_url` + empty (unión clinic/store). `foto` sin URL pinta `banda`; `split` sin URL deja panel `bg-card` | mesh-hero, grain, orbs, Smile/lucide, bg treatments. ⛔ reimplementar banda/foto/split × template |
+| FAQ (#3867) | title + questions[{question, answer}] + acordeón (`details`, un ítem abierto) + empty (público null, dueño placeholder) | ritmo, cromo, tipografía. ⛔ otro mecanismo de abrir/cerrar |
+| Stats (#3867) | title + intro + metrics[{value, label}] + `value` vacío omite la cifra + empty | escala tipográfica, columnas. ⛔ pintar un cero inventado |
+| Steps (#3867) | title + intro + steps[{heading, text}] + lista ordenada + empty | timeline, índices, conectores. ⛔ lista sin orden |
 | Gondola (#3812) | `Product` + getter `products/products` (Drizzle/`unstable_cache`) + `ProductCard` / `StoreCatalog` / `ProductDetail` | chrome home (`catalogTitle`/`emptyState`/headings), `getBranding`, cart/checkout/`AddToCartButton`, `formatPrice`/`discountPercent` del host, `TitleWithAccent`/grain |
 
 ## Aesthetic tokens (intersección)

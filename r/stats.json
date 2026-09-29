@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "stats",
+  "title": "Stats",
+  "description": "Canonical Stats block — metrics, tokenized baseline. Empty value omits the figure.",
+  "registryDependencies": [
+    "@guaso/block-zone"
+  ],
+  "files": [
+    {
+      "path": "registry/stats/stats.tsx",
+      "content": "import type { StatsData } from \"../block-zone/types\";\n\ntype StatsProps = {\n  data: StatsData;\n  isOwner?: boolean;\n};\n\nfunction filled(value?: string): string {\n  return typeof value === \"string\" ? value.trim() : \"\";\n}\n\nfunction StatsPlaceholder() {\n  return (\n    <section\n      aria-label=\"Números\"\n      className=\"mx-auto max-w-6xl px-6 py-16 md:py-20\"\n    >\n      <div className=\"rounded-lg border border-border bg-card px-8 py-12 text-center\">\n        <p className=\"font-heading text-sm text-muted-foreground\">\n          Números — agregá las cifras por chat\n        </p>\n      </div>\n    </section>\n  );\n}\n\nexport default function Stats({ data, isOwner = false }: StatsProps) {\n  const metrics = (Array.isArray(data.metrics) ? data.metrics : []).filter(\n    (item) => filled(item.value) || filled(item.label),\n  );\n\n  if (metrics.length === 0 && !filled(data.title) && !filled(data.intro)) {\n    return isOwner ? <StatsPlaceholder /> : null;\n  }\n\n  return (\n    <section\n      aria-label={filled(data.title) || \"Números\"}\n      className=\"mx-auto max-w-6xl px-6 py-16 md:py-20\"\n    >\n      {filled(data.title) ? (\n        <h2 className=\"font-heading text-3xl font-semibold tracking-tight text-foreground text-balance md:text-4xl\">\n          {data.title}\n        </h2>\n      ) : null}\n      {filled(data.intro) ? (\n        <p className=\"mt-3 max-w-2xl text-base leading-relaxed text-muted-foreground break-words\">\n          {data.intro}\n        </p>\n      ) : null}\n      {metrics.length > 0 ? (\n        <dl className=\"mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-3\">\n          {metrics.map((metric, i) => {\n            const value = filled(metric.value);\n            const label = filled(metric.label);\n            return (\n              <div key={i} className=\"border-t border-border pt-4\">\n                {value ? (\n                  <dd className=\"font-heading text-4xl font-semibold tracking-tight text-foreground tabular-nums md:text-5xl\">\n                    {metric.value}\n                  </dd>\n                ) : null}\n                {label ? (\n                  <dt className={value ? \"mt-2 text-sm text-muted-foreground\" : \"text-base text-foreground\"}>\n                    {metric.label}\n                  </dt>\n                ) : null}\n              </div>\n            );\n          })}\n        </dl>\n      ) : null}\n    </section>\n  );\n}\n",
+      "type": "registry:component",
+      "target": "@components/stats/stats.tsx"
+    }
+  ],
+  "type": "registry:component"
+}
