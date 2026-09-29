@@ -99,6 +99,48 @@
       ]
     },
     {
+      "name": "faq",
+      "type": "registry:component",
+      "title": "FAQ",
+      "description": "Canonical FAQ block — accordion, tokenized baseline.",
+      "registryDependencies": ["@guaso/block-zone"],
+      "files": [
+        {
+          "path": "registry/faq/faq.tsx",
+          "type": "registry:component",
+          "target": "@components/faq/faq.tsx"
+        }
+      ]
+    },
+    {
+      "name": "stats",
+      "type": "registry:component",
+      "title": "Stats",
+      "description": "Canonical Stats block — metrics, tokenized baseline. Empty value omits the figure.",
+      "registryDependencies": ["@guaso/block-zone"],
+      "files": [
+        {
+          "path": "registry/stats/stats.tsx",
+          "type": "registry:component",
+          "target": "@components/stats/stats.tsx"
+        }
+      ]
+    },
+    {
+      "name": "steps",
+      "type": "registry:component",
+      "title": "Steps",
+      "description": "Canonical Steps block — ordered list, tokenized baseline.",
+      "registryDependencies": ["@guaso/block-zone"],
+      "files": [
+        {
+          "path": "registry/steps/steps.tsx",
+          "type": "registry:component",
+          "target": "@components/steps/steps.tsx"
+        }
+      ]
+    },
+    {
       "name": "testimonials",
       "type": "registry:component",
       "title": "Testimonials",

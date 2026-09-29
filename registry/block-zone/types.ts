@@ -71,6 +71,38 @@ export type TestimonialsData = {
   layout?: TestimonialsLayout | string;
 };
 
+export type FaqItem = {
+  question?: string;
+  answer?: string;
+};
+
+export type FAQData = {
+  title?: string;
+  questions?: FaqItem[];
+};
+
+export type StatMetric = {
+  value?: string;
+  label?: string;
+};
+
+export type StatsData = {
+  title?: string;
+  intro?: string;
+  metrics?: StatMetric[];
+};
+
+export type StepItem = {
+  heading?: string;
+  text?: string;
+};
+
+export type StepsData = {
+  title?: string;
+  intro?: string;
+  steps?: StepItem[];
+};
+
 // ─── Variantes de bloque kit-once (#3882 WS1, #3883 WS2, #3884 WS3) ───────────
 // Closed-sets declarados UNA vez acá. El backend los espeja en
 // `_CANONICAL_BLOCKS` + `_validate_block_variant` (default + logger.warning);

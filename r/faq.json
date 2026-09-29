@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "faq",
+  "title": "FAQ",
+  "description": "Canonical FAQ block — accordion, tokenized baseline.",
+  "registryDependencies": [
+    "@guaso/block-zone"
+  ],
+  "files": [
+    {
+      "path": "registry/faq/faq.tsx",
+      "content": "import type { FAQData } from \"../block-zone/types\";\n\ntype FAQProps = {\n  data: FAQData;\n  isOwner?: boolean;\n};\n\nfunction filled(value?: string): string {\n  return typeof value === \"string\" ? value.trim() : \"\";\n}\n\nfunction FAQPlaceholder() {\n  return (\n    <section\n      aria-label=\"Preguntas\"\n      className=\"mx-auto max-w-3xl px-6 py-16 md:py-20\"\n    >\n      <div className=\"rounded-lg border border-border bg-card px-8 py-12 text-center\">\n        <p className=\"font-heading text-sm text-muted-foreground\">\n          Preguntas — agregá las preguntas por chat\n        </p>\n      </div>\n    </section>\n  );\n}\n\nexport default function FAQ({ data, isOwner = false }: FAQProps) {\n  const questions = (Array.isArray(data.questions) ? data.questions : []).filter(\n    (item) => filled(item.question) || filled(item.answer),\n  );\n\n  if (questions.length === 0) {\n    return isOwner ? <FAQPlaceholder /> : null;\n  }\n\n  return (\n    <section\n      aria-label={filled(data.title) || \"Preguntas\"}\n      className=\"mx-auto max-w-3xl px-6 py-16 md:py-20\"\n    >\n      {filled(data.title) ? (\n        <h2 className=\"mb-8 font-heading text-3xl font-semibold tracking-tight text-foreground text-balance md:text-4xl\">\n          {data.title}\n        </h2>\n      ) : null}\n      <div className=\"divide-y divide-border border-y border-border\">\n        {questions.map((item, i) => (\n          <details key={i} className=\"group py-1\" open={i === 0}>\n            <summary className=\"flex cursor-pointer list-none items-start justify-between gap-4 py-4 font-heading text-lg font-medium text-foreground marker:content-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary [&::-webkit-details-marker]:hidden\">\n              <span className=\"text-balance\">{filled(item.question) || \"Pregunta\"}</span>\n              <span\n                aria-hidden\n                className=\"mt-1 shrink-0 text-sm text-muted-foreground group-open:rotate-45\"\n              >\n                +\n              </span>\n            </summary>\n            {filled(item.answer) ? (\n              <p className=\"pb-5 text-sm leading-relaxed text-muted-foreground break-words\">\n                {item.answer}\n              </p>\n            ) : null}\n          </details>\n        ))}\n      </div>\n    </section>\n  );\n}\n",
+      "type": "registry:component",
+      "target": "@components/faq/faq.tsx"
+    }
+  ],
+  "type": "registry:component"
+}

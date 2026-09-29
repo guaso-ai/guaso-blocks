@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "steps",
+  "title": "Steps",
+  "description": "Canonical Steps block — ordered list, tokenized baseline.",
+  "registryDependencies": [
+    "@guaso/block-zone"
+  ],
+  "files": [
+    {
+      "path": "registry/steps/steps.tsx",
+      "content": "import type { StepsData } from \"../block-zone/types\";\n\ntype StepsProps = {\n  data: StepsData;\n  isOwner?: boolean;\n};\n\nfunction filled(value?: string): string {\n  return typeof value === \"string\" ? value.trim() : \"\";\n}\n\nfunction StepsPlaceholder() {\n  return (\n    <section\n      aria-label=\"Pasos\"\n      className=\"mx-auto max-w-3xl px-6 py-16 md:py-20\"\n    >\n      <div className=\"rounded-lg border border-border bg-card px-8 py-12 text-center\">\n        <p className=\"font-heading text-sm text-muted-foreground\">\n          Pasos — agregá los pasos por chat\n        </p>\n      </div>\n    </section>\n  );\n}\n\nexport default function Steps({ data, isOwner = false }: StepsProps) {\n  const steps = (Array.isArray(data.steps) ? data.steps : []).filter(\n    (item) => filled(item.heading) || filled(item.text),\n  );\n\n  if (steps.length === 0) {\n    return isOwner ? <StepsPlaceholder /> : null;\n  }\n\n  return (\n    <section\n      aria-label={filled(data.title) || \"Pasos\"}\n      className=\"mx-auto max-w-3xl px-6 py-16 md:py-20\"\n    >\n      {filled(data.title) ? (\n        <h2 className=\"font-heading text-3xl font-semibold tracking-tight text-foreground text-balance md:text-4xl\">\n          {data.title}\n        </h2>\n      ) : null}\n      {filled(data.intro) ? (\n        <p className=\"mt-3 max-w-2xl text-base leading-relaxed text-muted-foreground break-words\">\n          {data.intro}\n        </p>\n      ) : null}\n      <ol className=\"mt-10 flex flex-col gap-0\">\n        {steps.map((step, i) => (\n          <li key={i} className=\"grid grid-cols-[auto_1fr] gap-x-5 border-l border-border py-5 pl-0\">\n            <span className=\"ml-[-0.7rem] flex h-7 w-7 items-center justify-center rounded-full border border-border bg-card font-heading text-xs font-semibold text-foreground\">\n              {i + 1}\n            </span>\n            <div className=\"-mt-0.5\">\n              {filled(step.heading) ? (\n                <h3 className=\"font-heading text-lg font-semibold tracking-tight text-foreground text-balance\">\n                  {step.heading}\n                </h3>\n              ) : null}\n              {filled(step.text) ? (\n                <p className=\"mt-1 text-sm leading-relaxed text-muted-foreground break-words\">\n                  {step.text}\n                </p>\n              ) : null}\n            </div>\n          </li>\n        ))}\n      </ol>\n    </section>\n  );\n}\n",
+      "type": "registry:component",
+      "target": "@components/steps/steps.tsx"
+    }
+  ],
+  "type": "registry:component"
+}
