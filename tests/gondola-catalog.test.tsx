@@ -161,6 +161,44 @@ describe("gondola getter fallback JSON", () => {
   });
 });
 
+describe("gondola ProductDetail slots opacos (#3924)", () => {
+  it("sin slots no emite data-guaso-slot (store idéntico)", () => {
+    const { container } = render(
+      <ProductDetail product={sample} currencySymbol="$" />,
+    );
+    expect(
+      container.querySelector("[data-guaso-slot]"),
+    ).toBeNull();
+  });
+
+  it("pega imageSlot/nameSlot/priceSlot en las 3 zonas", () => {
+    const { container } = render(
+      <ProductDetail
+        product={sample}
+        currencySymbol="$"
+        imageSlot={{ "data-guaso-slot": "c:products:oxido:images" }}
+        nameSlot={{ "data-guaso-slot": "c:products:oxido:name" }}
+        priceSlot={{ "data-guaso-slot": "c:products:oxido:price" }}
+      />,
+    );
+    const main = container.querySelector(
+      ".aspect-square.overflow-hidden.rounded-2xl img",
+    );
+    expect(main?.getAttribute("data-guaso-slot")).toBe(
+      "c:products:oxido:images",
+    );
+    const heading = container.querySelector("h1");
+    expect(heading?.getAttribute("data-guaso-slot")).toBe(
+      "c:products:oxido:name",
+    );
+    expect(heading?.textContent).toBe("Óxido");
+    const price = screen.getByText("$180.000");
+    expect(price.getAttribute("data-guaso-slot")).toBe(
+      "c:products:oxido:price",
+    );
+  });
+});
+
 describe("gondola ProductDetail gallery (#3888)", () => {
   it("tap en miniatura cambia la foto grande; destacada = images[0]", async () => {
     const { fireEvent } = await import("@testing-library/react");

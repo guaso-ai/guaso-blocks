@@ -4,11 +4,19 @@ import { useState, type ReactNode } from "react";
 import Link from "next/link";
 import { firstImageSrc, priceLabel, quantityLabel, type Product } from "./types";
 
+type SlotAttrs = { "data-guaso-slot": string } | Record<string, never>;
+
 type ProductDetailProps = {
   product: Product;
   currencySymbol: string;
   storeNav?: string;
   children?: ReactNode;
+  // Atributos opacos por zona editable (los calcula el template y los
+  // pega el kit con spread). `{}` = no-op. El kit nunca importa `@/lib/*`
+  // ni conoce el protocolo de slots.
+  imageSlot?: SlotAttrs;
+  nameSlot?: SlotAttrs;
+  priceSlot?: SlotAttrs;
 };
 
 export function ProductDetail({
@@ -16,6 +24,9 @@ export function ProductDetail({
   currencySymbol,
   storeNav,
   children,
+  imageSlot = {},
+  nameSlot = {},
+  priceSlot = {},
 }: ProductDetailProps) {
   const cover = firstImageSrc(product.images);
   const images = (product.images ?? []).filter(function (img): img is string {
@@ -48,6 +59,7 @@ export function ProductDetail({
                 width={1200}
                 height={1200}
                 className="size-full object-cover"
+                {...imageSlot}
               />
             ) : null}
           </div>
@@ -83,10 +95,16 @@ export function ProductDetail({
               {product.category}
             </p>
           ) : null}
-          <h1 className="mt-2 font-heading text-3xl font-semibold text-foreground md:text-4xl">
+          <h1
+            {...nameSlot}
+            className="mt-2 font-heading text-3xl font-semibold text-foreground md:text-4xl"
+          >
             {product.name}
           </h1>
-          <p className="mt-5 text-3xl font-semibold text-primary">
+          <p
+            {...priceSlot}
+            className="mt-5 text-3xl font-semibold text-primary"
+          >
             {priceLabel(product.price, currencySymbol)}
           </p>
           <p className="mt-2 text-sm text-muted-foreground">
