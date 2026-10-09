@@ -15,6 +15,7 @@ Source of truth for what this kit unifies vs what stays in `guaso-template-*` (#
 | FAQ (#3867) | title + questions[{question, answer}] + acordeón (`details`, un ítem abierto) + empty (público null, dueño placeholder) | ritmo, cromo, tipografía. ⛔ otro mecanismo de abrir/cerrar |
 | Stats (#3867) | title + intro + metrics[{value, label}] + `value` vacío omite la cifra + empty | escala tipográfica, columnas. ⛔ pintar un cero inventado |
 | Steps (#3867) | title + intro + steps[{heading, text}] + lista ordenada + empty | timeline, índices, conectores. ⛔ lista sin orden |
+| Grilla (#4304) | contenedor de un nivel: `columnas` 1–4 + `espacio` chico\|medio\|grande + `envolver` si\|no + `alineacion_horizontal`/`alineacion_vertical` + `altura_igual` + `orden_mobile` normal\|invertido + `proporcion` por hijo (presets resueltos por backend); hijos = BlockZone sin CTA ni anidadas; mobile apila (sin breakpoints extra) | gap/padding de sección, ancho máximo, tokens. ⛔ recalcular presets en la skin; ⛔ breakpoints por prop |
 | Gondola (#3812) | `Product` + getter `products/products` (Drizzle/`unstable_cache`) + `ProductCard` / `StoreCatalog` / `ProductDetail` | chrome home (`catalogTitle`/`emptyState`/headings), `getBranding`, cart/checkout/`AddToCartButton`, `formatPrice`/`discountPercent` del host, `TitleWithAccent`/grain |
 
 ## Aesthetic tokens (intersección)

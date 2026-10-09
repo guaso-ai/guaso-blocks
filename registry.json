@@ -141,6 +141,20 @@
       ]
     },
     {
+      "name": "grilla",
+      "type": "registry:component",
+      "title": "Grilla",
+      "description": "Canonical Grilla container (#4304) — one level of children. Props: columnas 1-4, espacio chico|medio|grande, envolver si|no, alineacion_horizontal inicio|centro|fin, alineacion_vertical arriba|centrado|abajo, altura_igual si|no, orden_mobile normal|invertido; proporcion per child (presets resolved by backend).",
+      "registryDependencies": ["@guaso/block-zone"],
+      "files": [
+        {
+          "path": "registry/grilla/grilla.tsx",
+          "type": "registry:component",
+          "target": "@components/grilla/grilla.tsx"
+        }
+      ]
+    },
+    {
       "name": "testimonials",
       "type": "registry:component",
       "title": "Testimonials",
