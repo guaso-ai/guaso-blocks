@@ -183,6 +183,119 @@ export function resolveCtaAlign(value: unknown): CtaAlign {
     : DEFAULT_CTA_ALIGN;
 }
 
+// ─── Grilla de un nivel (#4304; contrato backend #4309) ──────────────────────
+// Espejo de `_BLOCK_VARIANT_CLOSESETS["Grilla"]` / `_BLOCK_VARIANT_DEFAULTS`.
+// El kit NO copia la tabla de presets: el backend expande cada preset en
+// `columnas` del contenedor y en `proporcion` de cada hijo (`resolve_container_*`).
+// `GrillaPreset` es solo el set cerrado de ids (paridad), no proporciones.
+export type GrillaColumnas = "1" | "2" | "3" | "4";
+export type GrillaEspacio = "chico" | "medio" | "grande";
+export type GrillaEnvolver = "si" | "no";
+export type GrillaAlineacionHorizontal = "inicio" | "centro" | "fin";
+export type GrillaAlineacionVertical = "arriba" | "centrado" | "abajo";
+export type GrillaAlturaIgual = "si" | "no";
+export type GrillaOrdenMobile = "normal" | "invertido";
+export type GrillaProporcion = "1/4" | "1/3" | "1/2" | "2/3" | "3/4" | "igual";
+export type GrillaPreset =
+  | "mitad_y_mitad"
+  | "hero_2_3_1_3"
+  | "3_tarjetas"
+  | "banda_de_4";
+
+export const DEFAULT_GRILLA_COLUMNAS: GrillaColumnas = "2";
+export const DEFAULT_GRILLA_ESPACIO: GrillaEspacio = "medio";
+export const DEFAULT_GRILLA_ENVOLVER: GrillaEnvolver = "no";
+export const DEFAULT_GRILLA_ALINEACION_HORIZONTAL: GrillaAlineacionHorizontal =
+  "inicio";
+export const DEFAULT_GRILLA_ALINEACION_VERTICAL: GrillaAlineacionVertical =
+  "arriba";
+export const DEFAULT_GRILLA_ALTURA_IGUAL: GrillaAlturaIgual = "no";
+export const DEFAULT_GRILLA_ORDEN_MOBILE: GrillaOrdenMobile = "normal";
+export const DEFAULT_GRILLA_PROPORCION: GrillaProporcion = "igual";
+
+/** Hijo de primer nivel tal como lo guarda el plan (`proporcion` ya resuelta por el backend). */
+export type GrillaChild = {
+  id?: string;
+  type: string;
+  data?: Record<string, unknown>;
+  proporcion?: string;
+};
+
+export type GrillaData = {
+  columnas?: GrillaColumnas | string;
+  espacio?: GrillaEspacio | string;
+  envolver?: GrillaEnvolver | string;
+  alineacion_horizontal?: GrillaAlineacionHorizontal | string;
+  alineacion_vertical?: GrillaAlineacionVertical | string;
+  altura_igual?: GrillaAlturaIgual | string;
+  orden_mobile?: GrillaOrdenMobile | string;
+  preset?: GrillaPreset | string;
+  children?: GrillaChild[];
+};
+
+export function resolveGrillaColumnas(value: unknown): GrillaColumnas {
+  return value === "1" || value === "2" || value === "3" || value === "4"
+    ? value
+    : DEFAULT_GRILLA_COLUMNAS;
+}
+
+export function resolveGrillaEspacio(value: unknown): GrillaEspacio {
+  return value === "chico" || value === "medio" || value === "grande"
+    ? value
+    : DEFAULT_GRILLA_ESPACIO;
+}
+
+export function resolveGrillaEnvolver(value: unknown): GrillaEnvolver {
+  return value === "si" || value === "no" ? value : DEFAULT_GRILLA_ENVOLVER;
+}
+
+export function resolveGrillaAlineacionHorizontal(
+  value: unknown,
+): GrillaAlineacionHorizontal {
+  return value === "inicio" || value === "centro" || value === "fin"
+    ? value
+    : DEFAULT_GRILLA_ALINEACION_HORIZONTAL;
+}
+
+export function resolveGrillaAlineacionVertical(
+  value: unknown,
+): GrillaAlineacionVertical {
+  return value === "arriba" || value === "centrado" || value === "abajo"
+    ? value
+    : DEFAULT_GRILLA_ALINEACION_VERTICAL;
+}
+
+export function resolveGrillaAlturaIgual(value: unknown): GrillaAlturaIgual {
+  return value === "si" || value === "no" ? value : DEFAULT_GRILLA_ALTURA_IGUAL;
+}
+
+export function resolveGrillaOrdenMobile(value: unknown): GrillaOrdenMobile {
+  return value === "normal" || value === "invertido"
+    ? value
+    : DEFAULT_GRILLA_ORDEN_MOBILE;
+}
+
+export function resolveGrillaProporcion(value: unknown): GrillaProporcion {
+  return value === "1/4" ||
+    value === "1/3" ||
+    value === "1/2" ||
+    value === "2/3" ||
+    value === "3/4" ||
+    value === "igual"
+    ? value
+    : DEFAULT_GRILLA_PROPORCION;
+}
+
+/** Id de preset válido o "" (sin preset). Las proporciones ya vienen resueltas en el plan. */
+export function resolveGrillaPreset(value: unknown): GrillaPreset | "" {
+  return value === "mitad_y_mitad" ||
+    value === "hero_2_3_1_3" ||
+    value === "3_tarjetas" ||
+    value === "banda_de_4"
+    ? value
+    : "";
+}
+
 /**
  * Rating por ítem: dígito "1"–"5" (string, como el repeatable del schema).
  * Ausente o fuera de rango → undefined (sin estrellas, sin default inventado).
