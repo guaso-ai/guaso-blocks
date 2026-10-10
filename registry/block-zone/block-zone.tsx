@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import type {
   Block,
   LayoutSpacing,
@@ -91,6 +92,28 @@ function layoutWrapperClass(l: ResolvedLayout): string {
 }
 
 /**
+ * Envoltorio de layout de UN bloque (#4264 · #4349). Lo usa BlockZone (visitante y dueño)
+ * y los hosts que renderizan bloques sueltos (preview del dueño), así el cliente ve lo mismo.
+ * Con todas las props en default devuelve `children` sin DOM extra; si no, un <div> con
+ * el `id` del anchor y las clases de surface/width/spacing/visibility.
+ */
+export function LayoutBlockWrap({
+  data,
+  children,
+}: {
+  data: Record<string, unknown> | null | undefined;
+  children: ReactNode;
+}) {
+  const layout = readLayout(data);
+  if (isLayoutDefault(layout)) return <>{children}</>;
+  return (
+    <div id={layout.anchor || undefined} className={layoutWrapperClass(layout)}>
+      {children}
+    </div>
+  );
+}
+
+/**
  * Renders enabled schema-bound blocks. Unknown types → ignored.
  * Pass `isOwner` from the host (⛔ no draftMode inside the kit).
  * Props de layout (#4264) por bloque: con todas en default, sin envoltorio extra.
@@ -109,18 +132,10 @@ export default function BlockZone({
       const Component = getBlockComponent(b.type);
       if (!Component) return null;
       const key = b.id ? b.id : `blk-${i}`;
-      const layout = readLayout(b.data);
-      if (isLayoutDefault(layout)) {
-        return <Component key={key} data={b.data} isOwner={isOwner} />;
-      }
       return (
-        <div
-          key={key}
-          id={layout.anchor || undefined}
-          className={layoutWrapperClass(layout)}
-        >
+        <LayoutBlockWrap key={key} data={b.data}>
           <Component data={b.data} isOwner={isOwner} />
-        </div>
+        </LayoutBlockWrap>
       );
     });
   if (!rendered.some((r) => r !== null)) return null;
