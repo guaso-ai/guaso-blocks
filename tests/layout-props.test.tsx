@@ -13,7 +13,15 @@ import {
   resolveLayoutVisibility,
   resolveLayoutWidth,
   type Block,
+  type CTAData,
+  type CardsData,
+  type FAQData,
+  type GalleryData,
+  type LayoutProps,
+  type RichSectionData,
+  type StatsData,
   type StepsData,
+  type TestimonialsData,
 } from "../registry/block-zone/types";
 
 const TEXT = { title: "Hola", body: "Cuerpo" };
@@ -167,6 +175,18 @@ describe("BlockZone wrapper de layout (#4264)", () => {
     expect(chico.className).toContain("py-4");
   });
 
+  it("spacing medio (default) no agrega padding aunque el envoltorio se active por otra prop (#4346 FIX-1)", () => {
+    const anchorOnly = zoneWith({ anchor: "precios" }).firstElementChild as HTMLElement;
+    expect(anchorOnly.className).toBe("empty:hidden");
+    expect(anchorOnly.className).not.toMatch(/\bpy-/);
+    expect(anchorOnly.innerHTML).toBe(bareSection());
+
+    const surfaceOnly = zoneWith({ surface: "suave", spacing: "medio" })
+      .firstElementChild as HTMLElement;
+    expect(surfaceOnly.className).not.toMatch(/\bpy-/);
+    expect(surfaceOnly.className).toContain("bg-muted");
+  });
+
   it("visibility solo_mobile → oculto desde md; solo_desktop → oculto bajo md", () => {
     const mobile = zoneWith({ visibility: "solo_mobile" })
       .firstElementChild as HTMLElement;
@@ -197,16 +217,23 @@ describe("BlockZone wrapper de layout (#4264)", () => {
   });
 });
 
-describe("tipos de bloque canónicos extienden LayoutProps", () => {
-  it("StepsData acepta las props de layout", () => {
-    const d: StepsData = {
-      title: "Pasos",
-      surface: "suave",
-      width: "angosto",
-      spacing: "grande",
-      visibility: "solo_desktop",
-      anchor: "pasos",
-    };
-    expect(d.anchor).toBe("pasos");
-  });
-});
+// ─── Gate de tipo: los 8 *Data canónicos extienden LayoutProps (#4346 FIX-2) ──
+// vitest no typechecka: este gate lo hace tsc (tests/** está en tsconfig include).
+// Si se saca una de las 5 claves de LayoutProps de un *Data canónico, tsc falla
+// acá con "Type 'false' does not satisfy the constraint 'true'".
+// Correr: `npx tsc --noEmit` en el kit (errores preexistentes de entorno aparte).
+type Expect<T extends true> = T;
+type HasAllLayoutKeys<T> = [Exclude<keyof LayoutProps, keyof T>] extends [never]
+  ? true
+  : false;
+
+export type CanonicalLayoutGate = [
+  Expect<HasAllLayoutKeys<RichSectionData>>,
+  Expect<HasAllLayoutKeys<CTAData>>,
+  Expect<HasAllLayoutKeys<GalleryData>>,
+  Expect<HasAllLayoutKeys<CardsData>>,
+  Expect<HasAllLayoutKeys<TestimonialsData>>,
+  Expect<HasAllLayoutKeys<FAQData>>,
+  Expect<HasAllLayoutKeys<StatsData>>,
+  Expect<HasAllLayoutKeys<StepsData>>,
+];

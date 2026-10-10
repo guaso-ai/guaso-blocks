@@ -36,9 +36,10 @@ const LAYOUT_WIDTH_CLASS: Record<LayoutWidth, string> = {
   completo: "w-full [&>*]:max-w-none",
 };
 
+// medio = default: no agrega padding (cada bloque ya trae el suyo). Solo chico/grande emiten clase.
 const LAYOUT_SPACING_CLASS: Record<LayoutSpacing, string> = {
   chico: "py-4 md:py-6",
-  medio: "py-8 md:py-12",
+  medio: "",
   grande: "py-16 md:py-24",
 };
 
