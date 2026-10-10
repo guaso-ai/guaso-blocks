@@ -9,7 +9,63 @@ export type Block = {
   data: Record<string, unknown>;
 };
 
-export type RichSectionData = {
+// ─── Props comunes de layout (#4264; SoT backend `LAYOUT_PROP_*`, #4346 C3) ──
+// Espejo de `LAYOUT_PROP_CLOSESETS` / `LAYOUT_PROP_DEFAULTS` / `LAYOUT_ANCHOR_RE`.
+// Las 5 son opcionales: ausentes o inválidas → default (sin warning en el kit).
+// Defaults = render actual (invariante: sin props, el DOM no cambia).
+export type LayoutSurface = "neutro" | "suave" | "oscuro" | "acento";
+export type LayoutWidth = "angosto" | "normal" | "completo";
+export type LayoutSpacing = "chico" | "medio" | "grande";
+export type LayoutVisibility = "todos" | "solo_desktop" | "solo_mobile";
+
+export type LayoutProps = {
+  surface?: LayoutSurface | string;
+  width?: LayoutWidth | string;
+  spacing?: LayoutSpacing | string;
+  visibility?: LayoutVisibility | string;
+  anchor?: string;
+};
+
+export const DEFAULT_LAYOUT_SURFACE: LayoutSurface = "neutro";
+export const DEFAULT_LAYOUT_WIDTH: LayoutWidth = "normal";
+export const DEFAULT_LAYOUT_SPACING: LayoutSpacing = "medio";
+export const DEFAULT_LAYOUT_VISIBILITY: LayoutVisibility = "todos";
+
+const LAYOUT_ANCHOR_RE = /^[a-z][a-z0-9-]{0,39}$/;
+
+export function resolveLayoutSurface(value: unknown): LayoutSurface {
+  return value === "neutro" ||
+    value === "suave" ||
+    value === "oscuro" ||
+    value === "acento"
+    ? value
+    : DEFAULT_LAYOUT_SURFACE;
+}
+
+export function resolveLayoutWidth(value: unknown): LayoutWidth {
+  return value === "angosto" || value === "normal" || value === "completo"
+    ? value
+    : DEFAULT_LAYOUT_WIDTH;
+}
+
+export function resolveLayoutSpacing(value: unknown): LayoutSpacing {
+  return value === "chico" || value === "medio" || value === "grande"
+    ? value
+    : DEFAULT_LAYOUT_SPACING;
+}
+
+export function resolveLayoutVisibility(value: unknown): LayoutVisibility {
+  return value === "todos" || value === "solo_desktop" || value === "solo_mobile"
+    ? value
+    : DEFAULT_LAYOUT_VISIBILITY;
+}
+
+/** Ancla slug (`^[a-z][a-z0-9-]{0,39}$`) o "" (sin ancla). Nunca lanza. */
+export function resolveLayoutAnchor(value: unknown): string {
+  return typeof value === "string" && LAYOUT_ANCHOR_RE.test(value) ? value : "";
+}
+
+export type RichSectionData = LayoutProps & {
   title?: string;
   body?: string;
   cta_label?: string;
@@ -20,7 +76,7 @@ export type RichSectionData = {
   mode?: RichMode | string;
 };
 
-export type CTAData = {
+export type CTAData = LayoutProps & {
   headline?: string;
   subtext?: string;
   button_label?: string;
@@ -36,7 +92,7 @@ export type GalleryImage = {
   caption?: string;
 };
 
-export type GalleryData = {
+export type GalleryData = LayoutProps & {
   title?: string;
   images?: GalleryImage[];
   columns?: GalleryColumns | string;
@@ -50,7 +106,7 @@ export type CardItem = {
   link_url?: string;
 };
 
-export type CardsData = {
+export type CardsData = LayoutProps & {
   title?: string;
   subtitle?: string;
   cards?: CardItem[];
@@ -65,7 +121,7 @@ export type TestimonialItem = {
   rating?: string;
 };
 
-export type TestimonialsData = {
+export type TestimonialsData = LayoutProps & {
   title?: string;
   items?: TestimonialItem[];
   layout?: TestimonialsLayout | string;
@@ -76,7 +132,7 @@ export type FaqItem = {
   answer?: string;
 };
 
-export type FAQData = {
+export type FAQData = LayoutProps & {
   title?: string;
   questions?: FaqItem[];
 };
@@ -86,7 +142,7 @@ export type StatMetric = {
   label?: string;
 };
 
-export type StatsData = {
+export type StatsData = LayoutProps & {
   title?: string;
   intro?: string;
   metrics?: StatMetric[];
@@ -97,7 +153,7 @@ export type StepItem = {
   text?: string;
 };
 
-export type StepsData = {
+export type StepsData = LayoutProps & {
   title?: string;
   intro?: string;
   steps?: StepItem[];
