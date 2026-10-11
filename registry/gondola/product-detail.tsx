@@ -3,6 +3,7 @@
 import { useState, type ReactNode } from "react";
 import Link from "next/link";
 import { firstImageSrc, priceLabel, quantityLabel, type Product } from "./types";
+import { BLOCK_RADIUS_CLASS } from "../block-zone/types";
 
 type SlotAttrs = { "data-guaso-slot": string } | Record<string, never>;
 
@@ -51,7 +52,7 @@ export function ProductDetail({
 
       <div className="mt-8 grid gap-12 md:grid-cols-2">
         <div className="space-y-4">
-          <div className="relative aspect-square overflow-hidden rounded-2xl bg-card">
+          <div className={`relative aspect-square overflow-hidden ${BLOCK_RADIUS_CLASS} bg-card`}>
             {current ? (
               <img
                 src={current}
@@ -72,7 +73,7 @@ export function ProductDetail({
                   onClick={() => setSelected(i)}
                   aria-label={`Ver foto ${i + 1} de ${product.name}`}
                   aria-current={i === selected}
-                  className={`relative aspect-square overflow-hidden rounded-xl bg-card ${
+                  className={`relative aspect-square overflow-hidden ${BLOCK_RADIUS_CLASS} bg-card ${
                     i === selected ? "ring-2 ring-primary ring-offset-2" : ""
                   }`}
                 >

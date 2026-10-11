@@ -116,7 +116,7 @@ describe("imagen en RichSection", () => {
   it("default: caja con aspect-[4/5], borde y bg-card; img object-cover sin posición", () => {
     const c = rich({});
     expect(imgBoxTokens(c)).toEqual(
-      expect.arrayContaining(["relative", "aspect-[4/5]", "w-full", "overflow-hidden", "rounded-lg", "border", "border-border", "bg-card"]),
+      expect.arrayContaining(["relative", "aspect-[4/5]", "w-full", "overflow-hidden", "rounded-[var(--block-radius,0.5rem)]", "border", "border-border", "bg-card"]),
     );
     expect(imgTokens(c)).toEqual(expect.arrayContaining(["size-full", "object-cover"]));
     expect(imgTokens(c)).not.toContain("object-top");
@@ -228,13 +228,13 @@ describe("defaults = clases originales (igualdad exacta)", () => {
 
   it("RichSection: caja e img default exactas", () => {
     const c = render(<RichSection data={{ title: "Hola", body: "Cuerpo", image_url: IMG }} />).container;
-    expect(imgBoxTokens(c)).toEqual("relative aspect-[4/5] w-full overflow-hidden rounded-lg border border-border bg-card".split(" "));
+    expect(imgBoxTokens(c)).toEqual("relative aspect-[4/5] w-full overflow-hidden rounded-[var(--block-radius,0.5rem)] border border-border bg-card".split(" "));
     expect(imgTokens(c)).toEqual("size-full object-cover".split(" "));
   });
 
   it("Gallery: caja e img default exactas", () => {
     const c = render(<Gallery data={{ title: "G", images: [{ url: IMG }] }} />).container;
-    expect(imgBoxTokens(c)).toEqual("relative aspect-[4/3] w-full overflow-hidden rounded-lg border border-border bg-card".split(" "));
+    expect(imgBoxTokens(c)).toEqual("relative aspect-[4/3] w-full overflow-hidden rounded-[var(--block-radius,0.5rem)] border border-border bg-card".split(" "));
     expect(imgTokens(c)).toEqual("size-full object-cover".split(" "));
   });
 
@@ -242,7 +242,7 @@ describe("defaults = clases originales (igualdad exacta)", () => {
     const c = render(
       <CTA data={{ headline: "H", style: "split", image_url: IMG, button_label: "Ir", button_url: "/x" }} />,
     ).container;
-    expect(imgBoxTokens(c)).toEqual("overflow-hidden rounded-lg border border-border bg-card".split(" "));
+    expect(imgBoxTokens(c)).toEqual("overflow-hidden rounded-[var(--block-radius,0.5rem)] border border-border bg-card".split(" "));
     expect(imgTokens(c)).toEqual("aspect-[4/3] size-full object-cover".split(" "));
   });
 });

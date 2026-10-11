@@ -463,6 +463,11 @@ export function resolveImageFocal(value: unknown): ImageFocal {
     : DEFAULT_IMAGE_FOCAL;
 }
 
+// Tokens de forma de bloque (#4416). Strings completas: Tailwind JIT no interpola.
+// Cada fallback dentro de var() = valor Tailwind equivalente de hoy; un consumidor sin el
+// bloque canónico block-form-tokens en su :root renderiza igual que antes.
+export const BLOCK_RADIUS_CLASS = "rounded-[var(--block-radius,0.5rem)]";
+
 // Clases por valor, partidas en base + md para componer en el mismo orden que el kit previo
 // (el default reproduce la cadena fija de cada h2: mismos tokens, mismo orden).
 type HeadingSize = { base: string; md: string };

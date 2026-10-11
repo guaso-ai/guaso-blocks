@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { firstImageSrc, priceLabel, quantityLabel, type Product } from "./types";
+import { BLOCK_RADIUS_CLASS } from "../block-zone/types";
 
 type ProductCardProps = {
   product: Product;
@@ -14,7 +15,7 @@ export function ProductCard({ product, currencySymbol }: ProductCardProps) {
       : undefined;
 
   return (
-    <article className="flex flex-col overflow-hidden rounded-2xl border border-border bg-card">
+    <article className={`flex flex-col overflow-hidden ${BLOCK_RADIUS_CLASS} border border-border bg-card`}>
       <Link href={`/store/${product.slug}`} className="relative block aspect-square overflow-hidden bg-card">
         {image ? (
           <img

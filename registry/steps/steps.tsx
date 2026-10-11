@@ -1,5 +1,5 @@
 import type { StepsData } from "../block-zone/types";
-import { sectionHeadingClass } from "../block-zone/types";
+import { BLOCK_RADIUS_CLASS, sectionHeadingClass } from "../block-zone/types";
 
 type StepsProps = {
   data: StepsData;
@@ -16,7 +16,7 @@ function StepsPlaceholder() {
       aria-label="Pasos"
       className="mx-auto max-w-3xl px-6 py-16 md:py-20"
     >
-      <div className="rounded-lg border border-border bg-card px-8 py-12 text-center">
+      <div className={`${BLOCK_RADIUS_CLASS} border border-border bg-card px-8 py-12 text-center`}>
         <p className="font-heading text-sm text-muted-foreground">
           Pasos — agregá los pasos por chat
         </p>

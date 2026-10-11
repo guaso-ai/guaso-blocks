@@ -186,6 +186,7 @@
       "type": "registry:component",
       "title": "Gondola",
       "description": "Vitrina products/products: getter Drizzle + ProductCard, StoreCatalog, ProductDetail. Sin cart ni chrome de home.",
+      "registryDependencies": ["@guaso/block-zone"],
       "files": [
         {
           "path": "registry/gondola/types.ts",
