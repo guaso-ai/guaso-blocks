@@ -43,7 +43,7 @@ Aligned to Guaso `_CANONICAL_BLOCKS` (backend). Do not invent props outside that
 
 ## Tokens
 
-CROSS_TEMPLATE semantic tokens only (`text-foreground`, `text-primary`, `bg-primary`, `font-heading`, `border-border`, `bg-card`, `text-muted-foreground`, `text-primary-foreground`). No hex, lucide, or template skins — skins live in `guaso-template-*` (#3065).
+CROSS_TEMPLATE semantic tokens only (`text-foreground`, `text-primary`, `bg-primary`, `font-heading`, `border-border`, `bg-card`, `text-muted-foreground`, `text-primary-foreground`). Forma/tipografía de bloque solo vía helpers `var(--block-*, fallback)` de `registry/block-zone/types.ts` (#4416). No hex, lucide, or template skins — skins live in `guaso-template-*` (#3065).
 
 ## Docs
 

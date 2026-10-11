@@ -31,7 +31,7 @@ const LAYOUT_SURFACE_CLASS: Record<LayoutSurface, string> = {
   acento: "bg-primary text-primary-foreground",
 };
 
-// normal = ancho que ya trae cada bloque (max-w-6xl): no agrega clase.
+// normal = ancho que ya trae cada bloque (SECTION_CONTAINER_CLASS): no agrega clase.
 const LAYOUT_WIDTH_CLASS: Record<LayoutWidth, string> = {
   angosto: `mx-auto w-full ${NARROW_CONTAINER_CLASS}`,
   normal: "",
