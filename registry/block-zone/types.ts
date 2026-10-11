@@ -479,15 +479,35 @@ export const NARROW_SECTION_ROOT_CLASS = `mx-auto ${NARROW_CONTAINER_CLASS} ${SE
 // Clases por valor, partidas en base + md para componer en el mismo orden que el kit previo
 // (el default reproduce la cadena fija de cada h2: mismos tokens, mismo orden).
 type HeadingSize = { base: string; md: string };
+// Tamaño de heading desde tokens --block-text-* (block-form-tokens). Fallback = valor Tailwind de hoy
+// (escala sección 1.5/1.875/2.25rem y CTA 1.25/1.5/1.875rem; md = +0.375rem). Ver tests/block-tokens-source.test.ts.
 const SECTION_HEADING_SIZE: Record<TypoScale, HeadingSize> = {
-  chico: { base: "text-2xl", md: "md:text-3xl" },
-  medio: { base: "text-3xl", md: "md:text-4xl" },
-  grande: { base: "text-4xl", md: "md:text-5xl" },
+  chico: {
+    base: "text-[length:var(--block-text-chico,1.5rem)]",
+    md: "md:text-[length:var(--block-text-chico-md,1.875rem)]",
+  },
+  medio: {
+    base: "text-[length:var(--block-text-medio,1.875rem)]",
+    md: "md:text-[length:var(--block-text-medio-md,2.25rem)]",
+  },
+  grande: {
+    base: "text-[length:var(--block-text-grande,2.25rem)]",
+    md: "md:text-[length:var(--block-text-grande-md,3rem)]",
+  },
 };
 const CTA_HEADING_SIZE: Record<TypoScale, HeadingSize> = {
-  chico: { base: "text-xl", md: "md:text-2xl" },
-  medio: { base: "text-2xl", md: "md:text-3xl" },
-  grande: { base: "text-3xl", md: "md:text-4xl" },
+  chico: {
+    base: "text-[length:var(--block-text-cta-chico,1.25rem)]",
+    md: "md:text-[length:var(--block-text-cta-chico-md,1.5rem)]",
+  },
+  medio: {
+    base: "text-[length:var(--block-text-cta-medio,1.5rem)]",
+    md: "md:text-[length:var(--block-text-cta-medio-md,1.875rem)]",
+  },
+  grande: {
+    base: "text-[length:var(--block-text-cta-grande,1.875rem)]",
+    md: "md:text-[length:var(--block-text-cta-grande-md,2.25rem)]",
+  },
 };
 const ASPECT_CLASS: Record<ImageAspect, string> = {
   "4:5": "aspect-[4/5]",

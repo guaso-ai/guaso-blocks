@@ -42,26 +42,38 @@ const SECTION_BLOCKS: Array<[string, Renderer]> = [
   ["Steps", (x) => render(<Steps data={{ title: "T", steps: [{ heading: "A", text: "x" }], ...x }} />).container],
 ];
 
+// #4416 A3-c: heading desde tokens --block-text-* (fallback = Tailwind de hoy).
+const SEC = {
+  chico: ["text-[length:var(--block-text-chico,1.5rem)]", "md:text-[length:var(--block-text-chico-md,1.875rem)]"],
+  medio: ["text-[length:var(--block-text-medio,1.875rem)]", "md:text-[length:var(--block-text-medio-md,2.25rem)]"],
+  grande: ["text-[length:var(--block-text-grande,2.25rem)]", "md:text-[length:var(--block-text-grande-md,3rem)]"],
+} as const;
+const CTA_T = {
+  chico: ["text-[length:var(--block-text-cta-chico,1.25rem)]", "md:text-[length:var(--block-text-cta-chico-md,1.5rem)]"],
+  medio: ["text-[length:var(--block-text-cta-medio,1.5rem)]", "md:text-[length:var(--block-text-cta-medio-md,1.875rem)]"],
+  grande: ["text-[length:var(--block-text-cta-grande,1.875rem)]", "md:text-[length:var(--block-text-cta-grande-md,2.25rem)]"],
+} as const;
+
 describe("tipografía: scale y emphasis en los 8 canónicos", () => {
-  it.each(SECTION_BLOCKS)("%s: default md = text-3xl md:text-4xl, font-semibold", (_name, render) => {
+  it.each(SECTION_BLOCKS)("%s: default md = escala medio por tokens, font-semibold", (_name, render) => {
     const h = h2Tokens(render({}));
-    expect(h).toContain("text-3xl");
-    expect(h).toContain("md:text-4xl");
+    expect(h).toContain(SEC.medio[0]);
+    expect(h).toContain(SEC.medio[1]);
     expect(h).toContain("font-semibold");
   });
 
-  it.each(SECTION_BLOCKS)("%s: scale grande → text-4xl md:text-5xl (tokens exactos)", (_name, render) => {
+  it.each(SECTION_BLOCKS)("%s: scale grande → tokens grande (exactos, sin medio)", (_name, render) => {
     const h = h2Tokens(render({ scale: "grande" }));
-    expect(h).toContain("text-4xl");
-    expect(h).toContain("md:text-5xl");
-    expect(h).not.toContain("text-3xl");
-    expect(h).not.toContain("md:text-4xl");
+    expect(h).toContain(SEC.grande[0]);
+    expect(h).toContain(SEC.grande[1]);
+    expect(h).not.toContain(SEC.medio[0]);
+    expect(h).not.toContain(SEC.medio[1]);
   });
 
-  it.each(SECTION_BLOCKS)("%s: scale chico → text-2xl md:text-3xl", (_name, render) => {
+  it.each(SECTION_BLOCKS)("%s: scale chico → tokens chico", (_name, render) => {
     const h = h2Tokens(render({ scale: "chico" }));
-    expect(h).toContain("text-2xl");
-    expect(h).toContain("md:text-3xl");
+    expect(h).toContain(SEC.chico[0]);
+    expect(h).toContain(SEC.chico[1]);
   });
 
   it.each(SECTION_BLOCKS)("%s: emphasis fuerte → font-bold, sin font-semibold", (_name, render) => {
@@ -72,8 +84,8 @@ describe("tipografía: scale y emphasis en los 8 canónicos", () => {
 
   it.each(SECTION_BLOCKS)("%s: scale y emphasis fuera de set → default", (_name, render) => {
     const h = h2Tokens(render({ scale: "xl", emphasis: "x" }));
-    expect(h).toContain("text-3xl");
-    expect(h).toContain("md:text-4xl");
+    expect(h).toContain(SEC.medio[0]);
+    expect(h).toContain(SEC.medio[1]);
     expect(h).toContain("font-semibold");
   });
 });
@@ -82,29 +94,29 @@ describe("CTA: escala propia (un paso menor que la sección)", () => {
   const cta = (x: Record<string, unknown>) =>
     render(<CTA data={{ headline: "H", button_label: "Ir", button_url: "/x", ...x }} />).container;
 
-  it("default = text-2xl md:text-3xl", () => {
+  it("default = tokens CTA medio", () => {
     const h = h2Tokens(cta({}));
-    expect(h).toContain("text-2xl");
-    expect(h).toContain("md:text-3xl");
+    expect(h).toContain(CTA_T.medio[0]);
+    expect(h).toContain(CTA_T.medio[1]);
   });
 
-  it("grande = text-3xl md:text-4xl (tokens exactos)", () => {
+  it("grande = tokens CTA grande (exactos)", () => {
     const h = h2Tokens(cta({ scale: "grande" }));
-    expect(h).toContain("text-3xl");
-    expect(h).toContain("md:text-4xl");
-    expect(h).not.toContain("text-2xl");
+    expect(h).toContain(CTA_T.grande[0]);
+    expect(h).toContain(CTA_T.grande[1]);
+    expect(h).not.toContain(CTA_T.medio[0]);
   });
 
-  it("chico = text-xl md:text-2xl", () => {
+  it("chico = tokens CTA chico", () => {
     const h = h2Tokens(cta({ scale: "chico" }));
-    expect(h).toContain("text-xl");
-    expect(h).toContain("md:text-2xl");
+    expect(h).toContain(CTA_T.chico[0]);
+    expect(h).toContain(CTA_T.chico[1]);
   });
 
   it("emphasis fuerte → font-bold; fuera de set → default", () => {
     expect(h2Tokens(cta({ emphasis: "fuerte" }))).toContain("font-bold");
     const raro = h2Tokens(cta({ scale: "xl", emphasis: "x" }));
-    expect(raro).toContain("md:text-3xl");
+    expect(raro).toContain(CTA_T.medio[1]);
     expect(raro).toContain("font-semibold");
   });
 });
@@ -205,8 +217,8 @@ describe("imagen en Gallery", () => {
 });
 
 // Defaults = clases originales del kit (1714bc8): igualdad exacta de tokens y orden.
-const H_SECTION = "font-heading text-3xl font-semibold tracking-tight text-foreground text-balance md:text-4xl".split(" ");
-const H_CTA = "font-heading text-2xl font-semibold tracking-tight text-foreground text-balance md:text-3xl".split(" ");
+const H_SECTION = `font-heading ${SEC.medio[0]} font-semibold tracking-tight text-foreground text-balance ${SEC.medio[1]}`.split(" ");
+const H_CTA = `font-heading ${CTA_T.medio[0]} font-semibold tracking-tight text-foreground text-balance ${CTA_T.medio[1]}`.split(" ");
 
 describe("defaults = clases originales (igualdad exacta)", () => {
   it.each([

@@ -9,7 +9,14 @@ import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
-import { BLOCK_RADIUS_CLASS, NARROW_SECTION_ROOT_CLASS, SECTION_ROOT_CLASS } from "../registry/block-zone/types";
+import {
+  BLOCK_RADIUS_CLASS,
+  NARROW_SECTION_ROOT_CLASS,
+  SECTION_ROOT_CLASS,
+  ctaHeadingClass,
+  sectionHeadingClass,
+  type TypoProps,
+} from "../registry/block-zone/types";
 
 const REGISTRY = join(dirname(fileURLToPath(import.meta.url)), "..", "registry");
 
@@ -66,3 +73,34 @@ describe("#4416 A3-a: radio de bloque vía var(--block-radius)", () => {
     expect(offenders).toEqual([]);
   });
 });
+
+describe("#4416 A3-c: tamaño de heading vía var(--block-text-*)", () => {
+  const SECTION_EXPECT: Record<string, [string, string]> = {
+    chico: ["text-[length:var(--block-text-chico,1.5rem)]", "md:text-[length:var(--block-text-chico-md,1.875rem)]"],
+    medio: ["text-[length:var(--block-text-medio,1.875rem)]", "md:text-[length:var(--block-text-medio-md,2.25rem)]"],
+    grande: ["text-[length:var(--block-text-grande,2.25rem)]", "md:text-[length:var(--block-text-grande-md,3rem)]"],
+  };
+  const CTA_EXPECT: Record<string, [string, string]> = {
+    chico: ["text-[length:var(--block-text-cta-chico,1.25rem)]", "md:text-[length:var(--block-text-cta-chico-md,1.5rem)]"],
+    medio: ["text-[length:var(--block-text-cta-medio,1.5rem)]", "md:text-[length:var(--block-text-cta-medio-md,1.875rem)]"],
+    grande: ["text-[length:var(--block-text-cta-grande,1.875rem)]", "md:text-[length:var(--block-text-cta-grande-md,2.25rem)]"],
+  };
+
+  it.each(Object.entries(SECTION_EXPECT))("sección scale %s → tokens con fallback Tailwind", (scale, [base, md]) => {
+    const cls = sectionHeadingClass({ scale } as TypoProps).split(" ");
+    expect(cls).toContain(base);
+    expect(cls).toContain(md);
+  });
+
+  it.each(Object.entries(CTA_EXPECT))("CTA scale %s → tokens con fallback Tailwind", (scale, [base, md]) => {
+    const cls = ctaHeadingClass({ scale } as TypoProps).split(" ");
+    expect(cls).toContain(base);
+    expect(cls).toContain(md);
+  });
+
+  it("types.ts no escribe tamaños de heading Tailwind literales", () => {
+    const src = readFileSync(join(REGISTRY, "block-zone", "types.ts"), "utf-8");
+    expect(src).not.toMatch(/(?<![\w-])text-(?:xl|2xl|3xl|4xl|5xl)(?![\w-])/);
+  });
+});
+
