@@ -1,5 +1,6 @@
 import type { CTAData, CtaAlign, ImageProps, TypoProps } from "../block-zone/types";
 import {
+  BLOCK_RADIUS_BUTTON_CLASS,
   BLOCK_RADIUS_CLASS,
   DEFAULT_CTA_ASPECT,
   ctaHeadingClass,
@@ -26,7 +27,7 @@ const ALIGN_CLASS: Record<CtaAlign, string> = {
 const SECTION_BASE = `${SECTION_ROOT_CLASS} flex flex-col`;
 
 const BUTTON_CLASS =
-  `inline-flex min-h-11 items-center justify-center ${BLOCK_RADIUS_CLASS} bg-primary px-7 py-3.5 text-sm font-medium text-primary-foreground transition-opacity duration-200 hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary motion-reduce:transition-none`;
+  `inline-flex min-h-11 items-center justify-center ${BLOCK_RADIUS_BUTTON_CLASS} bg-primary px-7 py-3.5 text-sm font-medium text-primary-foreground transition-opacity duration-200 hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary motion-reduce:transition-none`;
 
 function sectionClass(align: CtaAlign): string {
   return `${SECTION_BASE} ${ALIGN_CLASS[align]}`;

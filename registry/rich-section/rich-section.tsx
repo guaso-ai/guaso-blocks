@@ -9,6 +9,7 @@ import {
   resolveRichMode,
   safeHref,
   sectionHeadingClass,
+  BLOCK_RADIUS_BUTTON_CLASS,
   BLOCK_RADIUS_CLASS,
   SECTION_ROOT_CLASS,
 } from "../block-zone/types";
@@ -83,7 +84,7 @@ export default function RichSection({
                   "[&_ol]:list-decimal [&_ol]:pl-5",
                   "[&_li]:relative [&_li]:pl-7",
                   "[&_li]:before:absolute [&_li]:before:left-0 [&_li]:before:top-1.5",
-                  "[&_li]:before:size-4 [&_li]:before:rounded-[var(--block-radius,0.5rem)]",
+                  "[&_li]:before:size-4 [&_li]:before:rounded-[var(--block-radius,0.125rem)]",
                   "[&_li]:before:border [&_li]:before:border-primary",
                   "[&_li]:before:bg-primary [&_li]:before:content-['']",
                 ].join(" ")
@@ -104,7 +105,7 @@ export default function RichSection({
         >
           <a
             href={ctaHref}
-            className={`inline-flex items-center justify-center ${BLOCK_RADIUS_CLASS} border border-primary bg-transparent px-6 py-3 text-sm font-medium text-primary transition-colors duration-200 hover:bg-primary hover:text-primary-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary motion-reduce:transition-none`}
+            className={`inline-flex items-center justify-center ${BLOCK_RADIUS_BUTTON_CLASS} border border-primary bg-transparent px-6 py-3 text-sm font-medium text-primary transition-colors duration-200 hover:bg-primary hover:text-primary-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary motion-reduce:transition-none`}
           >
             {data.cta_label}
           </a>

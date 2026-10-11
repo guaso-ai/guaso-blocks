@@ -10,7 +10,10 @@ import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import {
+  BLOCK_RADIUS_BUTTON_CLASS,
   BLOCK_RADIUS_CLASS,
+  BLOCK_RADIUS_PRODUCT_CLASS,
+  BLOCK_RADIUS_THUMB_CLASS,
   NARROW_SECTION_ROOT_CLASS,
   SECTION_ROOT_CLASS,
   ctaHeadingClass,
@@ -19,6 +22,7 @@ import {
 } from "../registry/block-zone/types";
 
 const REGISTRY = join(dirname(fileURLToPath(import.meta.url)), "..", "registry");
+const read = (rel: string) => readFileSync(join(REGISTRY, rel), "utf-8");
 
 function sourceFiles(dir: string): string[] {
   return readdirSync(dir).flatMap((name: string) => {
@@ -35,6 +39,32 @@ const LITERAL_RADIUS = /(?<![\w-])rounded(?:-(?:sm|md|lg|xl|2xl|3xl))?(?=[\s"'`]
 describe("#4416 A3-a: radio de bloque vía var(--block-radius)", () => {
   it("helper: lee --block-radius con fallback = rounded-lg de hoy (0.5rem)", () => {
     expect(BLOCK_RADIUS_CLASS).toBe("rounded-[var(--block-radius,0.5rem)]");
+  });
+
+  // Cada tier conserva el radio Tailwind que el kit renderiza hoy (v3 de los templates:
+  // md 0.375rem, lg 0.5rem, xl 0.75rem, 2xl 1rem). Un tier nuevo sin fallback propio rojea acá.
+  it.each([
+    ["BLOCK_RADIUS_CLASS (cards/secciones, rounded-lg)", BLOCK_RADIUS_CLASS, "0.5rem"],
+    ["BLOCK_RADIUS_BUTTON_CLASS (botones, rounded-md)", BLOCK_RADIUS_BUTTON_CLASS, "0.375rem"],
+    ["BLOCK_RADIUS_PRODUCT_CLASS (gondola producto, rounded-2xl)", BLOCK_RADIUS_PRODUCT_CLASS, "1rem"],
+    ["BLOCK_RADIUS_THUMB_CLASS (gondola miniatura, rounded-xl)", BLOCK_RADIUS_THUMB_CLASS, "0.75rem"],
+  ])("%s conserva su fallback de hoy", (_name, cls, fallback) => {
+    expect(cls).toBe(`rounded-[var(--block-radius,${fallback})]`);
+  });
+
+  it("RichSection bullet: fallback 0.125rem (rounded-sm v3), no el radio de card", () => {
+    expect(read("rich-section/rich-section.tsx")).toContain(
+      "[&_li]:before:rounded-[var(--block-radius,0.125rem)]",
+    );
+  });
+
+  it("consumidores: cta/rich-section botón usan el tier de botón; gondola usa tiers de producto", () => {
+    expect(read("cta/cta.tsx")).toContain("${BLOCK_RADIUS_BUTTON_CLASS} bg-primary");
+    expect(read("rich-section/rich-section.tsx")).toMatch(/\$\{BLOCK_RADIUS_BUTTON_CLASS\} border border-primary/);
+    expect(read("gondola/product-card.tsx")).toContain("${BLOCK_RADIUS_PRODUCT_CLASS}");
+    const detail = read("gondola/product-detail.tsx");
+    expect(detail).toContain("${BLOCK_RADIUS_PRODUCT_CLASS} bg-card");
+    expect(detail).toContain("${BLOCK_RADIUS_THUMB_CLASS} bg-card");
   });
 
   it("ningún archivo de registry/ escribe un radio Tailwind literal sin var()", () => {

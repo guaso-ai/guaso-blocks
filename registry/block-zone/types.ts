@@ -464,9 +464,16 @@ export function resolveImageFocal(value: unknown): ImageFocal {
 }
 
 // Tokens de forma de bloque (#4416). Strings completas: Tailwind JIT no interpola.
-// Cada fallback dentro de var() = valor Tailwind equivalente de hoy; un consumidor sin el
+// Cada fallback dentro de var() = valor que el kit renderiza hoy para ese tier de uso
+// (Tailwind v3 de los templates; ver tests/block-tokens-source.test.ts). Un consumidor sin el
 // bloque canónico block-form-tokens en su :root renderiza igual que antes.
+// Tiers (escala Tailwind de hoy): cards/secciones = lg (0.5rem) · botones = md (0.375rem) ·
+// gondola producto/imagen principal = 2xl (1rem) y miniaturas = xl (0.75rem). El bullet de
+// RichSection vive inline en rich-section.tsx (selector de li::before), fallback 0.125rem (sm v3).
 export const BLOCK_RADIUS_CLASS = "rounded-[var(--block-radius,0.5rem)]";
+export const BLOCK_RADIUS_BUTTON_CLASS = "rounded-[var(--block-radius,0.375rem)]";
+export const BLOCK_RADIUS_PRODUCT_CLASS = "rounded-[var(--block-radius,1rem)]";
+export const BLOCK_RADIUS_THUMB_CLASS = "rounded-[var(--block-radius,0.75rem)]";
 export const SECTION_PY_CLASS = "py-[var(--block-space-y,4rem)] md:py-[var(--block-space-y-md,5rem)]";
 export const SECTION_PX_CLASS = "px-[var(--block-space-x,1.5rem)]";
 export const SECTION_CONTAINER_CLASS = "max-w-[var(--block-container,72rem)]";
