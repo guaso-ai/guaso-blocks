@@ -18,6 +18,7 @@ import {
   resolveLayoutWidth,
 } from "./types";
 import { getBlockComponent } from "./registry";
+import { NARROW_CONTAINER_CLASS } from "./types";
 
 // Clases literales (Tailwind las escanea en el template). Tokens semánticos only.
 // `empty:hidden`: un bloque que renderiza null no deja un envoltorio vacío pintado.
@@ -32,7 +33,7 @@ const LAYOUT_SURFACE_CLASS: Record<LayoutSurface, string> = {
 
 // normal = ancho que ya trae cada bloque (max-w-6xl): no agrega clase.
 const LAYOUT_WIDTH_CLASS: Record<LayoutWidth, string> = {
-  angosto: "mx-auto w-full max-w-3xl",
+  angosto: `mx-auto w-full ${NARROW_CONTAINER_CLASS}`,
   normal: "",
   completo: "w-full [&>*]:max-w-none",
 };
@@ -41,7 +42,7 @@ const LAYOUT_WIDTH_CLASS: Record<LayoutWidth, string> = {
 const LAYOUT_SPACING_CLASS: Record<LayoutSpacing, string> = {
   chico: "py-4 md:py-6",
   medio: "",
-  grande: "py-16 md:py-24",
+  grande: "py-[var(--block-space-y-grande,4rem)] md:py-[var(--block-space-y-grande-md,6rem)]",
 };
 
 const LAYOUT_VISIBILITY_CLASS: Record<LayoutVisibility, string> = {

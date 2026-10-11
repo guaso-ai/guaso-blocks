@@ -1,5 +1,5 @@
 import type { StatsData } from "../block-zone/types";
-import { BLOCK_RADIUS_CLASS, sectionHeadingClass } from "../block-zone/types";
+import { SECTION_ROOT_CLASS, BLOCK_RADIUS_CLASS, sectionHeadingClass } from "../block-zone/types";
 
 type StatsProps = {
   data: StatsData;
@@ -14,7 +14,7 @@ function StatsPlaceholder() {
   return (
     <section
       aria-label="Números"
-      className="mx-auto max-w-6xl px-6 py-16 md:py-20"
+      className={SECTION_ROOT_CLASS}
     >
       <div className={`${BLOCK_RADIUS_CLASS} border border-border bg-card px-8 py-12 text-center`}>
         <p className="font-heading text-sm text-muted-foreground">
@@ -37,7 +37,7 @@ export default function Stats({ data, isOwner = false }: StatsProps) {
   return (
     <section
       aria-label={filled(data.title) || "Números"}
-      className="mx-auto max-w-6xl px-6 py-16 md:py-20"
+      className={SECTION_ROOT_CLASS}
     >
       {filled(data.title) ? (
         <h2 className={sectionHeadingClass(data)}>

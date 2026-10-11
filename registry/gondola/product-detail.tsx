@@ -3,7 +3,7 @@
 import { useState, type ReactNode } from "react";
 import Link from "next/link";
 import { firstImageSrc, priceLabel, quantityLabel, type Product } from "./types";
-import { BLOCK_RADIUS_CLASS } from "../block-zone/types";
+import { SECTION_PY_CLASS, SECTION_PX_CLASS, BLOCK_RADIUS_CLASS } from "../block-zone/types";
 
 type SlotAttrs = { "data-guaso-slot": string } | Record<string, never>;
 
@@ -38,7 +38,7 @@ export function ProductDetail({
   const current = images[Math.min(selected, images.length - 1)] ?? cover;
 
   return (
-    <section className="mx-auto max-w-7xl px-6 py-12 md:py-16">
+    <section className={`mx-auto max-w-7xl ${SECTION_PX_CLASS} ${SECTION_PY_CLASS}`}>
       <nav className="flex items-center gap-1.5 text-sm text-muted-foreground">
         {storeNav ? (
           <Link href="/store" className="text-muted-foreground">

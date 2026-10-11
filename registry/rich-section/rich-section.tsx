@@ -10,6 +10,7 @@ import {
   safeHref,
   sectionHeadingClass,
   BLOCK_RADIUS_CLASS,
+  SECTION_ROOT_CLASS,
 } from "../block-zone/types";
 
 type RichSectionProps = {
@@ -21,7 +22,7 @@ function RichSectionPlaceholder() {
   return (
     <section
       aria-label="Sección de texto"
-      className="mx-auto max-w-6xl px-6 py-16 md:py-20"
+      className={SECTION_ROOT_CLASS}
     >
       <div className={`${BLOCK_RADIUS_CLASS} border border-border bg-card px-8 py-12 text-center`}>
         <p className="font-heading text-sm text-muted-foreground">
@@ -141,7 +142,7 @@ export default function RichSection({
   return (
     <section
       aria-label={data.title ?? "Sección de contenido"}
-      className="mx-auto max-w-6xl px-6 py-16 md:py-24"
+      className={SECTION_ROOT_CLASS}
     >
       <div
         className={

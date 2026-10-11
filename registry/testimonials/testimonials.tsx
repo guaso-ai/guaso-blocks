@@ -4,6 +4,7 @@ import {
   resolveTestimonialRating,
   resolveTestimonialsLayout,
   BLOCK_RADIUS_CLASS,
+  SECTION_ROOT_CLASS,
 } from "../block-zone/types";
 
 type TestimonialsProps = {
@@ -15,7 +16,7 @@ function TestimonialsPlaceholder() {
   return (
     <section
       aria-label="Testimonios"
-      className="mx-auto max-w-6xl px-6 py-16 md:py-20"
+      className={SECTION_ROOT_CLASS}
     >
       <div className={`${BLOCK_RADIUS_CLASS} border border-border bg-card px-8 py-12 text-center`}>
         <p className="font-heading text-sm text-muted-foreground">
@@ -115,7 +116,7 @@ export default function Testimonials({
     const [first, ...rest] = items;
     const firstRating = resolveTestimonialRating(first.rating);
     return (
-      <section aria-label={label} className="mx-auto max-w-6xl px-6 py-16 md:py-20">
+      <section aria-label={label} className={SECTION_ROOT_CLASS}>
         {data.title ? (
           <h2 className={`mb-10 ${sectionHeadingClass(data)}`}>
             {data.title}
@@ -164,7 +165,7 @@ export default function Testimonials({
   // Región enfocable para que el scroll sea operable por teclado.
   if (layout === "carrusel") {
     return (
-      <section aria-label={label} className="mx-auto max-w-6xl px-6 py-16 md:py-20">
+      <section aria-label={label} className={SECTION_ROOT_CLASS}>
         {data.title ? (
           <h2 className={`mb-10 ${sectionHeadingClass(data)}`}>
             {data.title}
@@ -194,7 +195,7 @@ export default function Testimonials({
   // Layout minimal: lista sin cromo de card, separada por divisores.
   if (layout === "minimal") {
     return (
-      <section aria-label={label} className="mx-auto max-w-6xl px-6 py-16 md:py-20">
+      <section aria-label={label} className={SECTION_ROOT_CLASS}>
         {data.title ? (
           <h2 className={`mb-10 ${sectionHeadingClass(data)}`}>
             {data.title}
@@ -215,7 +216,7 @@ export default function Testimonials({
   return (
     <section
       aria-label={label}
-      className="mx-auto max-w-6xl px-6 py-16 md:py-20"
+      className={SECTION_ROOT_CLASS}
     >
       {data.title ? (
         <h2 className={`mb-10 ${sectionHeadingClass(data)}`}>

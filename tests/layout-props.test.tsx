@@ -156,7 +156,7 @@ describe("BlockZone wrapper de layout (#4264)", () => {
 
   it("width angosto → max-width acotado; completo → sin tope en el hijo", () => {
     const angosto = zoneWith({ width: "angosto" }).firstElementChild as HTMLElement;
-    expect(angosto.className).toContain("max-w-3xl");
+    expect(angosto.className).toContain("max-w-[var(--block-narrow,48rem)]");
     const completo = zoneWith({ width: "completo" }).firstElementChild as HTMLElement;
     expect(completo.className).toContain("w-full");
     expect(completo.className).toContain("[&>*]:max-w-none");
@@ -170,7 +170,7 @@ describe("BlockZone wrapper de layout (#4264)", () => {
 
   it("spacing no default → padding vertical del envoltorio", () => {
     const grande = zoneWith({ spacing: "grande" }).firstElementChild as HTMLElement;
-    expect(grande.className).toContain("py-16");
+    expect(grande.className).toContain("py-[var(--block-space-y-grande,4rem)]");
     const chico = zoneWith({ spacing: "chico" }).firstElementChild as HTMLElement;
     expect(chico.className).toContain("py-4");
   });

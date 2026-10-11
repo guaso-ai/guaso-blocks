@@ -467,6 +467,14 @@ export function resolveImageFocal(value: unknown): ImageFocal {
 // Cada fallback dentro de var() = valor Tailwind equivalente de hoy; un consumidor sin el
 // bloque canónico block-form-tokens en su :root renderiza igual que antes.
 export const BLOCK_RADIUS_CLASS = "rounded-[var(--block-radius,0.5rem)]";
+export const SECTION_PY_CLASS = "py-[var(--block-space-y,4rem)] md:py-[var(--block-space-y-md,5rem)]";
+export const SECTION_PX_CLASS = "px-[var(--block-space-x,1.5rem)]";
+export const SECTION_CONTAINER_CLASS = "max-w-[var(--block-container,72rem)]";
+export const NARROW_CONTAINER_CLASS = "max-w-[var(--block-narrow,48rem)]";
+/** Raíz de sección centrada: `mx-auto` + contenedor + padding de sitio (tier medio). */
+export const SECTION_ROOT_CLASS = `mx-auto ${SECTION_CONTAINER_CLASS} ${SECTION_PX_CLASS} ${SECTION_PY_CLASS}`;
+/** Raíz de sección angosta (faq, steps). */
+export const NARROW_SECTION_ROOT_CLASS = `mx-auto ${NARROW_CONTAINER_CLASS} ${SECTION_PX_CLASS} ${SECTION_PY_CLASS}`;
 
 // Clases por valor, partidas en base + md para componer en el mismo orden que el kit previo
 // (el default reproduce la cadena fija de cada h2: mismos tokens, mismo orden).

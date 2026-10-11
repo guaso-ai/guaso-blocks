@@ -9,6 +9,7 @@ import {
   resolveCtaAlign,
   resolveCtaStyle,
   safeHref,
+  SECTION_ROOT_CLASS,
 } from "../block-zone/types";
 
 type CTAProps = {
@@ -22,7 +23,7 @@ const ALIGN_CLASS: Record<CtaAlign, string> = {
   right: "items-end justify-end text-right",
 };
 
-const SECTION_BASE = "mx-auto flex max-w-6xl flex-col px-6 py-16 md:py-20";
+const SECTION_BASE = `${SECTION_ROOT_CLASS} flex flex-col`;
 
 const BUTTON_CLASS =
   `inline-flex min-h-11 items-center justify-center ${BLOCK_RADIUS_CLASS} bg-primary px-7 py-3.5 text-sm font-medium text-primary-foreground transition-opacity duration-200 hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary motion-reduce:transition-none`;
@@ -35,7 +36,7 @@ function CTAPlaceholder() {
   return (
     <section
       aria-label="Llamado a la acción"
-      className="mx-auto max-w-6xl px-6 py-16"
+      className={SECTION_ROOT_CLASS}
     >
       <div className={`${BLOCK_RADIUS_CLASS} border border-border bg-card px-8 py-12 text-center`}>
         <p className="font-heading text-sm text-muted-foreground">
