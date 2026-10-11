@@ -1,5 +1,5 @@
 import type { FAQData } from "../block-zone/types";
-import { sectionHeadingClass } from "../block-zone/types";
+import { NARROW_SECTION_ROOT_CLASS, BLOCK_RADIUS_CLASS, sectionHeadingClass } from "../block-zone/types";
 
 type FAQProps = {
   data: FAQData;
@@ -14,9 +14,9 @@ function FAQPlaceholder() {
   return (
     <section
       aria-label="Preguntas"
-      className="mx-auto max-w-3xl px-6 py-16 md:py-20"
+      className={NARROW_SECTION_ROOT_CLASS}
     >
-      <div className="rounded-lg border border-border bg-card px-8 py-12 text-center">
+      <div className={`${BLOCK_RADIUS_CLASS} border border-border bg-card px-8 py-12 text-center`}>
         <p className="font-heading text-sm text-muted-foreground">
           Preguntas — agregá las preguntas por chat
         </p>
@@ -37,7 +37,7 @@ export default function FAQ({ data, isOwner = false }: FAQProps) {
   return (
     <section
       aria-label={filled(data.title) || "Preguntas"}
-      className="mx-auto max-w-3xl px-6 py-16 md:py-20"
+      className={NARROW_SECTION_ROOT_CLASS}
     >
       {filled(data.title) ? (
         <h2 className={`mb-8 ${sectionHeadingClass(data)}`}>

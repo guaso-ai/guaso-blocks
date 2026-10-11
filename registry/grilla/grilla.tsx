@@ -16,6 +16,7 @@ import {
   resolveGrillaEspacio,
   resolveGrillaOrdenMobile,
   resolveGrillaProporcion,
+  SECTION_ROOT_CLASS,
 } from "../block-zone/types";
 
 // Anchos en doceavos de fila: 1/4=3 · 1/3=4 · 1/2=6 · 2/3=8 · 3/4=9 · fila completa=12.
@@ -168,7 +169,7 @@ export default function Grilla({
   );
 
   const contenedor = [
-    "mx-auto flex max-w-6xl px-6 py-12 md:py-16",
+    `${SECTION_ROOT_CLASS} flex`,
     invertido ? "flex-col-reverse md:flex-col" : "flex-col",
     ESPACIO_GAP[espacio],
   ].join(" ");

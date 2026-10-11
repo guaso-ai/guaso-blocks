@@ -3,6 +3,12 @@
 import { useState, type ReactNode } from "react";
 import Link from "next/link";
 import { firstImageSrc, priceLabel, quantityLabel, type Product } from "./types";
+import {
+  SECTION_PY_CLASS,
+  SECTION_PX_CLASS,
+  BLOCK_RADIUS_PRODUCT_CLASS,
+  BLOCK_RADIUS_THUMB_CLASS,
+} from "../block-zone/types";
 
 type SlotAttrs = { "data-guaso-slot": string } | Record<string, never>;
 
@@ -37,7 +43,7 @@ export function ProductDetail({
   const current = images[Math.min(selected, images.length - 1)] ?? cover;
 
   return (
-    <section className="mx-auto max-w-7xl px-6 py-12 md:py-16">
+    <section className={`mx-auto max-w-7xl ${SECTION_PX_CLASS} ${SECTION_PY_CLASS}`}>
       <nav className="flex items-center gap-1.5 text-sm text-muted-foreground">
         {storeNav ? (
           <Link href="/store" className="text-muted-foreground">
@@ -51,7 +57,7 @@ export function ProductDetail({
 
       <div className="mt-8 grid gap-12 md:grid-cols-2">
         <div className="space-y-4">
-          <div className="relative aspect-square overflow-hidden rounded-2xl bg-card">
+          <div className={`relative aspect-square overflow-hidden ${BLOCK_RADIUS_PRODUCT_CLASS} bg-card`}>
             {current ? (
               <img
                 src={current}
@@ -72,7 +78,7 @@ export function ProductDetail({
                   onClick={() => setSelected(i)}
                   aria-label={`Ver foto ${i + 1} de ${product.name}`}
                   aria-current={i === selected}
-                  className={`relative aspect-square overflow-hidden rounded-xl bg-card ${
+                  className={`relative aspect-square overflow-hidden ${BLOCK_RADIUS_THUMB_CLASS} bg-card ${
                     i === selected ? "ring-2 ring-primary ring-offset-2" : ""
                   }`}
                 >

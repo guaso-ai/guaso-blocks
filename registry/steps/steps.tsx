@@ -1,5 +1,5 @@
 import type { StepsData } from "../block-zone/types";
-import { sectionHeadingClass } from "../block-zone/types";
+import { NARROW_SECTION_ROOT_CLASS, BLOCK_RADIUS_CLASS, sectionHeadingClass } from "../block-zone/types";
 
 type StepsProps = {
   data: StepsData;
@@ -14,9 +14,9 @@ function StepsPlaceholder() {
   return (
     <section
       aria-label="Pasos"
-      className="mx-auto max-w-3xl px-6 py-16 md:py-20"
+      className={NARROW_SECTION_ROOT_CLASS}
     >
-      <div className="rounded-lg border border-border bg-card px-8 py-12 text-center">
+      <div className={`${BLOCK_RADIUS_CLASS} border border-border bg-card px-8 py-12 text-center`}>
         <p className="font-heading text-sm text-muted-foreground">
           Pasos — agregá los pasos por chat
         </p>
@@ -37,7 +37,7 @@ export default function Steps({ data, isOwner = false }: StepsProps) {
   return (
     <section
       aria-label={filled(data.title) || "Pasos"}
-      className="mx-auto max-w-3xl px-6 py-16 md:py-20"
+      className={NARROW_SECTION_ROOT_CLASS}
     >
       {filled(data.title) ? (
         <h2 className={sectionHeadingClass(data)}>

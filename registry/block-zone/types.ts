@@ -463,18 +463,59 @@ export function resolveImageFocal(value: unknown): ImageFocal {
     : DEFAULT_IMAGE_FOCAL;
 }
 
+// Tokens de forma de bloque (#4416). Strings completas: Tailwind JIT no interpola.
+// Cards/secciones/imágenes consumen el tier de radio del canónico block-form-tokens (#4422):
+// `--block-radius-redondeado` (= var(--radius) del template), fallback 0.5rem (rounded-lg de hoy).
+// ⛔ No se consume el `--block-radius` global: el canónico lo define en :root y pisaría los
+// defaults por bloque. Botones, gondola y bullet NO tienen token por tier en #4422: van con su
+// valor literal de hoy (sin var). Pendiente: extender #4422 con --block-radius-boton,
+// --block-radius-producto, --block-radius-miniatura y --block-radius-bullet, y migrar acá.
+// Un consumidor sin el canónico en su :root renderiza igual que antes (fallback / literal).
+export const BLOCK_RADIUS_CLASS = "rounded-[var(--block-radius-redondeado,0.5rem)]";
+export const BLOCK_RADIUS_BUTTON_CLASS = "rounded-[0.375rem]";
+export const BLOCK_RADIUS_PRODUCT_CLASS = "rounded-[1rem]";
+export const BLOCK_RADIUS_THUMB_CLASS = "rounded-[0.75rem]";
+export const SECTION_PY_CLASS = "py-[var(--block-space-y,4rem)] md:py-[var(--block-space-y-md,5rem)]";
+export const SECTION_PX_CLASS = "px-[var(--block-space-x,1.5rem)]";
+export const SECTION_CONTAINER_CLASS = "max-w-[var(--block-container,72rem)]";
+export const NARROW_CONTAINER_CLASS = "max-w-[var(--block-narrow,48rem)]";
+/** Raíz de sección centrada: `mx-auto` + contenedor + padding de sitio (tier medio). */
+export const SECTION_ROOT_CLASS = `mx-auto ${SECTION_CONTAINER_CLASS} ${SECTION_PX_CLASS} ${SECTION_PY_CLASS}`;
+/** Raíz de sección angosta (faq, steps). */
+export const NARROW_SECTION_ROOT_CLASS = `mx-auto ${NARROW_CONTAINER_CLASS} ${SECTION_PX_CLASS} ${SECTION_PY_CLASS}`;
+
 // Clases por valor, partidas en base + md para componer en el mismo orden que el kit previo
 // (el default reproduce la cadena fija de cada h2: mismos tokens, mismo orden).
 type HeadingSize = { base: string; md: string };
+// Tamaño de heading desde tokens --block-text-* (block-form-tokens). Fallback = valor Tailwind de hoy
+// (escala sección 1.5/1.875/2.25rem y CTA 1.25/1.5/1.875rem; md = +0.375rem). Ver tests/block-tokens-source.test.ts.
 const SECTION_HEADING_SIZE: Record<TypoScale, HeadingSize> = {
-  chico: { base: "text-2xl", md: "md:text-3xl" },
-  medio: { base: "text-3xl", md: "md:text-4xl" },
-  grande: { base: "text-4xl", md: "md:text-5xl" },
+  chico: {
+    base: "text-[length:var(--block-text-chico,1.5rem)]",
+    md: "md:text-[length:var(--block-text-chico-md,1.875rem)]",
+  },
+  medio: {
+    base: "text-[length:var(--block-text-medio,1.875rem)]",
+    md: "md:text-[length:var(--block-text-medio-md,2.25rem)]",
+  },
+  grande: {
+    base: "text-[length:var(--block-text-grande,2.25rem)]",
+    md: "md:text-[length:var(--block-text-grande-md,3rem)]",
+  },
 };
 const CTA_HEADING_SIZE: Record<TypoScale, HeadingSize> = {
-  chico: { base: "text-xl", md: "md:text-2xl" },
-  medio: { base: "text-2xl", md: "md:text-3xl" },
-  grande: { base: "text-3xl", md: "md:text-4xl" },
+  chico: {
+    base: "text-[length:var(--block-text-cta-chico,1.25rem)]",
+    md: "md:text-[length:var(--block-text-cta-chico-md,1.5rem)]",
+  },
+  medio: {
+    base: "text-[length:var(--block-text-cta-medio,1.5rem)]",
+    md: "md:text-[length:var(--block-text-cta-medio-md,1.875rem)]",
+  },
+  grande: {
+    base: "text-[length:var(--block-text-cta-grande,1.875rem)]",
+    md: "md:text-[length:var(--block-text-cta-grande-md,2.25rem)]",
+  },
 };
 const ASPECT_CLASS: Record<ImageAspect, string> = {
   "4:5": "aspect-[4/5]",

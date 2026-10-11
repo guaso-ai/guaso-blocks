@@ -11,6 +11,8 @@ import {
   resolveGalleryColumns,
   resolveGalleryStyle,
   sectionHeadingClass,
+  BLOCK_RADIUS_CLASS,
+  SECTION_ROOT_CLASS,
 } from "../block-zone/types";
 
 type GalleryProps = {
@@ -22,9 +24,9 @@ function GalleryPlaceholder() {
   return (
     <section
       aria-label="Galería de imágenes"
-      className="mx-auto max-w-6xl px-6 py-16 md:py-20"
+      className={SECTION_ROOT_CLASS}
     >
-      <div className="rounded-lg border border-border bg-card px-8 py-12 text-center">
+      <div className={`${BLOCK_RADIUS_CLASS} border border-border bg-card px-8 py-12 text-center`}>
         <p className="font-heading text-sm text-muted-foreground">
           Galería de imágenes — agregá las fotos por chat
         </p>
@@ -54,7 +56,8 @@ function GalleryFigure({
         className={[
           "relative",
           imageAspectClass(presentation, DEFAULT_GALLERY_ASPECT),
-          "w-full overflow-hidden rounded-lg",
+          "w-full overflow-hidden",
+          BLOCK_RADIUS_CLASS,
           imageFrameClass(presentation),
           "bg-card",
         ]
@@ -109,7 +112,7 @@ export default function Gallery({ data, isOwner = false }: GalleryProps) {
     return (
       <section
         aria-label={label}
-        className="mx-auto max-w-6xl px-6 py-16 md:py-20"
+        className={SECTION_ROOT_CLASS}
       >
         {data.title ? (
           <h2 className={`mb-10 ${sectionHeadingClass(data)}`}>
@@ -138,7 +141,7 @@ export default function Gallery({ data, isOwner = false }: GalleryProps) {
     return (
       <section
         aria-label={label}
-        className="mx-auto max-w-6xl px-6 py-16 md:py-20"
+        className={SECTION_ROOT_CLASS}
       >
         {data.title ? (
           <h2 className={`mb-10 ${sectionHeadingClass(data)}`}>
@@ -170,7 +173,7 @@ export default function Gallery({ data, isOwner = false }: GalleryProps) {
   return (
     <section
       aria-label={label}
-      className="mx-auto max-w-6xl px-6 py-16 md:py-20"
+      className={SECTION_ROOT_CLASS}
     >
       {data.title ? (
         <h2 className={`mb-10 ${sectionHeadingClass(data)}`}>

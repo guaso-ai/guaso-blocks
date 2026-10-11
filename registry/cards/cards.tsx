@@ -1,9 +1,11 @@
 import type { CardsData, TypoProps } from "../block-zone/types";
 import {
+  BLOCK_RADIUS_CLASS,
   sectionHeadingClass,
   resolveCardsColumns,
   resolveCardsStyle,
   safeHref,
+  SECTION_ROOT_CLASS,
 } from "../block-zone/types";
 
 type CardsProps = {
@@ -15,9 +17,9 @@ function CardsPlaceholder() {
   return (
     <section
       aria-label="Tarjetas de contenido"
-      className="mx-auto max-w-6xl px-6 py-16 md:py-20"
+      className={SECTION_ROOT_CLASS}
     >
-      <div className="rounded-lg border border-border bg-card px-8 py-12 text-center">
+      <div className={`${BLOCK_RADIUS_CLASS} border border-border bg-card px-8 py-12 text-center`}>
         <p className="font-heading text-sm text-muted-foreground">
           Tarjetas de contenido — agregá los ítems por chat
         </p>
@@ -74,7 +76,7 @@ export default function Cards({ data, isOwner = false }: CardsProps) {
     return (
       <section
         aria-label={data.title ?? "Tarjetas de contenido"}
-        className="mx-auto max-w-6xl px-6 py-16 md:py-20"
+        className={SECTION_ROOT_CLASS}
       >
         <CardsHeader title={data.title} subtitle={data.subtitle} typo={data} />
 
@@ -115,7 +117,7 @@ export default function Cards({ data, isOwner = false }: CardsProps) {
   return (
     <section
       aria-label={data.title ?? "Tarjetas de contenido"}
-      className="mx-auto max-w-6xl px-6 py-16 md:py-20"
+      className={SECTION_ROOT_CLASS}
     >
       <CardsHeader title={data.title} subtitle={data.subtitle} typo={data} />
 
@@ -130,8 +132,8 @@ export default function Cards({ data, isOwner = false }: CardsProps) {
               key={i}
               className={
                 featured
-                  ? "flex flex-col gap-4 rounded-lg border border-border bg-card p-6 sm:col-span-2 sm:p-8"
-                  : "flex flex-col gap-4 rounded-lg border border-border bg-card p-6"
+                  ? `flex flex-col gap-4 ${BLOCK_RADIUS_CLASS} border border-border bg-card p-6 sm:col-span-2 sm:p-8`
+                  : `flex flex-col gap-4 ${BLOCK_RADIUS_CLASS} border border-border bg-card p-6`
               }
             >
               {card.heading ? (

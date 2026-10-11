@@ -1,5 +1,7 @@
 import type { CTAData, CtaAlign, ImageProps, TypoProps } from "../block-zone/types";
 import {
+  BLOCK_RADIUS_BUTTON_CLASS,
+  BLOCK_RADIUS_CLASS,
   DEFAULT_CTA_ASPECT,
   ctaHeadingClass,
   imageAspectClass,
@@ -8,6 +10,7 @@ import {
   resolveCtaAlign,
   resolveCtaStyle,
   safeHref,
+  SECTION_ROOT_CLASS,
 } from "../block-zone/types";
 
 type CTAProps = {
@@ -21,10 +24,10 @@ const ALIGN_CLASS: Record<CtaAlign, string> = {
   right: "items-end justify-end text-right",
 };
 
-const SECTION_BASE = "mx-auto flex max-w-6xl flex-col px-6 py-16 md:py-20";
+const SECTION_BASE = `${SECTION_ROOT_CLASS} flex flex-col`;
 
 const BUTTON_CLASS =
-  "inline-flex min-h-11 items-center justify-center rounded-md bg-primary px-7 py-3.5 text-sm font-medium text-primary-foreground transition-opacity duration-200 hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary motion-reduce:transition-none";
+  `inline-flex min-h-11 items-center justify-center ${BLOCK_RADIUS_BUTTON_CLASS} bg-primary px-7 py-3.5 text-sm font-medium text-primary-foreground transition-opacity duration-200 hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary motion-reduce:transition-none`;
 
 function sectionClass(align: CtaAlign): string {
   return `${SECTION_BASE} ${ALIGN_CLASS[align]}`;
@@ -34,9 +37,9 @@ function CTAPlaceholder() {
   return (
     <section
       aria-label="Llamado a la acción"
-      className="mx-auto max-w-6xl px-6 py-16"
+      className={SECTION_ROOT_CLASS}
     >
-      <div className="rounded-lg border border-border bg-card px-8 py-12 text-center">
+      <div className={`${BLOCK_RADIUS_CLASS} border border-border bg-card px-8 py-12 text-center`}>
         <p className="font-heading text-sm text-muted-foreground">
           Sección de llamado a la acción — completá el texto desde el chat
         </p>
@@ -95,7 +98,7 @@ function CtaVisual({
   if (!src) {
     return (
       <div
-        className="min-h-48 rounded-lg border border-border bg-card md:min-h-full"
+        className={`min-h-48 ${BLOCK_RADIUS_CLASS} border border-border bg-card md:min-h-full`}
         aria-hidden="true"
       />
     );
@@ -103,7 +106,7 @@ function CtaVisual({
 
   return (
     <div
-      className={["overflow-hidden rounded-lg", imageFrameClass(image), "bg-card"]
+      className={["overflow-hidden", BLOCK_RADIUS_CLASS, imageFrameClass(image), "bg-card"]
         .filter(Boolean)
         .join(" ")}
     >
@@ -138,7 +141,7 @@ function CtaBanda({
       aria-label={data.headline ?? "Llamado a la acción"}
       className={sectionClass(align)}
     >
-      <div className="w-full rounded-lg border border-border bg-card px-8 py-10 md:px-12 md:py-12">
+      <div className={`w-full ${BLOCK_RADIUS_CLASS} border border-border bg-card px-8 py-10 md:px-12 md:py-12`}>
         <div className="flex flex-col gap-8 md:flex-row md:items-center md:justify-between md:gap-12">
           <CtaCopy headline={data.headline} subtext={data.subtext} typo={data} />
           <CtaButton href={buttonHref} label={data.button_label} />
@@ -164,7 +167,7 @@ function CtaFoto({
       aria-label={data.headline ?? "Llamado a la acción"}
       className={sectionClass(align)}
     >
-      <div className="relative w-full overflow-hidden rounded-lg border border-border">
+      <div className={`relative w-full overflow-hidden ${BLOCK_RADIUS_CLASS} border border-border`}>
         <img
           src={imageHref}
           alt=""

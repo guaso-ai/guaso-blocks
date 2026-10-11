@@ -182,7 +182,7 @@ describe("gondola ProductDetail slots opacos (#3924)", () => {
       />,
     );
     const main = container.querySelector(
-      ".aspect-square.overflow-hidden.rounded-2xl img",
+      ".aspect-square.overflow-hidden img",
     );
     expect(main?.getAttribute("data-guaso-slot")).toBe(
       "c:products:oxido:images",
@@ -206,14 +206,14 @@ describe("gondola ProductDetail gallery (#3888)", () => {
       <ProductDetail product={sample} currencySymbol="$" />,
     );
     const main = container.querySelector(
-      ".aspect-square.overflow-hidden.rounded-2xl img",
+      ".aspect-square.overflow-hidden img",
     ) as HTMLImageElement | null;
     expect(main?.getAttribute("src")).toBe("https://example.com/cover.jpg");
     const thumbs = screen.getAllByRole("button");
     expect(thumbs).toHaveLength(2);
     fireEvent.click(thumbs[1]);
     const mainAfter = container.querySelector(
-      ".aspect-square.overflow-hidden.rounded-2xl img",
+      ".aspect-square.overflow-hidden img",
     ) as HTMLImageElement | null;
     expect(mainAfter?.getAttribute("src")).toBe("https://example.com/g2.jpg");
   });

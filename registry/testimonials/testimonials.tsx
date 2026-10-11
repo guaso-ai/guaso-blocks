@@ -3,6 +3,8 @@ import {
   sectionHeadingClass,
   resolveTestimonialRating,
   resolveTestimonialsLayout,
+  BLOCK_RADIUS_CLASS,
+  SECTION_ROOT_CLASS,
 } from "../block-zone/types";
 
 type TestimonialsProps = {
@@ -14,9 +16,9 @@ function TestimonialsPlaceholder() {
   return (
     <section
       aria-label="Testimonios"
-      className="mx-auto max-w-6xl px-6 py-16 md:py-20"
+      className={SECTION_ROOT_CLASS}
     >
-      <div className="rounded-lg border border-border bg-card px-8 py-12 text-center">
+      <div className={`${BLOCK_RADIUS_CLASS} border border-border bg-card px-8 py-12 text-center`}>
         <p className="font-heading text-sm text-muted-foreground">
           Testimonios — agregá las reseñas por chat
         </p>
@@ -88,7 +90,7 @@ function TestimonialQuote({ item }: { item: TestimonialItem }) {
 
 function TestimonialCard({ item }: { item: TestimonialItem }) {
   return (
-    <blockquote className="flex flex-col gap-4 rounded-lg border border-border bg-card p-6">
+    <blockquote className={`flex flex-col gap-4 ${BLOCK_RADIUS_CLASS} border border-border bg-card p-6`}>
       <TestimonialQuote item={item} />
     </blockquote>
   );
@@ -114,7 +116,7 @@ export default function Testimonials({
     const [first, ...rest] = items;
     const firstRating = resolveTestimonialRating(first.rating);
     return (
-      <section aria-label={label} className="mx-auto max-w-6xl px-6 py-16 md:py-20">
+      <section aria-label={label} className={SECTION_ROOT_CLASS}>
         {data.title ? (
           <h2 className={`mb-10 ${sectionHeadingClass(data)}`}>
             {data.title}
@@ -122,7 +124,7 @@ export default function Testimonials({
         ) : null}
 
         <div className="flex flex-col gap-6">
-          <blockquote className="flex flex-col gap-4 rounded-lg border border-border bg-card p-6 sm:p-10">
+          <blockquote className={`flex flex-col gap-4 ${BLOCK_RADIUS_CLASS} border border-border bg-card p-6 sm:p-10`}>
             {first.quote ? (
               <p className="font-heading text-xl font-medium leading-relaxed text-foreground text-balance break-words md:text-2xl">
                 {first.quote}
@@ -163,7 +165,7 @@ export default function Testimonials({
   // Región enfocable para que el scroll sea operable por teclado.
   if (layout === "carrusel") {
     return (
-      <section aria-label={label} className="mx-auto max-w-6xl px-6 py-16 md:py-20">
+      <section aria-label={label} className={SECTION_ROOT_CLASS}>
         {data.title ? (
           <h2 className={`mb-10 ${sectionHeadingClass(data)}`}>
             {data.title}
@@ -180,7 +182,7 @@ export default function Testimonials({
           {items.map((item, i) => (
             <blockquote
               key={i}
-              className="flex w-[85%] shrink-0 snap-start flex-col gap-4 rounded-lg border border-border bg-card p-6 sm:w-[60%] lg:w-[31%]"
+              className={`flex w-[85%] shrink-0 snap-start flex-col gap-4 ${BLOCK_RADIUS_CLASS} border border-border bg-card p-6 sm:w-[60%] lg:w-[31%]`}
             >
               <TestimonialQuote item={item} />
             </blockquote>
@@ -193,7 +195,7 @@ export default function Testimonials({
   // Layout minimal: lista sin cromo de card, separada por divisores.
   if (layout === "minimal") {
     return (
-      <section aria-label={label} className="mx-auto max-w-6xl px-6 py-16 md:py-20">
+      <section aria-label={label} className={SECTION_ROOT_CLASS}>
         {data.title ? (
           <h2 className={`mb-10 ${sectionHeadingClass(data)}`}>
             {data.title}
@@ -214,7 +216,7 @@ export default function Testimonials({
   return (
     <section
       aria-label={label}
-      className="mx-auto max-w-6xl px-6 py-16 md:py-20"
+      className={SECTION_ROOT_CLASS}
     >
       {data.title ? (
         <h2 className={`mb-10 ${sectionHeadingClass(data)}`}>

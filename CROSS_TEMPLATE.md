@@ -20,6 +20,6 @@ Source of truth for what this kit unifies vs what stays in `guaso-template-*` (#
 
 ## Aesthetic tokens (intersección)
 
-Allowed utility tokens only: `text-foreground`, `text-primary`, `bg-primary`, `font-heading`, `border-border`, `bg-card`, `text-muted-foreground`, `text-primary-foreground`.
+Allowed utility tokens only: `text-foreground`, `text-primary`, `bg-primary`, `font-heading`, `border-border`, `bg-card`, `text-muted-foreground`, `text-primary-foreground`. Forma y tipografía de bloque (#4416): solo vía helpers de `registry/block-zone/types.ts` con `var(--block-*, <fallback>)` (`rounded-[var(--block-radius-redondeado,0.5rem)]` para cards/secciones, `py-[var(--block-space-y,4rem)]`, `px-[var(--block-space-x,1.5rem)]`, `max-w-[var(--block-container,72rem)]`, `max-w-[var(--block-narrow,48rem)]`, `text-[length:var(--block-text-*,…)]`). Radio por tier: solo `--block-radius-{recto,suave,redondeado}` del canónico block-form-tokens (#4422); ⛔ `--block-radius` global (pisa defaults por bloque). Botones, gondola y bullet van con radio literal (`rounded-[0.375rem]`, `rounded-[1rem]`, `rounded-[0.75rem]`, `rounded-[0.125rem]`) hasta extender #4422 con tokens por rol. ⛔ padding de sección/contenedor/heading Tailwind literal.
 
 ⛔ `TitleWithAccent`, `grain-overlay`, `mesh-hero`, `hairline`, orbs, hex literals, hardcoded eyebrow (“Sobre nosotros” / “Galería” / “Servicios”), lucide, store/clinic-only looks.

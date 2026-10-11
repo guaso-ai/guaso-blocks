@@ -9,6 +9,9 @@ import {
   resolveRichMode,
   safeHref,
   sectionHeadingClass,
+  BLOCK_RADIUS_BUTTON_CLASS,
+  BLOCK_RADIUS_CLASS,
+  SECTION_ROOT_CLASS,
 } from "../block-zone/types";
 
 type RichSectionProps = {
@@ -20,9 +23,9 @@ function RichSectionPlaceholder() {
   return (
     <section
       aria-label="Sección de texto"
-      className="mx-auto max-w-6xl px-6 py-16 md:py-20"
+      className={SECTION_ROOT_CLASS}
     >
-      <div className="rounded-lg border border-border bg-card px-8 py-12 text-center">
+      <div className={`${BLOCK_RADIUS_CLASS} border border-border bg-card px-8 py-12 text-center`}>
         <p className="font-heading text-sm text-muted-foreground">
           Sección de texto — agregá el contenido por chat
         </p>
@@ -81,7 +84,7 @@ export default function RichSection({
                   "[&_ol]:list-decimal [&_ol]:pl-5",
                   "[&_li]:relative [&_li]:pl-7",
                   "[&_li]:before:absolute [&_li]:before:left-0 [&_li]:before:top-1.5",
-                  "[&_li]:before:size-4 [&_li]:before:rounded-sm",
+                  "[&_li]:before:size-4 [&_li]:before:rounded-[0.125rem]",
                   "[&_li]:before:border [&_li]:before:border-primary",
                   "[&_li]:before:bg-primary [&_li]:before:content-['']",
                 ].join(" ")
@@ -102,7 +105,7 @@ export default function RichSection({
         >
           <a
             href={ctaHref}
-            className="inline-flex items-center justify-center rounded-md border border-primary bg-transparent px-6 py-3 text-sm font-medium text-primary transition-colors duration-200 hover:bg-primary hover:text-primary-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary motion-reduce:transition-none"
+            className={`inline-flex items-center justify-center ${BLOCK_RADIUS_BUTTON_CLASS} border border-primary bg-transparent px-6 py-3 text-sm font-medium text-primary transition-colors duration-200 hover:bg-primary hover:text-primary-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary motion-reduce:transition-none`}
           >
             {data.cta_label}
           </a>
@@ -117,7 +120,8 @@ export default function RichSection({
         className={[
           "relative",
           imageAspectClass(data, DEFAULT_RICH_ASPECT),
-          "w-full overflow-hidden rounded-lg",
+          "w-full overflow-hidden",
+          BLOCK_RADIUS_CLASS,
           imageFrameClass(data),
           "bg-card",
         ]
@@ -139,7 +143,7 @@ export default function RichSection({
   return (
     <section
       aria-label={data.title ?? "Sección de contenido"}
-      className="mx-auto max-w-6xl px-6 py-16 md:py-24"
+      className={SECTION_ROOT_CLASS}
     >
       <div
         className={
