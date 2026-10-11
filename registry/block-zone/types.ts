@@ -65,7 +65,7 @@ export function resolveLayoutAnchor(value: unknown): string {
   return typeof value === "string" && LAYOUT_ANCHOR_RE.test(value) ? value : "";
 }
 
-export type RichSectionData = LayoutProps & {
+export type RichSectionData = LayoutProps & TypoProps & ImageProps & {
   title?: string;
   body?: string;
   cta_label?: string;
@@ -76,7 +76,7 @@ export type RichSectionData = LayoutProps & {
   mode?: RichMode | string;
 };
 
-export type CTAData = LayoutProps & {
+export type CTAData = LayoutProps & TypoProps & ImageProps & {
   headline?: string;
   subtext?: string;
   button_label?: string;
@@ -92,7 +92,7 @@ export type GalleryImage = {
   caption?: string;
 };
 
-export type GalleryData = LayoutProps & {
+export type GalleryData = LayoutProps & TypoProps & ImageProps & {
   title?: string;
   images?: GalleryImage[];
   columns?: GalleryColumns | string;
@@ -106,7 +106,7 @@ export type CardItem = {
   link_url?: string;
 };
 
-export type CardsData = LayoutProps & {
+export type CardsData = LayoutProps & TypoProps & {
   title?: string;
   subtitle?: string;
   cards?: CardItem[];
@@ -121,7 +121,7 @@ export type TestimonialItem = {
   rating?: string;
 };
 
-export type TestimonialsData = LayoutProps & {
+export type TestimonialsData = LayoutProps & TypoProps & {
   title?: string;
   items?: TestimonialItem[];
   layout?: TestimonialsLayout | string;
@@ -132,7 +132,7 @@ export type FaqItem = {
   answer?: string;
 };
 
-export type FAQData = LayoutProps & {
+export type FAQData = LayoutProps & TypoProps & {
   title?: string;
   questions?: FaqItem[];
 };
@@ -142,7 +142,7 @@ export type StatMetric = {
   label?: string;
 };
 
-export type StatsData = LayoutProps & {
+export type StatsData = LayoutProps & TypoProps & {
   title?: string;
   intro?: string;
   metrics?: StatMetric[];
@@ -153,7 +153,7 @@ export type StepItem = {
   text?: string;
 };
 
-export type StepsData = LayoutProps & {
+export type StepsData = LayoutProps & TypoProps & {
   title?: string;
   intro?: string;
   steps?: StepItem[];
@@ -395,3 +395,132 @@ export function safeHref(url?: string): string | undefined {
 
   return undefined;
 }
+
+// --- Presentación (#4266, corte B). Defaults = render actual: sin props, el DOM no cambia.
+// Tipografía (scale, emphasis) en los 8 bloques canónicos; imagen (aspect, frame, fit, focal)
+// en RichSection, CTA y Gallery. Fuera de closed-set → default, nunca explota.
+export type TypoScale = "chico" | "medio" | "grande";
+export type TypoEmphasis = "normal" | "fuerte";
+export type ImageAspect = "4:5" | "4:3" | "1:1" | "16:9";
+export type ImageFrame = "borde" | "sin_borde" | "sombra";
+export type ImageFit = "cover" | "contain";
+export type ImageFocal = "centro" | "arriba" | "abajo" | "izquierda" | "derecha";
+
+export type TypoProps = {
+  scale?: TypoScale | string;
+  emphasis?: TypoEmphasis | string;
+};
+
+export type ImageProps = {
+  aspect?: ImageAspect | string;
+  frame?: ImageFrame | string;
+  fit?: ImageFit | string;
+  focal?: ImageFocal | string;
+};
+
+export const DEFAULT_TYPO_SCALE: TypoScale = "medio";
+export const DEFAULT_TYPO_EMPHASIS: TypoEmphasis = "normal";
+export const DEFAULT_IMAGE_FRAME: ImageFrame = "borde";
+export const DEFAULT_IMAGE_FIT: ImageFit = "cover";
+export const DEFAULT_IMAGE_FOCAL: ImageFocal = "centro";
+export const DEFAULT_RICH_ASPECT: ImageAspect = "4:5";
+export const DEFAULT_CTA_ASPECT: ImageAspect = "4:3";
+export const DEFAULT_GALLERY_ASPECT: ImageAspect = "4:3";
+
+export function resolveTypoScale(value: unknown): TypoScale {
+  return value === "chico" || value === "medio" || value === "grande"
+    ? value
+    : DEFAULT_TYPO_SCALE;
+}
+
+export function resolveTypoEmphasis(value: unknown): TypoEmphasis {
+  return value === "normal" || value === "fuerte" ? value : DEFAULT_TYPO_EMPHASIS;
+}
+
+export function resolveImageAspect(value: unknown, fallback: ImageAspect): ImageAspect {
+  return value === "4:5" || value === "4:3" || value === "1:1" || value === "16:9"
+    ? value
+    : fallback;
+}
+
+export function resolveImageFrame(value: unknown): ImageFrame {
+  return value === "borde" || value === "sin_borde" || value === "sombra"
+    ? value
+    : DEFAULT_IMAGE_FRAME;
+}
+
+export function resolveImageFit(value: unknown): ImageFit {
+  return value === "cover" || value === "contain" ? value : DEFAULT_IMAGE_FIT;
+}
+
+export function resolveImageFocal(value: unknown): ImageFocal {
+  return value === "centro" ||
+    value === "arriba" ||
+    value === "abajo" ||
+    value === "izquierda" ||
+    value === "derecha"
+    ? value
+    : DEFAULT_IMAGE_FOCAL;
+}
+
+// Clases por valor, partidas en base + md para componer en el mismo orden que el kit previo
+// (el default reproduce la cadena fija de cada h2: mismos tokens, mismo orden).
+type HeadingSize = { base: string; md: string };
+const SECTION_HEADING_SIZE: Record<TypoScale, HeadingSize> = {
+  chico: { base: "text-2xl", md: "md:text-3xl" },
+  medio: { base: "text-3xl", md: "md:text-4xl" },
+  grande: { base: "text-4xl", md: "md:text-5xl" },
+};
+const CTA_HEADING_SIZE: Record<TypoScale, HeadingSize> = {
+  chico: { base: "text-xl", md: "md:text-2xl" },
+  medio: { base: "text-2xl", md: "md:text-3xl" },
+  grande: { base: "text-3xl", md: "md:text-4xl" },
+};
+const ASPECT_CLASS: Record<ImageAspect, string> = {
+  "4:5": "aspect-[4/5]",
+  "4:3": "aspect-[4/3]",
+  "1:1": "aspect-square",
+  "16:9": "aspect-video",
+};
+const FOCAL_CLASS: Record<ImageFocal, string> = {
+  centro: "",
+  arriba: "object-top",
+  abajo: "object-bottom",
+  izquierda: "object-left",
+  derecha: "object-right",
+};
+
+/** Clase del h2 de sección (RichSection, Gallery, Cards, Testimonials, FAQ, Stats, Steps). */
+export function sectionHeadingClass(props: TypoProps): string {
+  const size = SECTION_HEADING_SIZE[resolveTypoScale(props.scale)];
+  const weight = resolveTypoEmphasis(props.emphasis) === "fuerte" ? "font-bold" : "font-semibold";
+  return `font-heading ${size.base} ${weight} tracking-tight text-foreground text-balance ${size.md}`;
+}
+
+/** Clase del h2 del CTA (escala propia: un paso menor que la sección). */
+export function ctaHeadingClass(props: TypoProps): string {
+  const size = CTA_HEADING_SIZE[resolveTypoScale(props.scale)];
+  const weight = resolveTypoEmphasis(props.emphasis) === "fuerte" ? "font-bold" : "font-semibold";
+  return `font-heading ${size.base} ${weight} tracking-tight text-foreground text-balance ${size.md}`;
+}
+
+/** Clase de proporción de la imagen. `fallback` = default del bloque (4:5 RichSection, 4:3 CTA/Gallery). */
+export function imageAspectClass(props: ImageProps, fallback: ImageAspect): string {
+  return ASPECT_CLASS[resolveImageAspect(props.aspect, fallback)];
+}
+
+/** Clases del marco: borde (default), sin borde o sombra. */
+export function imageFrameClass(props: ImageProps): string {
+  const frame = resolveImageFrame(props.frame);
+  if (frame === "borde") return "border border-border";
+  if (frame === "sombra") return "shadow-md";
+  return "";
+}
+
+/** Clases de ajuste y punto focal del <img>. Defaults = `object-cover` sin posición extra. */
+export function imageFitClass(props: ImageProps): string {
+  const fit = resolveImageFit(props.fit) === "contain" ? "object-contain" : "object-cover";
+  const focal = FOCAL_CLASS[resolveImageFocal(props.focal)];
+  return focal ? `${fit} ${focal}` : fit;
+}
+

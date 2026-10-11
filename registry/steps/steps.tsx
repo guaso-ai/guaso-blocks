@@ -1,4 +1,5 @@
 import type { StepsData } from "../block-zone/types";
+import { sectionHeadingClass } from "../block-zone/types";
 
 type StepsProps = {
   data: StepsData;
@@ -39,7 +40,7 @@ export default function Steps({ data, isOwner = false }: StepsProps) {
       className="mx-auto max-w-3xl px-6 py-16 md:py-20"
     >
       {filled(data.title) ? (
-        <h2 className="font-heading text-3xl font-semibold tracking-tight text-foreground text-balance md:text-4xl">
+        <h2 className={sectionHeadingClass(data)}>
           {data.title}
         </h2>
       ) : null}

@@ -1,7 +1,16 @@
-import type { GalleryData, GalleryImage } from "../block-zone/types";
+import type {
+  GalleryData,
+  GalleryImage,
+  ImageProps,
+} from "../block-zone/types";
 import {
+  DEFAULT_GALLERY_ASPECT,
+  imageAspectClass,
+  imageFitClass,
+  imageFrameClass,
   resolveGalleryColumns,
   resolveGalleryStyle,
+  sectionHeadingClass,
 } from "../block-zone/types";
 
 type GalleryProps = {
@@ -32,14 +41,26 @@ function GalleryFigure({
   image,
   index,
   className,
+  presentation,
 }: {
   image: GalleryImage;
+  presentation: ImageProps;
   index: number;
   className?: string;
 }) {
   return (
     <figure className={className ?? "min-w-0"}>
-      <div className="relative aspect-[4/3] w-full overflow-hidden rounded-lg border border-border bg-card">
+      <div
+        className={[
+          "relative",
+          imageAspectClass(presentation, DEFAULT_GALLERY_ASPECT),
+          "w-full overflow-hidden rounded-lg",
+          imageFrameClass(presentation),
+          "bg-card",
+        ]
+          .filter(Boolean)
+          .join(" ")}
+      >
         <img
           src={image.url.trim()}
           alt={image.alt ?? `Imagen ${index + 1}`}
@@ -47,7 +68,7 @@ function GalleryFigure({
           height={600}
           loading="lazy"
           decoding="async"
-          className="size-full object-cover"
+          className={["size-full", imageFitClass(presentation)].join(" ")}
         />
       </div>
       {image.caption ? (
@@ -91,7 +112,7 @@ export default function Gallery({ data, isOwner = false }: GalleryProps) {
         className="mx-auto max-w-6xl px-6 py-16 md:py-20"
       >
         {data.title ? (
-          <h2 className="mb-10 font-heading text-3xl font-semibold tracking-tight text-foreground text-balance md:text-4xl">
+          <h2 className={`mb-10 ${sectionHeadingClass(data)}`}>
             {data.title}
           </h2>
         ) : null}
@@ -99,6 +120,7 @@ export default function Gallery({ data, isOwner = false }: GalleryProps) {
         <div className={MASONRY_CLASS[columns]}>
           {images.map((image, i) => (
             <GalleryFigure
+              presentation={data}
               key={`${image.url}-${i}`}
               image={image}
               index={i}
@@ -119,7 +141,7 @@ export default function Gallery({ data, isOwner = false }: GalleryProps) {
         className="mx-auto max-w-6xl px-6 py-16 md:py-20"
       >
         {data.title ? (
-          <h2 className="mb-10 font-heading text-3xl font-semibold tracking-tight text-foreground text-balance md:text-4xl">
+          <h2 className={`mb-10 ${sectionHeadingClass(data)}`}>
             {data.title}
           </h2>
         ) : null}
@@ -133,6 +155,7 @@ export default function Gallery({ data, isOwner = false }: GalleryProps) {
         >
           {images.map((image, i) => (
             <GalleryFigure
+              presentation={data}
               key={`${image.url}-${i}`}
               image={image}
               index={i}
@@ -150,14 +173,14 @@ export default function Gallery({ data, isOwner = false }: GalleryProps) {
       className="mx-auto max-w-6xl px-6 py-16 md:py-20"
     >
       {data.title ? (
-        <h2 className="mb-10 font-heading text-3xl font-semibold tracking-tight text-foreground text-balance md:text-4xl">
+        <h2 className={`mb-10 ${sectionHeadingClass(data)}`}>
           {data.title}
         </h2>
       ) : null}
 
       <div className={COLUMNS_CLASS[columns]}>
         {images.map((image, i) => (
-          <GalleryFigure key={`${image.url}-${i}`} image={image} index={i} />
+          <GalleryFigure presentation={data} key={`${image.url}-${i}`} image={image} index={i} />
         ))}
       </div>
     </section>

@@ -1,5 +1,10 @@
-import type { CTAData, CtaAlign } from "../block-zone/types";
+import type { CTAData, CtaAlign, ImageProps, TypoProps } from "../block-zone/types";
 import {
+  DEFAULT_CTA_ASPECT,
+  ctaHeadingClass,
+  imageAspectClass,
+  imageFitClass,
+  imageFrameClass,
   resolveCtaAlign,
   resolveCtaStyle,
   safeHref,
@@ -43,15 +48,17 @@ function CTAPlaceholder() {
 function CtaCopy({
   headline,
   subtext,
+  typo,
 }: {
   headline?: string;
   subtext?: string;
+  typo: TypoProps;
 }) {
   if (!headline && !subtext) return null;
   return (
     <div className="flex min-w-0 max-w-xl flex-col gap-3">
       {headline ? (
-        <h2 className="font-heading text-2xl font-semibold tracking-tight text-foreground text-balance md:text-3xl">
+        <h2 className={ctaHeadingClass(typo)}>
           {headline}
         </h2>
       ) : null}
@@ -76,7 +83,15 @@ function CtaButton({ href, label }: { href?: string; label?: string }) {
   );
 }
 
-function CtaVisual({ src, alt }: { src?: string; alt: string }) {
+function CtaVisual({
+  src,
+  alt,
+  image,
+}: {
+  src?: string;
+  alt: string;
+  image: ImageProps;
+}) {
   if (!src) {
     return (
       <div
@@ -87,7 +102,11 @@ function CtaVisual({ src, alt }: { src?: string; alt: string }) {
   }
 
   return (
-    <div className="overflow-hidden rounded-lg border border-border bg-card">
+    <div
+      className={["overflow-hidden rounded-lg", imageFrameClass(image), "bg-card"]
+        .filter(Boolean)
+        .join(" ")}
+    >
       <img
         src={src}
         alt={alt}
@@ -95,7 +114,11 @@ function CtaVisual({ src, alt }: { src?: string; alt: string }) {
         height={600}
         loading="lazy"
         decoding="async"
-        className="aspect-[4/3] size-full object-cover"
+        className={[
+          imageAspectClass(image, DEFAULT_CTA_ASPECT),
+          "size-full",
+          imageFitClass(image),
+        ].join(" ")}
       />
     </div>
   );
@@ -117,7 +140,7 @@ function CtaBanda({
     >
       <div className="w-full rounded-lg border border-border bg-card px-8 py-10 md:px-12 md:py-12">
         <div className="flex flex-col gap-8 md:flex-row md:items-center md:justify-between md:gap-12">
-          <CtaCopy headline={data.headline} subtext={data.subtext} />
+          <CtaCopy headline={data.headline} subtext={data.subtext} typo={data} />
           <CtaButton href={buttonHref} label={data.button_label} />
         </div>
       </div>
@@ -149,11 +172,11 @@ function CtaFoto({
           height={900}
           loading="lazy"
           decoding="async"
-          className="absolute inset-0 size-full object-cover"
+          className={["absolute inset-0 size-full", imageFitClass(data)].join(" ")}
         />
         <div className="relative flex min-h-64 flex-col justify-center bg-card/80 px-8 py-10 md:min-h-80 md:px-12 md:py-12">
           <div className={`flex flex-col gap-8 ${ALIGN_CLASS[align]}`}>
-            <CtaCopy headline={data.headline} subtext={data.subtext} />
+            <CtaCopy headline={data.headline} subtext={data.subtext} typo={data} />
             <CtaButton href={buttonHref} label={data.button_label} />
           </div>
         </div>
@@ -180,10 +203,11 @@ function CtaSplit({
     >
       <div className="grid w-full gap-8 md:grid-cols-2 md:items-center md:gap-12">
         <div className={`flex min-w-0 flex-col gap-8 ${ALIGN_CLASS[align]}`}>
-          <CtaCopy headline={data.headline} subtext={data.subtext} />
+          <CtaCopy headline={data.headline} subtext={data.subtext} typo={data} />
           <CtaButton href={buttonHref} label={data.button_label} />
         </div>
         <CtaVisual
+          image={data}
           src={imageHref}
           alt={
             data.headline
