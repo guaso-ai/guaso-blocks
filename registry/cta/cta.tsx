@@ -103,7 +103,7 @@ function CtaVisual({
 
   return (
     <div
-      className={["overflow-hidden rounded-lg bg-card", imageFrameClass(image)]
+      className={["overflow-hidden rounded-lg", imageFrameClass(image), "bg-card"]
         .filter(Boolean)
         .join(" ")}
     >
@@ -115,8 +115,8 @@ function CtaVisual({
         loading="lazy"
         decoding="async"
         className={[
-          "size-full",
           imageAspectClass(image, DEFAULT_CTA_ASPECT),
+          "size-full",
           imageFitClass(image),
         ].join(" ")}
       />

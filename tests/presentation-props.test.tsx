@@ -4,147 +4,202 @@ import RichSection from "../registry/rich-section/rich-section";
 import CTA from "../registry/cta/cta";
 import Gallery from "../registry/gallery/gallery";
 import Cards from "../registry/cards/cards";
+import Testimonials from "../registry/testimonials/testimonials";
+import FAQ from "../registry/faq/faq";
+import Stats from "../registry/stats/stats";
 import Steps from "../registry/steps/steps";
 
 // Presentación (#4266 corte B): tipografía en los 8 canónicos, imagen en RichSection/CTA/Gallery.
-// Defaults = render actual; valores fuera de closed-set caen al default sin error.
+// Asserts por token exacto (no por substring): "text-4xl" no debe matchear "md:text-4xl".
 
 const IMG = "https://example.com/a.jpg";
 
-function h2(container: HTMLElement): string {
-  return container.querySelector("h2")?.className ?? "";
+function tokens(el: Element | null | undefined): string[] {
+  return (el?.getAttribute("class") ?? "").split(/\s+/).filter(Boolean);
 }
 
-function imgClass(container: HTMLElement): string {
-  return container.querySelector("img")?.className ?? "";
+function h2Tokens(c: HTMLElement): string[] {
+  return tokens(c.querySelector("h2"));
 }
 
-function imgBox(container: HTMLElement): string {
-  return container.querySelector("img")?.parentElement?.className ?? "";
+function imgTokens(c: HTMLElement): string[] {
+  return tokens(c.querySelector("img"));
 }
 
-function rich(extra: Record<string, unknown> = {}) {
-  return render(
-    <RichSection data={{ title: "Hola", body: "Cuerpo", image_url: IMG, ...extra }} />,
-  ).container;
+function imgBoxTokens(c: HTMLElement): string[] {
+  return tokens(c.querySelector("img")?.parentElement);
 }
 
-describe("RichSection: defaults = render actual", () => {
-  it("sin props, h2 y caja de imagen conservan las clases fijas", () => {
-    const c = rich();
-    expect(h2(c)).toContain("text-3xl");
-    expect(h2(c)).toContain("md:text-4xl");
-    expect(h2(c)).toContain("font-semibold");
-    expect(imgBox(c)).toContain("aspect-[4/5]");
-    expect(imgBox(c)).toContain("border-border");
-    expect(imgClass(c)).toContain("object-cover");
-    expect(imgClass(c)).not.toMatch(/object-(top|bottom|left|right|contain)/);
+type Renderer = (extra: Record<string, unknown>) => HTMLElement;
+
+const SECTION_BLOCKS: Array<[string, Renderer]> = [
+  ["RichSection", (x) => render(<RichSection data={{ title: "T", body: "b", ...x }} />).container],
+  ["Gallery", (x) => render(<Gallery data={{ title: "T", images: [{ url: IMG }], ...x }} />).container],
+  ["Cards", (x) => render(<Cards data={{ title: "T", cards: [{ heading: "A", text: "x" }], ...x }} />).container],
+  ["Testimonials", (x) => render(<Testimonials data={{ title: "T", items: [{ author: "A", quote: "q" }], ...x }} />).container],
+  ["FAQ", (x) => render(<FAQ data={{ title: "T", questions: [{ question: "q", answer: "a" }], ...x }} />).container],
+  ["Stats", (x) => render(<Stats data={{ title: "T", metrics: [{ value: "1", label: "l" }], ...x }} />).container],
+  ["Steps", (x) => render(<Steps data={{ title: "T", steps: [{ heading: "A", text: "x" }], ...x }} />).container],
+];
+
+describe("tipografía: scale y emphasis en los 8 canónicos", () => {
+  it.each(SECTION_BLOCKS)("%s: default md = text-3xl md:text-4xl, font-semibold", (_name, render) => {
+    const h = h2Tokens(render({}));
+    expect(h).toContain("text-3xl");
+    expect(h).toContain("md:text-4xl");
+    expect(h).toContain("font-semibold");
   });
 
-  it("valores fuera de closed-set caen al default", () => {
-    const c = rich({
-      scale: "xl",
-      emphasis: "x",
-      aspect: "9:16",
-      frame: "raro",
-      fit: "fill",
-      focal: "diagonal",
-    });
-    expect(h2(c)).toContain("text-3xl");
-    expect(h2(c)).toContain("font-semibold");
-    expect(imgBox(c)).toContain("aspect-[4/5]");
-    expect(imgBox(c)).toContain("border-border");
-    expect(imgClass(c)).toContain("object-cover");
+  it.each(SECTION_BLOCKS)("%s: scale grande → text-4xl md:text-5xl (tokens exactos)", (_name, render) => {
+    const h = h2Tokens(render({ scale: "grande" }));
+    expect(h).toContain("text-4xl");
+    expect(h).toContain("md:text-5xl");
+    expect(h).not.toContain("text-3xl");
+    expect(h).not.toContain("md:text-4xl");
+  });
+
+  it.each(SECTION_BLOCKS)("%s: scale chico → text-2xl md:text-3xl", (_name, render) => {
+    const h = h2Tokens(render({ scale: "chico" }));
+    expect(h).toContain("text-2xl");
+    expect(h).toContain("md:text-3xl");
+  });
+
+  it.each(SECTION_BLOCKS)("%s: emphasis fuerte → font-bold, sin font-semibold", (_name, render) => {
+    const h = h2Tokens(render({ emphasis: "fuerte" }));
+    expect(h).toContain("font-bold");
+    expect(h).not.toContain("font-semibold");
+  });
+
+  it.each(SECTION_BLOCKS)("%s: scale y emphasis fuera de set → default", (_name, render) => {
+    const h = h2Tokens(render({ scale: "xl", emphasis: "x" }));
+    expect(h).toContain("text-3xl");
+    expect(h).toContain("md:text-4xl");
+    expect(h).toContain("font-semibold");
   });
 });
 
-describe("tipografía", () => {
-  it("scale chico y grande cambian el tamaño del h2", () => {
-    expect(h2(rich({ scale: "chico" }))).toContain("text-2xl");
-    expect(h2(rich({ scale: "chico" }))).toContain("md:text-3xl");
-    expect(h2(rich({ scale: "grande" }))).toContain("text-4xl");
-    expect(h2(rich({ scale: "grande" }))).toContain("md:text-5xl");
+describe("CTA: escala propia (un paso menor que la sección)", () => {
+  const cta = (x: Record<string, unknown>) =>
+    render(<CTA data={{ headline: "H", button_label: "Ir", button_url: "/x", ...x }} />).container;
+
+  it("default = text-2xl md:text-3xl", () => {
+    const h = h2Tokens(cta({}));
+    expect(h).toContain("text-2xl");
+    expect(h).toContain("md:text-3xl");
   });
 
-  it("emphasis fuerte pasa a font-bold", () => {
-    const c = rich({ emphasis: "fuerte" });
-    expect(h2(c)).toContain("font-bold");
-    expect(h2(c)).not.toContain("font-semibold");
+  it("grande = text-3xl md:text-4xl (tokens exactos)", () => {
+    const h = h2Tokens(cta({ scale: "grande" }));
+    expect(h).toContain("text-3xl");
+    expect(h).toContain("md:text-4xl");
+    expect(h).not.toContain("text-2xl");
   });
 
-  it("Steps respeta scale", () => {
-    const c = render(
-      <Steps data={{ title: "Pasos", steps: [{ heading: "Uno", text: "x" }], scale: "grande" }} />,
-    ).container;
-    expect(h2(c)).toContain("text-4xl");
+  it("chico = text-xl md:text-2xl", () => {
+    const h = h2Tokens(cta({ scale: "chico" }));
+    expect(h).toContain("text-xl");
+    expect(h).toContain("md:text-2xl");
   });
 
-  it("Cards respeta scale chico", () => {
-    const c = render(
-      <Cards data={{ title: "Servicios", cards: [{ heading: "A", text: "x" }], scale: "chico" }} />,
-    ).container;
-    expect(h2(c)).toContain("text-2xl");
-    expect(h2(c)).toContain("md:text-3xl");
+  it("emphasis fuerte → font-bold; fuera de set → default", () => {
+    expect(h2Tokens(cta({ emphasis: "fuerte" }))).toContain("font-bold");
+    const raro = h2Tokens(cta({ scale: "xl", emphasis: "x" }));
+    expect(raro).toContain("md:text-3xl");
+    expect(raro).toContain("font-semibold");
   });
 });
 
 describe("imagen en RichSection", () => {
-  it("aspect 16:9 y 1:1 cambian la proporción de la caja", () => {
-    expect(imgBox(rich({ aspect: "16:9" }))).toContain("aspect-video");
-    expect(imgBox(rich({ aspect: "1:1" }))).toContain("aspect-square");
+  const rich = (x: Record<string, unknown>) =>
+    render(<RichSection data={{ title: "Hola", body: "Cuerpo", image_url: IMG, ...x }} />).container;
+
+  it("default: caja con aspect-[4/5], borde y bg-card; img object-cover sin posición", () => {
+    const c = rich({});
+    expect(imgBoxTokens(c)).toEqual(
+      expect.arrayContaining(["relative", "aspect-[4/5]", "w-full", "overflow-hidden", "rounded-lg", "border", "border-border", "bg-card"]),
+    );
+    expect(imgTokens(c)).toEqual(expect.arrayContaining(["size-full", "object-cover"]));
+    expect(imgTokens(c)).not.toContain("object-top");
   });
 
-  it("frame sin_borde quita el borde y sombra lo reemplaza", () => {
-    const sinBorde = imgBox(rich({ frame: "sin_borde" }));
+  it("aspect 16:9 y 1:1 reemplazan el aspect por defecto", () => {
+    expect(imgBoxTokens(rich({ aspect: "16:9" }))).toContain("aspect-video");
+    expect(imgBoxTokens(rich({ aspect: "16:9" }))).not.toContain("aspect-[4/5]");
+    expect(imgBoxTokens(rich({ aspect: "1:1" }))).toContain("aspect-square");
+  });
+
+  it("frame sin_borde quita el borde; sombra lo reemplaza", () => {
+    const sinBorde = imgBoxTokens(rich({ frame: "sin_borde" }));
     expect(sinBorde).not.toContain("border-border");
-    const sombra = imgBox(rich({ frame: "sombra" }));
+    expect(sinBorde).not.toContain("border");
+    const sombra = imgBoxTokens(rich({ frame: "sombra" }));
     expect(sombra).toContain("shadow-md");
     expect(sombra).not.toContain("border-border");
   });
 
-  it("fit contain y focal arriba/izquierda llegan al <img>", () => {
-    expect(imgClass(rich({ fit: "contain" }))).toContain("object-contain");
-    expect(imgClass(rich({ focal: "arriba" }))).toContain("object-top");
-    expect(imgClass(rich({ focal: "izquierda" }))).toContain("object-left");
+  it("fit contain y focal arriba/abajo/izquierda/derecha llegan al img", () => {
+    expect(imgTokens(rich({ fit: "contain" }))).toContain("object-contain");
+    expect(imgTokens(rich({ focal: "arriba" }))).toContain("object-top");
+    expect(imgTokens(rich({ focal: "abajo" }))).toContain("object-bottom");
+    expect(imgTokens(rich({ focal: "izquierda" }))).toContain("object-left");
+    expect(imgTokens(rich({ focal: "derecha" }))).toContain("object-right");
+  });
+
+  it("fuera de set → default (aspect, frame, fit, focal)", () => {
+    const c = rich({ aspect: "9:16", frame: "raro", fit: "fill", focal: "diagonal" });
+    expect(imgBoxTokens(c)).toContain("aspect-[4/5]");
+    expect(imgBoxTokens(c)).toContain("border-border");
+    expect(imgTokens(c)).toContain("object-cover");
+    expect(imgTokens(c)).not.toContain("object-top");
   });
 });
 
-describe("CTA", () => {
-  it("h2 con escala propia (un paso menor que la sección) y default text-2xl", () => {
-    const base = render(<CTA data={{ headline: "Llamado", button_label: "Ir", button_url: "/x" }} />).container;
-    expect(h2(base)).toContain("text-2xl");
-    expect(h2(base)).toContain("md:text-3xl");
-    const grande = render(
-      <CTA data={{ headline: "Llamado", button_label: "Ir", button_url: "/x", scale: "grande" }} />,
-    ).container;
-    expect(h2(grande)).toContain("text-3xl");
-    expect(h2(grande)).toContain("md:text-4xl");
-  });
-
-  it("style split: default 4:3 y aspect 1:1 en el <img>", () => {
+describe("imagen en CTA", () => {
+  it("split: aspect default 4:3 en el img; aspect 1:1 lo reemplaza; frame sin_borde en el wrapper", () => {
     const base = render(
       <CTA data={{ headline: "H", style: "split", image_url: IMG, button_label: "Ir", button_url: "/x" }} />,
     ).container;
-    expect(imgClass(base)).toContain("aspect-[4/3]");
-    const cuadrado = render(
-      <CTA
-        data={{ headline: "H", style: "split", image_url: IMG, button_label: "Ir", button_url: "/x", aspect: "1:1" }}
-      />,
+    expect(imgTokens(base)).toContain("aspect-[4/3]");
+    expect(imgBoxTokens(base)).toContain("border-border");
+
+    const sq = render(
+      <CTA data={{ headline: "H", style: "split", image_url: IMG, button_label: "Ir", button_url: "/x", aspect: "1:1" }} />,
     ).container;
-    expect(imgClass(cuadrado)).toContain("aspect-square");
+    expect(imgTokens(sq)).toContain("aspect-square");
+    expect(imgTokens(sq)).not.toContain("aspect-[4/3]");
+
+    const sinBorde = render(
+      <CTA data={{ headline: "H", style: "split", image_url: IMG, button_label: "Ir", button_url: "/x", frame: "sin_borde", fit: "contain" }} />,
+    ).container;
+    expect(imgBoxTokens(sinBorde)).not.toContain("border-border");
+    expect(imgTokens(sinBorde)).toContain("object-contain");
+  });
+
+  it("foto (imagen absoluta de fondo): fit y focal aplican; aspect no aplica", () => {
+    const c = render(
+      <CTA data={{ headline: "H", style: "foto", image_url: IMG, button_label: "Ir", button_url: "/x", fit: "contain", focal: "derecha" }} />,
+    ).container;
+    expect(imgTokens(c)).toContain("absolute");
+    expect(imgTokens(c)).toContain("object-contain");
+    expect(imgTokens(c)).toContain("object-right");
   });
 });
 
-describe("Gallery", () => {
-  it("default 4:3 en la caja de cada imagen; aspect 16:9 la cambia; emphasis fuerte en h2", () => {
-    const base = render(
-      <Gallery data={{ title: "Galería", images: [{ url: IMG }, { url: IMG }] }} />,
-    ).container;
-    expect(imgBox(base)).toContain("aspect-[4/3]");
-    const wide = render(
-      <Gallery data={{ title: "Galería", images: [{ url: IMG }], aspect: "16:9", emphasis: "fuerte" }} />,
-    ).container;
-    expect(imgBox(wide)).toContain("aspect-video");
-    expect(h2(wide)).toContain("font-bold");
+describe("imagen en Gallery", () => {
+  const gal = (x: Record<string, unknown>) =>
+    render(<Gallery data={{ title: "Galería", images: [{ url: IMG }], ...x }} />).container;
+
+  it("default 4:3 en la caja; aspect 16:9 la cambia; sombra; fit y focal llegan al img", () => {
+    expect(imgBoxTokens(gal({}))).toContain("aspect-[4/3]");
+    expect(imgBoxTokens(gal({ aspect: "16:9" }))).toContain("aspect-video");
+    expect(imgBoxTokens(gal({ frame: "sombra" }))).toContain("shadow-md");
+    expect(imgTokens(gal({ fit: "contain" }))).toContain("object-contain");
+    expect(imgTokens(gal({ focal: "abajo" }))).toContain("object-bottom");
+  });
+
+  it("fuera de set → default", () => {
+    const c = gal({ aspect: "9:16", frame: "raro", fit: "fill", focal: "diagonal" });
+    expect(imgBoxTokens(c)).toContain("aspect-[4/3]");
+    expect(imgTokens(c)).toContain("object-cover");
   });
 });

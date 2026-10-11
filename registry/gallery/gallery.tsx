@@ -52,9 +52,11 @@ function GalleryFigure({
     <figure className={className ?? "min-w-0"}>
       <div
         className={[
-          "relative w-full overflow-hidden rounded-lg bg-card",
+          "relative",
           imageAspectClass(presentation, DEFAULT_GALLERY_ASPECT),
+          "w-full overflow-hidden rounded-lg",
           imageFrameClass(presentation),
+          "bg-card",
         ]
           .filter(Boolean)
           .join(" ")}

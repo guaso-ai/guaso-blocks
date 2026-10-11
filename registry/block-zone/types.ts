@@ -463,16 +463,18 @@ export function resolveImageFocal(value: unknown): ImageFocal {
     : DEFAULT_IMAGE_FOCAL;
 }
 
-// Clases por valor. El default de cada tabla reproduce la clase fija que tenía el kit.
-const SECTION_HEADING_SIZE: Record<TypoScale, string> = {
-  chico: "text-2xl md:text-3xl",
-  medio: "text-3xl md:text-4xl",
-  grande: "text-4xl md:text-5xl",
+// Clases por valor, partidas en base + md para componer en el mismo orden que el kit previo
+// (el default reproduce la cadena fija de cada h2: mismos tokens, mismo orden).
+type HeadingSize = { base: string; md: string };
+const SECTION_HEADING_SIZE: Record<TypoScale, HeadingSize> = {
+  chico: { base: "text-2xl", md: "md:text-3xl" },
+  medio: { base: "text-3xl", md: "md:text-4xl" },
+  grande: { base: "text-4xl", md: "md:text-5xl" },
 };
-const CTA_HEADING_SIZE: Record<TypoScale, string> = {
-  chico: "text-xl md:text-2xl",
-  medio: "text-2xl md:text-3xl",
-  grande: "text-3xl md:text-4xl",
+const CTA_HEADING_SIZE: Record<TypoScale, HeadingSize> = {
+  chico: { base: "text-xl", md: "md:text-2xl" },
+  medio: { base: "text-2xl", md: "md:text-3xl" },
+  grande: { base: "text-3xl", md: "md:text-4xl" },
 };
 const ASPECT_CLASS: Record<ImageAspect, string> = {
   "4:5": "aspect-[4/5]",
@@ -492,14 +494,14 @@ const FOCAL_CLASS: Record<ImageFocal, string> = {
 export function sectionHeadingClass(props: TypoProps): string {
   const size = SECTION_HEADING_SIZE[resolveTypoScale(props.scale)];
   const weight = resolveTypoEmphasis(props.emphasis) === "fuerte" ? "font-bold" : "font-semibold";
-  return `font-heading ${size} ${weight} tracking-tight text-foreground text-balance`;
+  return `font-heading ${size.base} ${weight} tracking-tight text-foreground text-balance ${size.md}`;
 }
 
 /** Clase del h2 del CTA (escala propia: un paso menor que la sección). */
 export function ctaHeadingClass(props: TypoProps): string {
   const size = CTA_HEADING_SIZE[resolveTypoScale(props.scale)];
   const weight = resolveTypoEmphasis(props.emphasis) === "fuerte" ? "font-bold" : "font-semibold";
-  return `font-heading ${size} ${weight} tracking-tight text-foreground text-balance`;
+  return `font-heading ${size.base} ${weight} tracking-tight text-foreground text-balance ${size.md}`;
 }
 
 /** Clase de proporción de la imagen. `fallback` = default del bloque (4:5 RichSection, 4:3 CTA/Gallery). */

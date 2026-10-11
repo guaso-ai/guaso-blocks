@@ -115,9 +115,11 @@ export default function RichSection({
     hasImage && imageUrl ? (
       <div
         className={[
-          "relative w-full overflow-hidden rounded-lg bg-card",
+          "relative",
           imageAspectClass(data, DEFAULT_RICH_ASPECT),
+          "w-full overflow-hidden rounded-lg",
           imageFrameClass(data),
+          "bg-card",
         ]
           .filter(Boolean)
           .join(" ")}
