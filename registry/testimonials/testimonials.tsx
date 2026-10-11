@@ -1,5 +1,6 @@
 import type { TestimonialItem, TestimonialsData } from "../block-zone/types";
 import {
+  sectionHeadingClass,
   resolveTestimonialRating,
   resolveTestimonialsLayout,
 } from "../block-zone/types";
@@ -115,7 +116,7 @@ export default function Testimonials({
     return (
       <section aria-label={label} className="mx-auto max-w-6xl px-6 py-16 md:py-20">
         {data.title ? (
-          <h2 className="mb-10 font-heading text-3xl font-semibold tracking-tight text-foreground text-balance md:text-4xl">
+          <h2 className={`mb-10 ${sectionHeadingClass(data)}`}>
             {data.title}
           </h2>
         ) : null}
@@ -164,7 +165,7 @@ export default function Testimonials({
     return (
       <section aria-label={label} className="mx-auto max-w-6xl px-6 py-16 md:py-20">
         {data.title ? (
-          <h2 className="mb-10 font-heading text-3xl font-semibold tracking-tight text-foreground text-balance md:text-4xl">
+          <h2 className={`mb-10 ${sectionHeadingClass(data)}`}>
             {data.title}
           </h2>
         ) : null}
@@ -194,7 +195,7 @@ export default function Testimonials({
     return (
       <section aria-label={label} className="mx-auto max-w-6xl px-6 py-16 md:py-20">
         {data.title ? (
-          <h2 className="mb-10 font-heading text-3xl font-semibold tracking-tight text-foreground text-balance md:text-4xl">
+          <h2 className={`mb-10 ${sectionHeadingClass(data)}`}>
             {data.title}
           </h2>
         ) : null}
@@ -216,7 +217,7 @@ export default function Testimonials({
       className="mx-auto max-w-6xl px-6 py-16 md:py-20"
     >
       {data.title ? (
-        <h2 className="mb-10 font-heading text-3xl font-semibold tracking-tight text-foreground text-balance md:text-4xl">
+        <h2 className={`mb-10 ${sectionHeadingClass(data)}`}>
           {data.title}
         </h2>
       ) : null}

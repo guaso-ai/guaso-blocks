@@ -1,9 +1,14 @@
 import ReactMarkdown from "react-markdown";
 import type { RichSectionData } from "../block-zone/types";
 import {
+  DEFAULT_RICH_ASPECT,
+  imageAspectClass,
+  imageFitClass,
+  imageFrameClass,
   resolveRichImageSide,
   resolveRichMode,
   safeHref,
+  sectionHeadingClass,
 } from "../block-zone/types";
 
 type RichSectionProps = {
@@ -58,7 +63,7 @@ export default function RichSection({
         .join(" ")}
     >
       {data.title ? (
-        <h2 className="font-heading text-3xl font-semibold tracking-tight text-foreground text-balance md:text-4xl">
+        <h2 className={sectionHeadingClass(data)}>
           {data.title}
         </h2>
       ) : null}
@@ -108,7 +113,15 @@ export default function RichSection({
 
   const image =
     hasImage && imageUrl ? (
-      <div className="relative aspect-[4/5] w-full overflow-hidden rounded-lg border border-border bg-card">
+      <div
+        className={[
+          "relative w-full overflow-hidden rounded-lg bg-card",
+          imageAspectClass(data, DEFAULT_RICH_ASPECT),
+          imageFrameClass(data),
+        ]
+          .filter(Boolean)
+          .join(" ")}
+      >
         <img
           src={imageUrl}
           alt={data.title ? `Imagen: ${data.title}` : "Imagen de la sección"}
@@ -116,7 +129,7 @@ export default function RichSection({
           height={1000}
           loading="lazy"
           decoding="async"
-          className="size-full object-cover"
+          className={["size-full", imageFitClass(data)].join(" ")}
         />
       </div>
     ) : null;

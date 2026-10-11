@@ -1,5 +1,6 @@
-import type { CardsData } from "../block-zone/types";
+import type { CardsData, TypoProps } from "../block-zone/types";
 import {
+  sectionHeadingClass,
   resolveCardsColumns,
   resolveCardsStyle,
   safeHref,
@@ -28,15 +29,17 @@ function CardsPlaceholder() {
 function CardsHeader({
   title,
   subtitle,
+  typo,
 }: {
   title?: string;
   subtitle?: string;
+  typo: TypoProps;
 }) {
   if (!title && !subtitle) return null;
   return (
     <div className="mb-10 flex flex-col gap-3">
       {title ? (
-        <h2 className="font-heading text-3xl font-semibold tracking-tight text-foreground text-balance md:text-4xl">
+        <h2 className={sectionHeadingClass(typo)}>
           {title}
         </h2>
       ) : null}
@@ -73,7 +76,7 @@ export default function Cards({ data, isOwner = false }: CardsProps) {
         aria-label={data.title ?? "Tarjetas de contenido"}
         className="mx-auto max-w-6xl px-6 py-16 md:py-20"
       >
-        <CardsHeader title={data.title} subtitle={data.subtitle} />
+        <CardsHeader title={data.title} subtitle={data.subtitle} typo={data} />
 
         <div className="divide-y divide-border">
           {cards.map((card, i) => {
@@ -114,7 +117,7 @@ export default function Cards({ data, isOwner = false }: CardsProps) {
       aria-label={data.title ?? "Tarjetas de contenido"}
       className="mx-auto max-w-6xl px-6 py-16 md:py-20"
     >
-      <CardsHeader title={data.title} subtitle={data.subtitle} />
+      <CardsHeader title={data.title} subtitle={data.subtitle} typo={data} />
 
       <div className={COLUMNS_CLASS[columns]}>
         {cards.map((card, i) => {
