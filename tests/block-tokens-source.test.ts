@@ -1,9 +1,11 @@
 /**
  * #4416 — contrato de tokens de forma de bloque en el kit.
  *
- * Guard de fuente (sin render): ningún bloque de `registry/` escribe un valor de radio
- * fijo de Tailwind; todo pasa por el helper único `BLOCK_RADIUS_CLASS` (types.ts), que
- * lee `var(--block-radius, <fallback>)`. Un bloque nuevo que escriba `rounded-lg` rojea acá.
+ * Guard de fuente (sin render). Radio: cards/secciones/imágenes leen el tier
+ * `--block-radius-redondeado` del canónico block-form-tokens (#4422) con fallback 0.5rem.
+ * Botones, gondola y bullet van con su valor literal de hoy (#4422 no tiene token por rol):
+ * lista auditable `PENDING_LITERAL_RADIUS`. Ningún bloque escribe un radio literal fuera de
+ * esa lista ni consume el `--block-radius` global (lo define :root y pisaría los defaults).
  */
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join, dirname } from "node:path";
@@ -32,30 +34,60 @@ function sourceFiles(dir: string): string[] {
   });
 }
 
-// Radio Tailwind fijo: rounded | rounded-{sm,md,lg,xl,2xl,3xl}. `rounded-full` (círculo) y
-// `rounded-[var(…)]` quedan fuera del patrón.
-const LITERAL_RADIUS = /(?<![\w-])rounded(?:-(?:sm|md|lg|xl|2xl|3xl))?(?=[\s"'`])/;
+// Radio literal: rounded | rounded-{sm,md,lg,xl,2xl,3xl} | rounded-[valor] sin var().
+// `rounded-full` (círculo) y `rounded-[var(…)]` quedan fuera del patrón.
+const LITERAL_RADIUS = /(?<![\w-])rounded(?:-(?:sm|md|lg|xl|2xl|3xl)|-\[[^\]]*\])?(?=[\s"'`])/;
 
-describe("#4416 A3-a: radio de bloque vía var(--block-radius)", () => {
-  it("helper: lee --block-radius con fallback = rounded-lg de hoy (0.5rem)", () => {
-    expect(BLOCK_RADIUS_CLASS).toBe("rounded-[var(--block-radius,0.5rem)]");
+// Radio literal permitido: solo los tiers SIN token canónico (#4422) y con el valor que el kit
+// renderiza hoy. Cada entrada se quita al extender #4422 con su --block-radius-<rol> y migrar.
+const PENDING_LITERAL_RADIUS: ReadonlyArray<readonly [string, string]> = [
+  ["block-zone/types.ts", 'export const BLOCK_RADIUS_BUTTON_CLASS = "rounded-[0.375rem]";'],
+  ["block-zone/types.ts", 'export const BLOCK_RADIUS_PRODUCT_CLASS = "rounded-[1rem]";'],
+  ["block-zone/types.ts", 'export const BLOCK_RADIUS_THUMB_CLASS = "rounded-[0.75rem]";'],
+  ["rich-section/rich-section.tsx", "[&_li]:before:rounded-[0.125rem]"],
+];
+
+function radiusOffenders(): string[] {
+  const offenders: string[] = [];
+  for (const file of sourceFiles(REGISTRY)) {
+    const rel = file.slice(REGISTRY.length + 1);
+    readFileSync(file, "utf-8").split("\n").forEach((text: string, i: number) => {
+      if (!LITERAL_RADIUS.test(text) || text.includes("var(")) return;
+      if (PENDING_LITERAL_RADIUS.some(([f, line]) => rel === f && text.includes(line))) return;
+      offenders.push(`${rel}:${i + 1}: ${text.trim()}`);
+    });
+  }
+  return offenders;
+}
+
+describe("#4416 A3-a: radio de bloque vía tiers del canónico block-form-tokens (#4422)", () => {
+  it("cards/secciones/imágenes: --block-radius-redondeado con fallback 0.5rem (rounded-lg de hoy)", () => {
+    expect(BLOCK_RADIUS_CLASS).toBe("rounded-[var(--block-radius-redondeado,0.5rem)]");
   });
 
-  // Cada tier conserva el radio Tailwind que el kit renderiza hoy (v3 de los templates:
-  // md 0.375rem, lg 0.5rem, xl 0.75rem, 2xl 1rem). Un tier nuevo sin fallback propio rojea acá.
+  // Sin token por rol en #4422: valor literal de hoy (Tailwind v3 de los templates = v4 en estos tres).
   it.each([
-    ["BLOCK_RADIUS_CLASS (cards/secciones, rounded-lg)", BLOCK_RADIUS_CLASS, "0.5rem"],
-    ["BLOCK_RADIUS_BUTTON_CLASS (botones, rounded-md)", BLOCK_RADIUS_BUTTON_CLASS, "0.375rem"],
-    ["BLOCK_RADIUS_PRODUCT_CLASS (gondola producto, rounded-2xl)", BLOCK_RADIUS_PRODUCT_CLASS, "1rem"],
-    ["BLOCK_RADIUS_THUMB_CLASS (gondola miniatura, rounded-xl)", BLOCK_RADIUS_THUMB_CLASS, "0.75rem"],
-  ])("%s conserva su fallback de hoy", (_name, cls, fallback) => {
-    expect(cls).toBe(`rounded-[var(--block-radius,${fallback})]`);
+    ["BLOCK_RADIUS_BUTTON_CLASS (botones, 0.375rem)", BLOCK_RADIUS_BUTTON_CLASS, "rounded-[0.375rem]"],
+    ["BLOCK_RADIUS_PRODUCT_CLASS (gondola producto, 1rem)", BLOCK_RADIUS_PRODUCT_CLASS, "rounded-[1rem]"],
+    ["BLOCK_RADIUS_THUMB_CLASS (gondola miniatura, 0.75rem)", BLOCK_RADIUS_THUMB_CLASS, "rounded-[0.75rem]"],
+  ])("%s: literal sin var(), pendiente de extender #4422 por rol", (_name, cls, expected) => {
+    expect(cls).toBe(expected);
   });
 
-  it("RichSection bullet: fallback 0.125rem (rounded-sm v3), no el radio de card", () => {
-    expect(read("rich-section/rich-section.tsx")).toContain(
-      "[&_li]:before:rounded-[var(--block-radius,0.125rem)]",
-    );
+  it("RichSection bullet: literal 0.125rem sin var(), pendiente de extender #4422 por rol", () => {
+    expect(read("rich-section/rich-section.tsx")).toContain("[&_li]:before:rounded-[0.125rem]");
+  });
+
+  it("consume solo tiers del canónico: nunca el --block-radius global ni tokens inventados", () => {
+    const TIERS = ["-recto", "-suave", "-redondeado"];
+    const consumed = new Set<string>();
+    for (const file of sourceFiles(REGISTRY)) {
+      for (const m of readFileSync(file, "utf-8").matchAll(/var\(--block-radius([-\w]*)/g)) {
+        consumed.add(m[1]);
+      }
+    }
+    expect([...consumed].filter((tier) => !TIERS.includes(tier))).toEqual([]);
+    expect(consumed.has("-redondeado")).toBe(true);
   });
 
   it("consumidores: cta/rich-section botón usan el tier de botón; gondola usa tiers de producto", () => {
@@ -67,17 +99,8 @@ describe("#4416 A3-a: radio de bloque vía var(--block-radius)", () => {
     expect(detail).toContain("${BLOCK_RADIUS_THUMB_CLASS} bg-card");
   });
 
-  it("ningún archivo de registry/ escribe un radio Tailwind literal sin var()", () => {
-    const offenders: string[] = [];
-    for (const file of sourceFiles(REGISTRY)) {
-      const lines = readFileSync(file, "utf-8").split("\n");
-      lines.forEach((text: string, i: number) => {
-        if (LITERAL_RADIUS.test(text) && !text.includes("var(")) {
-          offenders.push(`${file}:${i + 1}: ${text.trim()}`);
-        }
-      });
-    }
-    expect(offenders).toEqual([]);
+  it("ningún radio literal en registry/ fuera de la lista pendiente (PENDING_LITERAL_RADIUS)", () => {
+    expect(radiusOffenders()).toEqual([]);
   });
 
   it("helpers de raíz: contenedor, padding y narrow leen var() con fallback del look actual", () => {

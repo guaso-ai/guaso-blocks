@@ -84,7 +84,7 @@ export default function RichSection({
                   "[&_ol]:list-decimal [&_ol]:pl-5",
                   "[&_li]:relative [&_li]:pl-7",
                   "[&_li]:before:absolute [&_li]:before:left-0 [&_li]:before:top-1.5",
-                  "[&_li]:before:size-4 [&_li]:before:rounded-[var(--block-radius,0.125rem)]",
+                  "[&_li]:before:size-4 [&_li]:before:rounded-[0.125rem]",
                   "[&_li]:before:border [&_li]:before:border-primary",
                   "[&_li]:before:bg-primary [&_li]:before:content-['']",
                 ].join(" ")
