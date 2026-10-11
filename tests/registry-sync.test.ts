@@ -22,6 +22,8 @@ type RegistryItem = {
   type?: string;
   title?: string;
   description?: string;
+  dependencies?: string[];
+  registryDependencies?: string[];
   files: RegistryFile[];
 };
 type PublishedFile = { path: string; type?: string; target?: string; content: string };
@@ -30,6 +32,8 @@ type PublishedItem = {
   type?: string;
   title?: string;
   description?: string;
+  dependencies?: string[];
+  registryDependencies?: string[];
   files: PublishedFile[];
 };
 
@@ -54,7 +58,10 @@ describe("r/*.json en sincronía con registry.json", () => {
       const published = readJson<PublishedItem>(file);
       expect(published.title ?? "").toBe(item.title ?? "");
       expect(published.description ?? "").toBe(item.description ?? "");
+      expect(published.name).toBe(name);
       expect(published.type ?? "").toBe(item.type ?? "");
+      expect(published.dependencies ?? []).toEqual(item.dependencies ?? []);
+      expect(published.registryDependencies ?? []).toEqual(item.registryDependencies ?? []);
       expect(
         published.files.map(({ path, type, target }) => ({ path, type, target })),
       ).toEqual(item.files.map(({ path, type, target }) => ({ path, type, target })));
