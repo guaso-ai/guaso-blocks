@@ -203,3 +203,58 @@ describe("imagen en Gallery", () => {
     expect(imgTokens(c)).toContain("object-cover");
   });
 });
+
+// Defaults = clases originales del kit (1714bc8): igualdad exacta de tokens y orden.
+const H_SECTION = "font-heading text-3xl font-semibold tracking-tight text-foreground text-balance md:text-4xl".split(" ");
+const H_CTA = "font-heading text-2xl font-semibold tracking-tight text-foreground text-balance md:text-3xl".split(" ");
+
+describe("defaults = clases originales (igualdad exacta)", () => {
+  it.each([
+    ["RichSection", (x: Record<string, unknown>) => render(<RichSection data={{ title: "T", body: "b", ...x }} />).container, H_SECTION],
+    ["Gallery", (x: Record<string, unknown>) => render(<Gallery data={{ title: "T", images: [{ url: IMG }], ...x }} />).container, ["mb-10", ...H_SECTION]],
+    ["Cards", (x: Record<string, unknown>) => render(<Cards data={{ title: "T", cards: [{ heading: "A", text: "x" }], ...x }} />).container, H_SECTION],
+    ["Testimonials", (x: Record<string, unknown>) => render(<Testimonials data={{ title: "T", items: [{ author: "A", quote: "q" }], ...x }} />).container, ["mb-10", ...H_SECTION]],
+    ["FAQ", (x: Record<string, unknown>) => render(<FAQ data={{ title: "T", questions: [{ question: "q", answer: "a" }], ...x }} />).container, ["mb-8", ...H_SECTION]],
+    ["Stats", (x: Record<string, unknown>) => render(<Stats data={{ title: "T", metrics: [{ value: "1", label: "l" }], ...x }} />).container, H_SECTION],
+    ["Steps", (x: Record<string, unknown>) => render(<Steps data={{ title: "T", steps: [{ heading: "A", text: "x" }], ...x }} />).container, H_SECTION],
+  ])("%s: h2 default exacto", (_name, mk, expected) => {
+    expect(h2Tokens(mk({}))).toEqual(expected);
+  });
+
+  it("CTA: h2 default exacto", () => {
+    const c = render(<CTA data={{ headline: "H", button_label: "Ir", button_url: "/x" }} />).container;
+    expect(h2Tokens(c)).toEqual(H_CTA);
+  });
+
+  it("RichSection: caja e img default exactas", () => {
+    const c = render(<RichSection data={{ title: "Hola", body: "Cuerpo", image_url: IMG }} />).container;
+    expect(imgBoxTokens(c)).toEqual("relative aspect-[4/5] w-full overflow-hidden rounded-lg border border-border bg-card".split(" "));
+    expect(imgTokens(c)).toEqual("size-full object-cover".split(" "));
+  });
+
+  it("Gallery: caja e img default exactas", () => {
+    const c = render(<Gallery data={{ title: "G", images: [{ url: IMG }] }} />).container;
+    expect(imgBoxTokens(c)).toEqual("relative aspect-[4/3] w-full overflow-hidden rounded-lg border border-border bg-card".split(" "));
+    expect(imgTokens(c)).toEqual("size-full object-cover".split(" "));
+  });
+
+  it("CTA split: wrapper e img default exactos", () => {
+    const c = render(
+      <CTA data={{ headline: "H", style: "split", image_url: IMG, button_label: "Ir", button_url: "/x" }} />,
+    ).container;
+    expect(imgBoxTokens(c)).toEqual("overflow-hidden rounded-lg border border-border bg-card".split(" "));
+    expect(imgTokens(c)).toEqual("aspect-[4/3] size-full object-cover".split(" "));
+  });
+});
+
+describe("CTA imagen fuera de set → default", () => {
+  it("aspect, frame, fit y focal inválidos caen al default del bloque", () => {
+    const c = render(
+      <CTA data={{ headline: "H", style: "split", image_url: IMG, button_label: "Ir", button_url: "/x", aspect: "9:16", frame: "raro", fit: "fill", focal: "diagonal" }} />,
+    ).container;
+    expect(imgTokens(c)).toContain("aspect-[4/3]");
+    expect(imgBoxTokens(c)).toContain("border-border");
+    expect(imgTokens(c)).toContain("object-cover");
+    expect(imgTokens(c)).not.toContain("object-top");
+  });
+});
