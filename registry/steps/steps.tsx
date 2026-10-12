@@ -45,7 +45,7 @@ export default function Steps({ data, isOwner = false }: StepsProps) {
         </h2>
       ) : null}
       {filled(data.intro) ? (
-        <p className="mt-3 max-w-2xl text-base leading-relaxed text-muted-foreground break-words">
+        <p className="mt-3 max-w-[var(--block-narrow,42rem)] text-base leading-relaxed text-muted-foreground break-words">
           {data.intro}
         </p>
       ) : null}

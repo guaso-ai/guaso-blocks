@@ -3,9 +3,9 @@
  *
  * Guard de fuente (sin render). Radio: cards/secciones/imágenes leen el tier
  * `--block-radius-redondeado` del canónico block-form-tokens (#4422) con fallback 0.5rem.
- * Botones, gondola y bullet van con su valor literal de hoy (#4422 no tiene token por rol):
- * lista auditable `PENDING_LITERAL_RADIUS`. Ningún bloque escribe un radio literal fuera de
- * esa lista ni consume el `--block-radius` global (lo define :root y pisaría los defaults).
+ * Botones, gondola y bullet también usan un tier (suave|redondeado) con el literal de hoy como fallback (#4404):
+ * `PENDING_LITERAL_RADIUS` está vacía. Ningún bloque escribe un radio literal ni consume
+ * el `--block-radius` global (lo define :root y pisaría los defaults).
  */
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join, dirname } from "node:path";
@@ -38,14 +38,8 @@ function sourceFiles(dir: string): string[] {
 // `rounded-full` (círculo) y `rounded-[var(…)]` quedan fuera del patrón.
 const LITERAL_RADIUS = /(?<![\w-])rounded(?:-(?:sm|md|lg|xl|2xl|3xl)|-\[[^\]]*\])?(?=[\s"'`])/;
 
-// Radio literal permitido: solo los tiers SIN token canónico (#4422) y con el valor que el kit
-// renderiza hoy. Cada entrada se quita al extender #4422 con su --block-radius-<rol> y migrar.
-const PENDING_LITERAL_RADIUS: ReadonlyArray<readonly [string, string]> = [
-  ["block-zone/types.ts", 'export const BLOCK_RADIUS_BUTTON_CLASS = "rounded-[0.375rem]";'],
-  ["block-zone/types.ts", 'export const BLOCK_RADIUS_PRODUCT_CLASS = "rounded-[1rem]";'],
-  ["block-zone/types.ts", 'export const BLOCK_RADIUS_THUMB_CLASS = "rounded-[0.75rem]";'],
-  ["rich-section/rich-section.tsx", "[&_li]:before:rounded-[0.125rem]"],
-];
+// Radio literal permitido (#4404): ninguno. Todo radio del kit sale de un tier del canónico.
+const PENDING_LITERAL_RADIUS: ReadonlyArray<readonly [string, string]> = [];
 
 function radiusOffenders(): string[] {
   const offenders: string[] = [];
@@ -65,17 +59,27 @@ describe("#4416 A3-a: radio de bloque vía tiers del canónico block-form-tokens
     expect(BLOCK_RADIUS_CLASS).toBe("rounded-[var(--block-radius-redondeado,0.5rem)]");
   });
 
-  // Sin token por rol en #4422: valor literal de hoy (Tailwind v3 de los templates = v4 en estos tres).
+  // #4404: cada rol usa un tier del canónico y conserva como fallback el literal de hoy.
   it.each([
-    ["BLOCK_RADIUS_BUTTON_CLASS (botones, 0.375rem)", BLOCK_RADIUS_BUTTON_CLASS, "rounded-[0.375rem]"],
-    ["BLOCK_RADIUS_PRODUCT_CLASS (gondola producto, 1rem)", BLOCK_RADIUS_PRODUCT_CLASS, "rounded-[1rem]"],
-    ["BLOCK_RADIUS_THUMB_CLASS (gondola miniatura, 0.75rem)", BLOCK_RADIUS_THUMB_CLASS, "rounded-[0.75rem]"],
-  ])("%s: literal sin var(), pendiente de extender #4422 por rol", (_name, cls, expected) => {
+    ["BLOCK_RADIUS_BUTTON_CLASS (botones, suave, 0.375rem)", BLOCK_RADIUS_BUTTON_CLASS, "rounded-[var(--block-radius-suave,0.375rem)]"],
+    ["BLOCK_RADIUS_PRODUCT_CLASS (gondola producto, redondeado, 1rem)", BLOCK_RADIUS_PRODUCT_CLASS, "rounded-[var(--block-radius-redondeado,1rem)]"],
+    ["BLOCK_RADIUS_THUMB_CLASS (gondola miniatura, redondeado, 0.75rem)", BLOCK_RADIUS_THUMB_CLASS, "rounded-[var(--block-radius-redondeado,0.75rem)]"],
+  ])("%s", (_name, cls, expected) => {
     expect(cls).toBe(expected);
   });
 
-  it("RichSection bullet: literal 0.125rem sin var(), pendiente de extender #4422 por rol", () => {
-    expect(read("rich-section/rich-section.tsx")).toContain("[&_li]:before:rounded-[0.125rem]");
+  it("RichSection bullet: tier suave con fallback 0.125rem", () => {
+    expect(read("rich-section/rich-section.tsx")).toContain("[&_li]:before:rounded-[var(--block-radius-suave,0.125rem)]");
+  });
+
+  it("max-w del kit: sin max-w-2xl/7xl literal (cards/stats/steps usan --block-narrow, product-detail --block-container)", () => {
+    for (const f of ["cards/cards.tsx", "stats/stats.tsx", "steps/steps.tsx"]) {
+      expect(read(f)).not.toMatch(/max-w-2xl/);
+      expect(read(f)).toContain("max-w-[var(--block-narrow,42rem)]");
+    }
+    const detail = read("gondola/product-detail.tsx");
+    expect(detail).not.toMatch(/max-w-7xl/);
+    expect(detail).toContain("max-w-[var(--block-container,80rem)]");
   });
 
   it("consume solo tiers del canónico: nunca el --block-radius global ni tokens inventados", () => {
@@ -99,7 +103,7 @@ describe("#4416 A3-a: radio de bloque vía tiers del canónico block-form-tokens
     expect(detail).toContain("${BLOCK_RADIUS_THUMB_CLASS} bg-card");
   });
 
-  it("ningún radio literal en registry/ fuera de la lista pendiente (PENDING_LITERAL_RADIUS)", () => {
+  it("ningún radio literal en registry/ (PENDING_LITERAL_RADIUS vacía)", () => {
     expect(radiusOffenders()).toEqual([]);
   });
 
