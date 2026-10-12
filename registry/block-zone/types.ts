@@ -463,18 +463,15 @@ export function resolveImageFocal(value: unknown): ImageFocal {
     : DEFAULT_IMAGE_FOCAL;
 }
 
-// Tokens de forma de bloque (#4416). Strings completas: Tailwind JIT no interpola.
-// Cards/secciones/imágenes consumen el tier de radio del canónico block-form-tokens (#4422):
-// `--block-radius-redondeado` (= var(--radius) del template), fallback 0.5rem (rounded-lg de hoy).
-// ⛔ No se consume el `--block-radius` global: el canónico lo define en :root y pisaría los
-// defaults por bloque. Botones, gondola y bullet NO tienen token por tier en #4422: van con su
-// valor literal de hoy (sin var). Pendiente: extender #4422 con --block-radius-boton,
-// --block-radius-producto, --block-radius-miniatura y --block-radius-bullet, y migrar acá.
-// Un consumidor sin el canónico en su :root renderiza igual que antes (fallback / literal).
+// Tokens de forma de bloque (#4416, #4404). Strings completas: Tailwind JIT no interpola.
+// Todo radio sale de un tier del canónico block-form-tokens (#4422): `--block-radius-redondeado`
+// (= var(--radius) del template) y `--block-radius-suave` (= la mitad). Cada rol conserva como fallback
+// el valor literal de hoy, así que un consumidor sin el canónico en su :root renderiza igual que antes.
+// ⛔ No se consume el `--block-radius` global: el canónico lo define en :root y pisaría los defaults por bloque.
 export const BLOCK_RADIUS_CLASS = "rounded-[var(--block-radius-redondeado,0.5rem)]";
-export const BLOCK_RADIUS_BUTTON_CLASS = "rounded-[0.375rem]";
-export const BLOCK_RADIUS_PRODUCT_CLASS = "rounded-[1rem]";
-export const BLOCK_RADIUS_THUMB_CLASS = "rounded-[0.75rem]";
+export const BLOCK_RADIUS_BUTTON_CLASS = "rounded-[var(--block-radius-suave,0.375rem)]";
+export const BLOCK_RADIUS_PRODUCT_CLASS = "rounded-[var(--block-radius-redondeado,1rem)]";
+export const BLOCK_RADIUS_THUMB_CLASS = "rounded-[var(--block-radius-redondeado,0.75rem)]";
 export const SECTION_PY_CLASS = "py-[var(--block-space-y,4rem)] md:py-[var(--block-space-y-md,5rem)]";
 export const SECTION_PX_CLASS = "px-[var(--block-space-x,1.5rem)]";
 export const SECTION_CONTAINER_CLASS = "max-w-[var(--block-container,72rem)]";

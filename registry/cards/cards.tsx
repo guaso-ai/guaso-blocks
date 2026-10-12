@@ -46,7 +46,7 @@ function CardsHeader({
         </h2>
       ) : null}
       {subtitle ? (
-        <p className="max-w-2xl text-base leading-relaxed text-muted-foreground break-words">
+        <p className="max-w-[var(--block-narrow,42rem)] text-base leading-relaxed text-muted-foreground break-words">
           {subtitle}
         </p>
       ) : null}

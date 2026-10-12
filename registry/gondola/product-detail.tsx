@@ -43,7 +43,7 @@ export function ProductDetail({
   const current = images[Math.min(selected, images.length - 1)] ?? cover;
 
   return (
-    <section className={`mx-auto max-w-7xl ${SECTION_PX_CLASS} ${SECTION_PY_CLASS}`}>
+    <section className={`mx-auto max-w-[var(--block-container,80rem)] ${SECTION_PX_CLASS} ${SECTION_PY_CLASS}`}>
       <nav className="flex items-center gap-1.5 text-sm text-muted-foreground">
         {storeNav ? (
           <Link href="/store" className="text-muted-foreground">
