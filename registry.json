@@ -45,7 +45,7 @@
       "name": "rich-section",
       "type": "registry:component",
       "title": "RichSection",
-      "description": "Canonical RichSection block — tokenized baseline. Variants: image_side left|right (default right); mode split|centrado|checklist (default split).",
+      "description": "Canonical RichSection block — tokenized baseline. Variants: image_side left|right (default right); mode split|centrado|checklist (default split); fondo normal|completo (default normal; completo = full-bleed con imagen o video_url de fondo + overlay).",
       "dependencies": ["react-markdown"],
       "registryDependencies": ["@guaso/block-zone"],
       "files": [
@@ -53,6 +53,11 @@
           "path": "registry/rich-section/rich-section.tsx",
           "type": "registry:component",
           "target": "@components/rich-section/rich-section.tsx"
+        },
+        {
+          "path": "registry/rich-section/hero-fondo-video.tsx",
+          "type": "registry:component",
+          "target": "@components/rich-section/hero-fondo-video.tsx"
         }
       ]
     },

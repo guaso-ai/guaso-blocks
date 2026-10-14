@@ -5,14 +5,17 @@ import {
   imageAspectClass,
   imageFitClass,
   imageFrameClass,
+  resolveRichFondo,
   resolveRichImageSide,
   resolveRichMode,
+  resolveRichVideoUrl,
   safeHref,
   sectionHeadingClass,
   BLOCK_RADIUS_BUTTON_CLASS,
   BLOCK_RADIUS_CLASS,
   SECTION_ROOT_CLASS,
 } from "../block-zone/types";
+import HeroFondoVideo from "./hero-fondo-video";
 
 type RichSectionProps = {
   data: RichSectionData;
@@ -54,19 +57,30 @@ export default function RichSection({
       ? data.image_url.trim()
       : undefined;
   const hasImage = Boolean(imageUrl);
+  // Fondo completo (#4567): solo con media de fondo (imagen o video). Sin media → render normal.
+  const videoUrl = resolveRichVideoUrl(data.video_url);
+  const isHero =
+    resolveRichFondo(data.fondo) === "completo" && (hasImage || Boolean(videoUrl));
   const splitLayout = hasImage && !isCenteredMode;
+  // En hero el texto va sobre el overlay: centrado por `align`, aunque haya imagen.
+  const textCentered = isCenter && (!hasImage || isHero);
+
+  // Tokens del cuerpo: default byte-idénticos a hoy; hero = tono inverso sobre el overlay.
+  const bodyToneClass = isHero
+    ? "max-w-none text-base leading-relaxed text-background break-words [&_a]:text-background [&_a]:underline [&_a]:underline-offset-4 [&_a:hover]:opacity-80 [&_strong]:font-semibold [&_strong]:text-background [&_h3]:font-heading [&_h3]:font-semibold [&_h3]:text-background"
+    : "max-w-none text-base leading-relaxed text-muted-foreground break-words [&_a]:text-primary [&_a]:underline [&_a]:underline-offset-4 [&_a:hover]:opacity-80 [&_strong]:font-semibold [&_strong]:text-foreground [&_h3]:font-heading [&_h3]:font-semibold [&_h3]:text-foreground";
 
   const text = (
     <div
       className={[
         "flex min-w-0 flex-col gap-6",
-        isCenter && !hasImage ? "items-center text-center" : "",
+        textCentered ? "items-center text-center" : "",
       ]
         .filter(Boolean)
         .join(" ")}
     >
       {data.title ? (
-        <h2 className={sectionHeadingClass(data)}>
+        <h2 className={sectionHeadingClass(data, isHero ? "inverse" : "default")}>
           {data.title}
         </h2>
       ) : null}
@@ -74,10 +88,7 @@ export default function RichSection({
       {data.body ? (
         <div
           className={[
-            "max-w-none text-base leading-relaxed text-muted-foreground break-words",
-            "[&_a]:text-primary [&_a]:underline [&_a]:underline-offset-4 [&_a:hover]:opacity-80",
-            "[&_strong]:font-semibold [&_strong]:text-foreground",
-            "[&_h3]:font-heading [&_h3]:font-semibold [&_h3]:text-foreground",
+            bodyToneClass,
             isChecklist
               ? [
                   "[&_ul]:list-none [&_ul]:space-y-3 [&_ul]:pl-0",
@@ -88,9 +99,11 @@ export default function RichSection({
                   "[&_li]:before:border [&_li]:before:border-primary",
                   "[&_li]:before:bg-primary [&_li]:before:content-['']",
                 ].join(" ")
-              : "[&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_li]:marker:text-primary",
+              : isHero
+                ? "[&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_li]:marker:text-background"
+                : "[&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_li]:marker:text-primary",
             "[&_blockquote]:border-l-2 [&_blockquote]:border-border [&_blockquote]:pl-4 [&_blockquote]:italic",
-            isCenter && !hasImage ? "mx-auto" : "",
+            textCentered ? "mx-auto" : "",
           ]
             .filter(Boolean)
             .join(" ")}
@@ -101,11 +114,15 @@ export default function RichSection({
 
       {ctaHref && data.cta_label ? (
         <div
-          className={isCenter && !hasImage ? "flex justify-center" : undefined}
+          className={textCentered ? "flex justify-center" : undefined}
         >
           <a
             href={ctaHref}
-            className={`inline-flex items-center justify-center ${BLOCK_RADIUS_BUTTON_CLASS} border border-primary bg-transparent px-6 py-3 text-sm font-medium text-primary transition-colors duration-200 hover:bg-primary hover:text-primary-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary motion-reduce:transition-none`}
+            className={
+              isHero
+                ? `inline-flex items-center justify-center ${BLOCK_RADIUS_BUTTON_CLASS} border border-background bg-transparent px-6 py-3 text-sm font-medium text-background transition-colors duration-200 hover:bg-background hover:text-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-background motion-reduce:transition-none`
+                : `inline-flex items-center justify-center ${BLOCK_RADIUS_BUTTON_CLASS} border border-primary bg-transparent px-6 py-3 text-sm font-medium text-primary transition-colors duration-200 hover:bg-primary hover:text-primary-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary motion-reduce:transition-none`
+            }
           >
             {data.cta_label}
           </a>
@@ -113,6 +130,18 @@ export default function RichSection({
       ) : null}
     </div>
   );
+
+  if (isHero) {
+    return (
+      <HeroFondoVideo
+        label={data.title ?? "Sección de contenido"}
+        imageUrl={imageUrl}
+        videoUrl={videoUrl}
+      >
+        {text}
+      </HeroFondoVideo>
+    );
+  }
 
   const image =
     hasImage && imageUrl ? (
