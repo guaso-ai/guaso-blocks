@@ -14,6 +14,9 @@ type HeroFondoVideoProps = {
  * controles, muted/loop) y overlay fijo `bg-foreground/60`. El texto va en `children` con tono
  * inverso (`text-background`) para mantener AA sobre el overlay.
  * Fallback: sin video, o video que no carga, o reduce-motion → queda la imagen de fondo.
+ * Solo video (sin imagen): la raíz lleva `bg-foreground` como base sólida; con reduce-motion o
+ * video caído queda el overlay sobre ese color (texto inverso sigue en AA), no sobre el fondo
+ * de página. Con imagen, la imagen cubre el 100% y esa base no se ve.
  * El caller solo lo usa si hay al menos imagen o video (sin media → render normal).
  */
 export default function HeroFondoVideo({
@@ -27,7 +30,7 @@ export default function HeroFondoVideo({
     : false;
 
   return (
-    <section aria-label={label} className="relative w-full overflow-hidden">
+    <section aria-label={label} className="relative w-full overflow-hidden bg-foreground">
       {imageUrl ? (
         <img
           src={imageUrl}

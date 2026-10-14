@@ -116,6 +116,16 @@ describe("RichSection fondo (#4567)", () => {
       expect(c.querySelector("img")).toBeNull();
       expect(overlayOf(c)).not.toBeNull();
     });
+
+    it("solo video (sin imagen) → la raíz tiene base sólida bg-foreground bajo el overlay (reduce-motion o video caído no deja el fondo de página)", () => {
+      const c = render(
+        <RichSection data={{ ...base, fondo: "completo", video_url: MP4 }} />,
+      ).container;
+      const root = c.querySelector("section") as HTMLElement;
+      // Token exacto (no `bg-foreground/60`): la base es sólida, el overlay sigue encima.
+      expect(root.classList.contains("bg-foreground")).toBe(true);
+      expect(overlayOf(c)).not.toBeNull();
+    });
   });
 
   describe("tipografía y alineación sobre el overlay", () => {
