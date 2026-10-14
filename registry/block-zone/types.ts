@@ -432,7 +432,7 @@ export function safeHref(url?: string): string | undefined {
 // en RichSection, CTA y Gallery. Fuera de closed-set → default, nunca explota.
 // Escala de los 8 canónicos (SoT PY `PRESENTATION_TYPO_CLOSESETS`, 3 valores).
 export type TypoScale = "chico" | "medio" | "grande";
-// RichSection suma `display` = hero tipográfico (#4282, SoT PY `PRESENTATION_HERO_SCALE_CLOSESET`).
+// RichSection suma `display` = hero tipográfico (#4282). ⚠️ pendiente de verificar: el espejo PY del closed-set de hero aún no existe en guaso-app origin/main (lo introduce #4282).
 // Solo RichSection: en los otros bloques `display` cae a medio (ver resolveTypoScale).
 export type RichSectionScale = TypoScale | "display";
 export type TypoEmphasis = "normal" | "fuerte";
