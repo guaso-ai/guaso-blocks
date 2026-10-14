@@ -19,6 +19,7 @@ import {
   NARROW_SECTION_ROOT_CLASS,
   SECTION_ROOT_CLASS,
   ctaHeadingClass,
+  richSectionHeadingClass,
   sectionHeadingClass,
   type TypoProps,
 } from "../registry/block-zone/types";
@@ -147,6 +148,25 @@ describe("#4416 A3-c: tamaño de heading vía var(--block-text-*)", () => {
     const cls = sectionHeadingClass({ scale } as TypoProps).split(" ");
     expect(cls).toContain(base);
     expect(cls).toContain(md);
+  });
+
+  // #4282: el hero (RichSection) suma display; el resto de escalas queda igual.
+  it("RichSection display → tokens --block-text-display con fallback 3.75rem / 6rem", () => {
+    const cls = richSectionHeadingClass({ scale: "display" } as TypoProps).split(" ");
+    expect(cls).toContain("text-[length:var(--block-text-display,3.75rem)]");
+    expect(cls).toContain("md:text-[length:var(--block-text-display-md,6rem)]");
+  });
+
+  it.each(Object.entries(SECTION_EXPECT))("RichSection scale %s → mismo token que sectionHeadingClass", (scale, [base, md]) => {
+    const cls = richSectionHeadingClass({ scale } as TypoProps).split(" ");
+    expect(cls).toContain(base);
+    expect(cls).toContain(md);
+  });
+
+  it("sectionHeadingClass con display (fuera de RichSection) cae a medio", () => {
+    const cls = sectionHeadingClass({ scale: "display" } as TypoProps).split(" ");
+    expect(cls).toContain(SECTION_EXPECT.medio[0]);
+    expect(cls).not.toContain("text-[length:var(--block-text-display,3.75rem)]");
   });
 
   it.each(Object.entries(CTA_EXPECT))("CTA scale %s → tokens con fallback Tailwind", (scale, [base, md]) => {

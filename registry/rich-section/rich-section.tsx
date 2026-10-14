@@ -9,8 +9,8 @@ import {
   resolveRichImageSide,
   resolveRichMode,
   resolveRichVideoUrl,
+  richSectionHeadingClass,
   safeHref,
-  sectionHeadingClass,
   BLOCK_RADIUS_BUTTON_CLASS,
   BLOCK_RADIUS_CLASS,
   SECTION_ROOT_CLASS,
@@ -80,7 +80,7 @@ export default function RichSection({
         .join(" ")}
     >
       {data.title ? (
-        <h2 className={sectionHeadingClass(data, isHero ? "inverse" : "default")}>
+        <h2 className={richSectionHeadingClass(data, isHero ? "inverse" : "default")}>
           {data.title}
         </h2>
       ) : null}

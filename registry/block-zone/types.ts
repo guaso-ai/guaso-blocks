@@ -430,7 +430,11 @@ export function safeHref(url?: string): string | undefined {
 // --- Presentación (#4266, corte B). Defaults = render actual: sin props, el DOM no cambia.
 // Tipografía (scale, emphasis) en los 8 bloques canónicos; imagen (aspect, frame, fit, focal)
 // en RichSection, CTA y Gallery. Fuera de closed-set → default, nunca explota.
+// Escala de los 8 canónicos (SoT PY `PRESENTATION_TYPO_CLOSESETS`, 3 valores).
 export type TypoScale = "chico" | "medio" | "grande";
+// RichSection suma `display` = hero tipográfico (#4282, SoT PY `PRESENTATION_HERO_SCALE_CLOSESET`).
+// Solo RichSection: en los otros bloques `display` cae a medio (ver resolveTypoScale).
+export type RichSectionScale = TypoScale | "display";
 export type TypoEmphasis = "normal" | "fuerte";
 export type ImageAspect = "4:5" | "4:3" | "1:1" | "16:9";
 export type ImageFrame = "borde" | "sin_borde" | "sombra";
@@ -462,6 +466,11 @@ export function resolveTypoScale(value: unknown): TypoScale {
   return value === "chico" || value === "medio" || value === "grande"
     ? value
     : DEFAULT_TYPO_SCALE;
+}
+
+// Solo RichSection admite `display`; el resto de bloques lo recibe como `medio` (fuera de closed-set).
+export function resolveRichSectionScale(value: unknown): RichSectionScale {
+  return value === "display" ? "display" : resolveTypoScale(value);
 }
 
 export function resolveTypoEmphasis(value: unknown): TypoEmphasis {
@@ -531,6 +540,15 @@ const SECTION_HEADING_SIZE: Record<TypoScale, HeadingSize> = {
     md: "md:text-[length:var(--block-text-grande-md,3rem)]",
   },
 };
+// Hero tipográfico (#4282): escalón por encima de `grande` (3rem md). Solo RichSection.
+// Fallback = 3.75rem base / 6rem md; los tokens --block-text-display* los fija el consumidor.
+const RICH_SECTION_HEADING_SIZE: Record<RichSectionScale, HeadingSize> = {
+  ...SECTION_HEADING_SIZE,
+  display: {
+    base: "text-[length:var(--block-text-display,3.75rem)]",
+    md: "md:text-[length:var(--block-text-display-md,6rem)]",
+  },
+};
 const CTA_HEADING_SIZE: Record<TypoScale, HeadingSize> = {
   chico: {
     base: "text-[length:var(--block-text-cta-chico,1.25rem)]",
@@ -562,12 +580,20 @@ const FOCAL_CLASS: Record<ImageFocal, string> = {
 /** Tono de texto: `inverse` para superficies oscuras (overlay de fondo completo, #4567). */
 export type TextTone = "default" | "inverse";
 
-/** Clase del h2 de sección (RichSection, Gallery, Cards, Testimonials, FAQ, Stats, Steps). */
-export function sectionHeadingClass(props: TypoProps, tone: TextTone = "default"): string {
-  const size = SECTION_HEADING_SIZE[resolveTypoScale(props.scale)];
+function sectionHeadingWith(size: HeadingSize, props: TypoProps, tone: TextTone): string {
   const weight = resolveTypoEmphasis(props.emphasis) === "fuerte" ? "font-bold" : "font-semibold";
   const color = tone === "inverse" ? "text-background" : "text-foreground";
   return `font-heading ${size.base} ${weight} tracking-tight ${color} text-balance ${size.md}`;
+}
+
+/** Clase del h2 de sección (Gallery, Cards, Testimonials, FAQ, Stats, Steps; RichSection usa richSectionHeadingClass). */
+export function sectionHeadingClass(props: TypoProps, tone: TextTone = "default"): string {
+  return sectionHeadingWith(SECTION_HEADING_SIZE[resolveTypoScale(props.scale)], props, tone);
+}
+
+/** Clase del h2 de RichSection (#4282): suma `display` (hero). Resto de escalas = sectionHeadingClass. */
+export function richSectionHeadingClass(props: TypoProps, tone: TextTone = "default"): string {
+  return sectionHeadingWith(RICH_SECTION_HEADING_SIZE[resolveRichSectionScale(props.scale)], props, tone);
 }
 
 /** Clase del h2 del CTA (escala propia: un paso menor que la sección). */

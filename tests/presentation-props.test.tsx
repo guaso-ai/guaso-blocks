@@ -90,6 +90,55 @@ describe("tipografía: scale y emphasis en los 8 canónicos", () => {
   });
 });
 
+// #4282 hero tipográfico: `display` solo en RichSection. Tokens con fallback 3.75rem / md 6rem.
+const DISPLAY_T = [
+  "text-[length:var(--block-text-display,3.75rem)]",
+  "md:text-[length:var(--block-text-display-md,6rem)]",
+] as const;
+
+describe("hero tipográfico display (#4282): solo RichSection", () => {
+  const rich = (x: Record<string, unknown>) =>
+    render(<RichSection data={{ title: "T", body: "b", ...x }} />).container;
+
+  it("RichSection scale display → tokens display (exactos, sin grande ni medio)", () => {
+    const h = h2Tokens(rich({ scale: "display" }));
+    expect(h).toContain(DISPLAY_T[0]);
+    expect(h).toContain(DISPLAY_T[1]);
+    expect(h).not.toContain(SEC.grande[0]);
+    expect(h).not.toContain(SEC.medio[0]);
+  });
+
+  it("RichSection display + emphasis fuerte → font-bold con tokens display", () => {
+    const h = h2Tokens(rich({ scale: "display", emphasis: "fuerte" }));
+    expect(h).toContain(DISPLAY_T[0]);
+    expect(h).toContain("font-bold");
+  });
+
+  it("RichSection grande/chico/medio no cambian al existir display", () => {
+    expect(h2Tokens(rich({ scale: "grande" }))).toContain(SEC.grande[0]);
+    expect(h2Tokens(rich({ scale: "chico" }))).toContain(SEC.chico[0]);
+    expect(h2Tokens(rich({}))).toContain(SEC.medio[0]);
+  });
+
+  it.each(SECTION_BLOCKS.filter(([name]) => name !== "RichSection"))(
+    "%s: scale display fuera de closed-set → medio (sin tokens display)",
+    (_name, render) => {
+      const h = h2Tokens(render({ scale: "display" }));
+      expect(h).toContain(SEC.medio[0]);
+      expect(h).toContain(SEC.medio[1]);
+      expect(h).not.toContain(DISPLAY_T[0]);
+    },
+  );
+
+  it("CTA scale display → tokens CTA medio (CTA no admite display)", () => {
+    const h = h2Tokens(
+      render(<CTA data={{ headline: "H", button_label: "Ir", button_url: "/x", scale: "display" }} />).container,
+    );
+    expect(h).toContain(CTA_T.medio[0]);
+    expect(h).not.toContain(DISPLAY_T[0]);
+  });
+});
+
 describe("CTA: escala propia (un paso menor que la sección)", () => {
   const cta = (x: Record<string, unknown>) =>
     render(<CTA data={{ headline: "H", button_label: "Ir", button_url: "/x", ...x }} />).container;
