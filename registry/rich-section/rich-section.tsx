@@ -59,8 +59,9 @@ export default function RichSection({
   const hasImage = Boolean(imageUrl);
   // Fondo completo (#4567): solo con media de fondo (imagen o video). Sin media → render normal.
   const videoUrl = resolveRichVideoUrl(data.video_url);
-  const isHero =
-    resolveRichFondo(data.fondo) === "completo" && (hasImage || Boolean(videoUrl));
+  // #4580: `completo` no admite botón (el dato se conserva, solo no se renderiza).
+  const isCompleto = resolveRichFondo(data.fondo) === "completo";
+  const isHero = isCompleto && (hasImage || Boolean(videoUrl));
   const splitLayout = hasImage && !isCenteredMode;
   // En hero el texto va sobre el overlay: centrado por `align`, aunque haya imagen.
   const textCentered = isCenter && (!hasImage || isHero);
@@ -112,17 +113,13 @@ export default function RichSection({
         </div>
       ) : null}
 
-      {ctaHref && data.cta_label ? (
+      {ctaHref && data.cta_label && !isCompleto ? (
         <div
           className={textCentered ? "flex justify-center" : undefined}
         >
           <a
             href={ctaHref}
-            className={
-              isHero
-                ? `inline-flex items-center justify-center ${BLOCK_RADIUS_BUTTON_CLASS} border border-background bg-transparent px-6 py-3 text-sm font-medium text-background transition-colors duration-200 hover:bg-background hover:text-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-background motion-reduce:transition-none`
-                : `inline-flex items-center justify-center ${BLOCK_RADIUS_BUTTON_CLASS} border border-primary bg-transparent px-6 py-3 text-sm font-medium text-primary transition-colors duration-200 hover:bg-primary hover:text-primary-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary motion-reduce:transition-none`
-            }
+            className={`inline-flex items-center justify-center ${BLOCK_RADIUS_BUTTON_CLASS} border border-primary bg-transparent px-6 py-3 text-sm font-medium text-primary transition-colors duration-200 hover:bg-primary hover:text-primary-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary motion-reduce:transition-none`}
           >
             {data.cta_label}
           </a>

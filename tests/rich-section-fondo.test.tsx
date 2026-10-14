@@ -140,12 +140,12 @@ describe("RichSection fondo (#4567)", () => {
       expect(c.querySelector(".text-background")).not.toBeNull();
     });
 
-    it("CTA inverso: borde y texto background, sin primary", () => {
-      hero();
+    it("CTA normal (fondo normal o ausente): borde y texto primary, sin background", () => {
+      render(<RichSection data={{ ...base, image_url: IMG }} />);
       const link = screen.getByRole("link", { name: "Ver" });
-      expect(link.className).toContain("border-background");
-      expect(link.className).toContain("text-background");
-      expect(link.className).not.toContain("border-primary");
+      expect(link.className).toContain("border-primary");
+      expect(link.className).toContain("text-primary");
+      expect(link.className).not.toContain("text-background");
     });
 
     it("align center centra el texto del hero aunque haya imagen", () => {
@@ -159,6 +159,41 @@ describe("RichSection fondo (#4567)", () => {
       expect(sectionHeadingClass({})).not.toContain("text-background");
       expect(sectionHeadingClass({}, "inverse")).toContain("text-background");
       expect(sectionHeadingClass({}, "inverse")).not.toContain("text-foreground");
+    });
+  });
+
+  describe("CTA en fondo completo (#4580)", () => {
+    it("completo con imagen + cta_url/cta_label → sin botón", () => {
+      hero();
+      expect(screen.queryByRole("link", { name: "Ver" })).toBeNull();
+    });
+
+    it("completo con solo video + cta → sin botón", () => {
+      render(<RichSection data={{ ...base, fondo: "completo", video_url: MP4 }} />);
+      expect(screen.queryByRole("link", { name: "Ver" })).toBeNull();
+    });
+
+    it("completo sin media + cta → sin botón (la variante completo no admite botón)", () => {
+      render(<RichSection data={{ ...base, fondo: "completo" }} />);
+      expect(screen.queryByRole("link", { name: "Ver" })).toBeNull();
+    });
+
+    it("completo sin botón: el título y el cuerpo siguen renderizados", () => {
+      hero();
+      expect(screen.getByRole("heading", { level: 2, name: "Hola" })).not.toBeNull();
+      expect(screen.getByText("Cuerpo")).not.toBeNull();
+    });
+
+    it("fondo normal con imagen + cta → botón con href (sin cambio)", () => {
+      render(<RichSection data={{ ...base, fondo: "normal", image_url: IMG }} />);
+      const link = screen.getByRole("link", { name: "Ver" });
+      expect(link.getAttribute("href")).toBe("/contacto");
+    });
+
+    it("sin fondo + cta → botón con href (sin cambio)", () => {
+      render(<RichSection data={{ ...base }} />);
+      const link = screen.getByRole("link", { name: "Ver" });
+      expect(link.getAttribute("href")).toBe("/contacto");
     });
   });
 
