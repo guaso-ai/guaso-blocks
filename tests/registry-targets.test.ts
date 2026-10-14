@@ -32,6 +32,7 @@ const REQUIRED_TARGETS = [
   "@components/block-zone/types.ts",
   "@components/block-zone/blocks-from-entry.ts",
   "@components/rich-section/rich-section.tsx",
+  "@components/rich-section/hero-fondo-video.tsx",
   "@components/cta/cta.tsx",
   "@components/gallery/gallery.tsx",
   "@components/cards/cards.tsx",

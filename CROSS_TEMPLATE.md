@@ -7,7 +7,7 @@ Source of truth for what this kit unifies vs what stays in `guaso-template-*` (#
 | `registry.ts` | byte-idéntico lookup + unknown→undefined (8 tipos) | — |
 | `types.ts` / fields | = `_CANONICAL_BLOCKS` + `safeHref` | comentarios locales |
 | `BlockZone` | filter enabled + ignore unknown; `isOwner` prop (no `draftMode`) | import `Block` desde `@/lib/products` (store) vs content; draftMode wrapper |
-| RichSection | title/body/cta/align/image + `image_side` left\|right (default right) + `mode` split\|centrado\|checklist (default split) + empty guard | TitleWithAccent, hairline, eyebrow, radii/sombras por vertical. ⛔ layout split/order hardcoded |
+| RichSection | title/body/cta/align/image + `image_side` left\|right (default right) + `mode` split\|centrado\|checklist (default split) + `fondo` normal\|completo (default normal; completo = hero full-bleed con imagen/`video_url` + overlay `bg-foreground/60`, #4567) + empty guard | TitleWithAccent, hairline, eyebrow, radii/sombras por vertical. ⛔ layout split/order hardcoded |
 | Gallery | title/images (url/alt/caption) + `columns` 2\|3\|4 (default 3) + `style` grilla\|masonry\|carrusel (default grilla) + empty/filter sin url | marcos dobles, next/image, eyebrows “Galería”. ⛔ masonry CSS `columns-*` hardcoded |
 | Cards | title/subtitle/cards + `columns`/`style` WS1 + safeHref links + empty | hairline “Servicios”, índices 01/02, next/link, grid px |
 | Testimonials | title/items (quote/author/role) + `layout`/`rating` WS1 + empty/filter útiles | hairline “Lo que dicen”, comillas decorativas, divide-y |

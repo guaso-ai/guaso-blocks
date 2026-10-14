@@ -29,7 +29,7 @@ Configure `components.json` registries:
 |---------------|--------------|------|
 | `@guaso/block-zone` | — | Zone + registry map + `safeHref`. Receives `blocks` already mapped. No content npm. |
 | `@guaso/blocks-from-entry` | — | `blocksFromEntry` adapter. CLI installs `@guaso-ai/content@^0.3.0`. Does not copy HTTP client. |
-| `@guaso/rich-section` | `RichSection` | Title/body markdown + optional CTA/image |
+| `@guaso/rich-section` | `RichSection` | Title/body markdown + optional CTA/image. `fondo` normal\|completo (default normal): `completo` = full-bleed con `image_url` y/o `video_url` de fondo (https, `.mp4`/`.webm`) + overlay `bg-foreground/60`; sin media cae a normal. `video_url` solo aplica con `completo` |
 | `@guaso/gallery` | `Gallery` | Image grid (`url`/`alt`/`caption`) |
 | `@guaso/cards` | `Cards` | Card grid with optional safe links |
 | `@guaso/testimonials` | `Testimonials` | Quote/author/role grid |

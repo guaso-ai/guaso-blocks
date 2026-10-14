@@ -74,6 +74,10 @@ export type RichSectionData = LayoutProps & TypoProps & ImageProps & {
   image_url?: string;
   image_side?: RichImageSide | string;
   mode?: RichMode | string;
+  /** Fondo (#4567, espejo de #4566): `completo` = full-bleed con media de fondo. */
+  fondo?: RichFondo | string;
+  /** Video de fondo (#4567): solo se usa con `fondo: completo`; ver `resolveRichVideoUrl`. */
+  video_url?: string;
 };
 
 export type CTAData = LayoutProps & TypoProps & ImageProps & {
@@ -171,6 +175,7 @@ export type GalleryColumns = "2" | "3" | "4";
 export type GalleryStyle = "grilla" | "masonry" | "carrusel";
 export type RichImageSide = "left" | "right";
 export type RichMode = "split" | "centrado" | "checklist";
+export type RichFondo = "normal" | "completo";
 export type CtaStyle = "banda" | "foto" | "split";
 export type CtaAlign = "left" | "center" | "right";
 
@@ -181,6 +186,7 @@ export const DEFAULT_GALLERY_COLUMNS: GalleryColumns = "3";
 export const DEFAULT_GALLERY_STYLE: GalleryStyle = "grilla";
 export const DEFAULT_RICH_IMAGE_SIDE: RichImageSide = "right";
 export const DEFAULT_RICH_MODE: RichMode = "split";
+export const DEFAULT_RICH_FONDO: RichFondo = "normal";
 export const DEFAULT_CTA_STYLE: CtaStyle = "banda";
 export const DEFAULT_CTA_ALIGN: CtaAlign = "center";
 
@@ -225,6 +231,31 @@ export function resolveRichMode(value: unknown): RichMode {
   return value === "split" || value === "centrado" || value === "checklist"
     ? value
     : DEFAULT_RICH_MODE;
+}
+
+export function resolveRichFondo(value: unknown): RichFondo {
+  return value === "normal" || value === "completo" ? value : DEFAULT_RICH_FONDO;
+}
+
+/**
+ * `video_url` de fondo válido o undefined. Espejo local de `isValidVideoUrl` del SDK (#4566):
+ * https literal, sin userinfo, sin espacios/controles/comillas/<>\, path .mp4 o .webm.
+ * Defensa en el render: la URL llega a `<video src>`. Nunca lanza.
+ */
+export function resolveRichVideoUrl(value: unknown): string | undefined {
+  if (typeof value !== "string") return undefined;
+  if (!/^https:\/\//i.test(value)) return undefined;
+  if (/[\s"'<>\\\x00-\x1f\x7f]/.test(value)) return undefined;
+  let url: URL;
+  try {
+    url = new URL(value);
+  } catch {
+    return undefined;
+  }
+  if (url.protocol !== "https:" || !url.hostname || url.username || url.password) {
+    return undefined;
+  }
+  return /\.(mp4|webm)$/i.test(url.pathname) ? value : undefined;
 }
 
 export function resolveCtaStyle(value: unknown): CtaStyle {
@@ -528,11 +559,15 @@ const FOCAL_CLASS: Record<ImageFocal, string> = {
   derecha: "object-right",
 };
 
+/** Tono de texto: `inverse` para superficies oscuras (overlay de fondo completo, #4567). */
+export type TextTone = "default" | "inverse";
+
 /** Clase del h2 de sección (RichSection, Gallery, Cards, Testimonials, FAQ, Stats, Steps). */
-export function sectionHeadingClass(props: TypoProps): string {
+export function sectionHeadingClass(props: TypoProps, tone: TextTone = "default"): string {
   const size = SECTION_HEADING_SIZE[resolveTypoScale(props.scale)];
   const weight = resolveTypoEmphasis(props.emphasis) === "fuerte" ? "font-bold" : "font-semibold";
-  return `font-heading ${size.base} ${weight} tracking-tight text-foreground text-balance ${size.md}`;
+  const color = tone === "inverse" ? "text-background" : "text-foreground";
+  return `font-heading ${size.base} ${weight} tracking-tight ${color} text-balance ${size.md}`;
 }
 
 /** Clase del h2 del CTA (escala propia: un paso menor que la sección). */
