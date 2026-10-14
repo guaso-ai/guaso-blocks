@@ -16,7 +16,8 @@ type HeroFondoVideoProps = {
  * Fallback: sin video, o video que no carga, o reduce-motion → queda la imagen de fondo.
  * Solo video (sin imagen): la raíz lleva `bg-foreground` como base sólida; con reduce-motion o
  * video caído queda el overlay sobre ese color (texto inverso sigue en AA), no sobre el fondo
- * de página. Con imagen, la imagen cubre el 100% y esa base no se ve.
+ * de página. Con imagen cargada, la imagen cubre el 100% y esa base no se ve; mientras la imagen
+ * no carga (`loading="lazy"`) o si la URL falla, se ve `bg-foreground` bajo el overlay.
  * El caller solo lo usa si hay al menos imagen o video (sin media → render normal).
  */
 export default function HeroFondoVideo({
