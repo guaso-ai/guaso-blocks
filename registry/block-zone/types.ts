@@ -65,6 +65,18 @@ export function resolveLayoutAnchor(value: unknown): string {
   return typeof value === "string" && LAYOUT_ANCHOR_RE.test(value) ? value : "";
 }
 
+/** Oferta viva ya resuelta por el host (#4599). Shape de render: NO se persiste ni entra en el schema. */
+export type RichOffer = {
+  name: string; // nombre del producto (h3 del slot)
+  priceLabel: string; // precio ya formateado por el host (es-AR)
+  imageUrl?: string; // foto del producto, opcional
+  href: string; // "/store/<slug>", ya gateado por el host
+  ctaLabel?: string; // texto del CTA; undefined = OFFER_CTA_DEFAULT; "" = sin CTA
+};
+
+/** Texto del CTA de la oferta cuando el host no pasa `ctaLabel` (#4599). */
+export const OFFER_CTA_DEFAULT = "Ver producto";
+
 export type RichSectionData = LayoutProps & TypoProps & ImageProps & {
   title?: string;
   body?: string;
@@ -78,6 +90,8 @@ export type RichSectionData = LayoutProps & TypoProps & ImageProps & {
   fondo?: RichFondo | string;
   /** Video de fondo (#4567): solo se usa con `fondo: completo`; ver `resolveRichVideoUrl`. */
   video_url?: string;
+  /** Oferta viva resuelta por el host (#4599). Ausente = sin slot. */
+  offer?: RichOffer;
 };
 
 export type CTAData = LayoutProps & TypoProps & ImageProps & {

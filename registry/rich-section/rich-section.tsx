@@ -2,6 +2,7 @@ import ReactMarkdown from "react-markdown";
 import type { RichSectionData } from "../block-zone/types";
 import {
   DEFAULT_RICH_ASPECT,
+  OFFER_CTA_DEFAULT,
   imageAspectClass,
   imageFitClass,
   imageFrameClass,
@@ -13,6 +14,7 @@ import {
   safeHref,
   BLOCK_RADIUS_BUTTON_CLASS,
   BLOCK_RADIUS_CLASS,
+  BLOCK_RADIUS_THUMB_CLASS,
   SECTION_ROOT_CLASS,
 } from "../block-zone/types";
 import HeroFondoVideo from "./hero-fondo-video";
@@ -21,6 +23,9 @@ type RichSectionProps = {
   data: RichSectionData;
   isOwner?: boolean;
 };
+
+// Botón de acción compartido por el CTA propio (`cta_url`) y el de la oferta (#4599).
+const CTA_LINK_CLASS = `inline-flex items-center justify-center ${BLOCK_RADIUS_BUTTON_CLASS} border border-primary bg-transparent px-6 py-3 text-sm font-medium text-primary transition-colors duration-200 hover:bg-primary hover:text-primary-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary motion-reduce:transition-none`;
 
 function RichSectionPlaceholder() {
   return (
@@ -65,6 +70,26 @@ export default function RichSection({
   const splitLayout = hasImage && !isCenteredMode;
   // En hero el texto va sobre el overlay: centrado por `align`, aunque haya imagen.
   const textCentered = isCenter && (!hasImage || isHero);
+
+  // Oferta viva (#4599): el kit solo pinta lo que el host resolvió; sin datos útiles, no renderiza nada.
+  const offer = data.offer ?? null;
+  const offerName = typeof offer?.name === "string" ? offer.name.trim() : "";
+  const offerPrice = typeof offer?.priceLabel === "string" ? offer.priceLabel.trim() : "";
+  const offerImageUrl =
+    typeof offer?.imageUrl === "string" && offer.imageUrl.trim()
+      ? offer.imageUrl.trim()
+      : undefined;
+  const offerHref = offer ? safeHref(offer.href) : undefined;
+  const offerCtaLabel = offer
+    ? (offer.ctaLabel ?? OFFER_CTA_DEFAULT).trim()
+    : "";
+  const offerNameClass = isHero ? "text-background" : "text-foreground";
+  const offerPriceClass = isHero ? "text-background" : "text-muted-foreground";
+  // #4580: `completo` no admite botón; la oferta tampoco lo renderiza ahí.
+  const showOfferCta = Boolean(offerHref && offerCtaLabel && !isCompleto);
+  const showOffer = Boolean(
+    offerImageUrl || offerName || offerPrice || showOfferCta,
+  );
 
   // Tokens del cuerpo: default byte-idénticos a hoy; hero = tono inverso sobre el overlay.
   const bodyToneClass = isHero
@@ -113,13 +138,57 @@ export default function RichSection({
         </div>
       ) : null}
 
+      {showOffer ? (
+        <div className="flex flex-col gap-4">
+          {offerImageUrl ? (
+            <div
+              className={[
+                "relative aspect-square w-40 overflow-hidden sm:w-48",
+                BLOCK_RADIUS_THUMB_CLASS,
+                "bg-card",
+              ].join(" ")}
+            >
+              <img
+                src={offerImageUrl}
+                alt={offerName}
+                width={800}
+                height={800}
+                loading="lazy"
+                decoding="async"
+                className="size-full object-cover"
+              />
+            </div>
+          ) : null}
+
+          {offerName ? (
+            <h3 className={`font-heading text-lg font-semibold ${offerNameClass}`}>
+              {offerName}
+            </h3>
+          ) : null}
+
+          {offerPrice ? (
+            <p className={`text-base font-medium ${offerPriceClass}`}>
+              {offerPrice}
+            </p>
+          ) : null}
+
+          {showOfferCta ? (
+            <div className={textCentered ? "flex justify-center" : undefined}>
+              <a href={offerHref} className={CTA_LINK_CLASS}>
+                {offerCtaLabel}
+              </a>
+            </div>
+          ) : null}
+        </div>
+      ) : null}
+
       {ctaHref && data.cta_label && !isCompleto ? (
         <div
           className={textCentered ? "flex justify-center" : undefined}
         >
           <a
             href={ctaHref}
-            className={`inline-flex items-center justify-center ${BLOCK_RADIUS_BUTTON_CLASS} border border-primary bg-transparent px-6 py-3 text-sm font-medium text-primary transition-colors duration-200 hover:bg-primary hover:text-primary-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary motion-reduce:transition-none`}
+            className={CTA_LINK_CLASS}
           >
             {data.cta_label}
           </a>
