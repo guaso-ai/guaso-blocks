@@ -88,6 +88,8 @@ export type RichSectionData = LayoutProps & TypoProps & ImageProps & {
   mode?: RichMode | string;
   /** Fondo (#4567, espejo de #4566): `completo` = full-bleed con media de fondo. */
   fondo?: RichFondo | string;
+  /** Movimiento (#4284): `marquee` = banda con `title` como texto; ausente/`estatico` = render normal. */
+  movimiento?: RichMovimiento;
   /** Video de fondo (#4567): solo se usa con `fondo: completo`; ver `resolveRichVideoUrl`. */
   video_url?: string;
   /** Oferta viva resuelta por el host (#4599). Ausente = sin slot. */
@@ -190,6 +192,8 @@ export type GalleryStyle = "grilla" | "masonry" | "carrusel";
 export type RichImageSide = "left" | "right";
 export type RichMode = "split" | "centrado" | "checklist";
 export type RichFondo = "normal" | "completo";
+/** Movimiento (#4284): `marquee` = banda que se desplaza (solo con `title`). */
+export type RichMovimiento = "estatico" | "marquee";
 export type CtaStyle = "banda" | "foto" | "split";
 export type CtaAlign = "left" | "center" | "right";
 
@@ -201,6 +205,7 @@ export const DEFAULT_GALLERY_STYLE: GalleryStyle = "grilla";
 export const DEFAULT_RICH_IMAGE_SIDE: RichImageSide = "right";
 export const DEFAULT_RICH_MODE: RichMode = "split";
 export const DEFAULT_RICH_FONDO: RichFondo = "normal";
+export const DEFAULT_RICH_MOVIMIENTO: RichMovimiento = "estatico";
 export const DEFAULT_CTA_STYLE: CtaStyle = "banda";
 export const DEFAULT_CTA_ALIGN: CtaAlign = "center";
 
@@ -249,6 +254,11 @@ export function resolveRichMode(value: unknown): RichMode {
 
 export function resolveRichFondo(value: unknown): RichFondo {
   return value === "normal" || value === "completo" ? value : DEFAULT_RICH_FONDO;
+}
+
+/** Movimiento de RichSection (#4284). Fuera de closed-set → `estatico`. Nunca lanza. */
+export function resolveRichMovimiento(value: unknown): RichMovimiento {
+  return value === "estatico" || value === "marquee" ? value : DEFAULT_RICH_MOVIMIENTO;
 }
 
 /**

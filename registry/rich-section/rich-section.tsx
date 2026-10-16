@@ -9,6 +9,7 @@ import {
   resolveRichFondo,
   resolveRichImageSide,
   resolveRichMode,
+  resolveRichMovimiento,
   resolveRichVideoUrl,
   richSectionHeadingClass,
   safeHref,
@@ -18,6 +19,7 @@ import {
   SECTION_ROOT_CLASS,
 } from "../block-zone/types";
 import HeroFondoVideo from "./hero-fondo-video";
+import RichMarquee from "./marquee";
 
 type RichSectionProps = {
   data: RichSectionData;
@@ -48,6 +50,13 @@ export default function RichSection({
 }: RichSectionProps) {
   if (!data.title && !data.body) {
     return isOwner ? <RichSectionPlaceholder /> : null;
+  }
+
+  // Banda marquee (#4284): el title es el texto; body/CTA/media quedan en data sin render.
+  // Sin title no hay banda vacía: cae al render normal.
+  const marqueeText = typeof data.title === "string" ? data.title.trim() : "";
+  if (resolveRichMovimiento(data.movimiento) === "marquee" && marqueeText) {
+    return <RichMarquee text={marqueeText} label={marqueeText} />;
   }
 
   // Kit-once (#3883): fuera del closed-set → default, nunca explota.
