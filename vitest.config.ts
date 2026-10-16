@@ -11,6 +11,11 @@ export default defineConfig({
         find: /content\/products\/products\.json$/,
         replacement: path.join(root, "tests/fixtures/products.json"),
       },
+      // #4287: el dialog vendorizado vive en registry/dialog; al instalar es @components/ui/dialog.tsx.
+      {
+        find: /^@\/components\/ui\/dialog$/,
+        replacement: path.join(root, "registry/dialog/dialog.tsx"),
+      },
     ],
   },
   test: {
