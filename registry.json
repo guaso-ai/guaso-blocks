@@ -84,13 +84,42 @@
       "name": "gallery",
       "type": "registry:component",
       "title": "Gallery",
-      "description": "Canonical Gallery block — tokenized baseline. Variants: columns 2|3|4 (default 3); style grilla|masonry|carrusel (default grilla).",
-      "registryDependencies": ["@guaso/block-zone"],
+      "description": "Canonical Gallery block — tokenized baseline. Variants: columns 2|3|4 (default 3); style grilla|masonry|carrusel (default grilla). Cada imagen abre la vista ampliada (gallery-lightbox, #4287).",
+      "registryDependencies": ["@guaso/block-zone", "@guaso/gallery-lightbox"],
       "files": [
         {
           "path": "registry/gallery/gallery.tsx",
           "type": "registry:component",
           "target": "@components/gallery/gallery.tsx"
+        }
+      ]
+    },
+    {
+      "name": "gallery-lightbox",
+      "type": "registry:component",
+      "title": "GalleryLightbox",
+      "description": "Vista ampliada de Gallery (#4287): dialog de shadcn vendorizado en el kit; ←/→ con vuelta cíclica, Esc cierra, foco devuelto a la miniatura. Always-on, sin prop.",
+      "dependencies": ["@radix-ui/react-dialog", "lucide-react"],
+      "registryDependencies": ["@guaso/block-zone", "@guaso/dialog"],
+      "files": [
+        {
+          "path": "registry/gallery-lightbox/gallery-lightbox.tsx",
+          "type": "registry:component",
+          "target": "@components/gallery-lightbox/gallery-lightbox.tsx"
+        }
+      ]
+    },
+    {
+      "name": "dialog",
+      "type": "registry:ui",
+      "title": "Dialog",
+      "description": "Copia vendorizada del dialog de shadcn (Radix) para el lightbox de Gallery; overlay bg-background/90. Target @components/ui/dialog.tsx (mismo path que shadcn).",
+      "dependencies": ["@radix-ui/react-dialog", "lucide-react"],
+      "files": [
+        {
+          "path": "registry/dialog/dialog.tsx",
+          "type": "registry:ui",
+          "target": "@components/ui/dialog.tsx"
         }
       ]
     },

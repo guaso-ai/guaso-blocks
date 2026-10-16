@@ -11,7 +11,10 @@
     "esModuleInterop": true,
     "isolatedModules": true,
     "resolveJsonModule": true,
-    "types": ["vitest/globals"]
+    "types": ["vitest/globals"],
+    "paths": {
+      "@/components/ui/dialog": ["./registry/dialog/dialog.tsx"]
+    }
   },
   "include": ["registry/**/*", "tests/**/*"]
 }
