@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "tabs",
+  "title": "Tabs",
+  "description": "Copia vendorizada del tabs de shadcn (Radix Tabs) para el menú por categorías (#4291); colores por tokens de la kit. Target @components/ui/tabs.tsx (mismo path que shadcn).",
+  "dependencies": [
+    "@radix-ui/react-tabs"
+  ],
+  "files": [
+    {
+      "path": "registry/tabs/tabs.tsx",
+      "content": "\"use client\";\n\n/**\n * Copia vendorizada del `tabs` de shadcn/ui (estilo default, sobre Radix Tabs).\n * Fuente: https://ui.shadcn.com/r/styles/default/tabs.json (shadcn CLI 4.22.0). Target: `@components/ui/tabs.tsx`\n * (mismo path que shadcn). Navegación de teclado de Radix: ←/→ mueven y activan, Home/End van al primero/último.\n *\n * Drift respecto del upstream (intencional, #4291):\n *  - `cn` local (sin tailwind-merge): los className del consumidor se concatenan.\n *  - Colores solo con tokens semánticos de la kit (⛔ literales de color); radios vía `--block-radius-*`.\n *  - Foco visible con `outline-primary` (mismo criterio que dialog).\n * Re-copiar desde upstream si cambia la base y actualizar esta versión.\n */\nimport * as React from \"react\";\nimport * as TabsPrimitive from \"@radix-ui/react-tabs\";\n\nfunction cn(...classes: Array<string | false | null | undefined>): string {\n  return classes.filter(Boolean).join(\" \");\n}\n\nconst Tabs = TabsPrimitive.Root;\n\nconst TabsList = ({\n  className,\n  ...props\n}: React.ComponentProps<typeof TabsPrimitive.List>) => (\n  <TabsPrimitive.List\n    className={cn(\n      \"inline-flex items-center justify-center gap-1 border border-border bg-card p-1 text-muted-foreground rounded-[var(--block-radius-suave,0.375rem)]\",\n      className,\n    )}\n    {...props}\n  />\n);\n\nconst TabsTrigger = ({\n  className,\n  ...props\n}: React.ComponentProps<typeof TabsPrimitive.Trigger>) => (\n  <TabsPrimitive.Trigger\n    className={cn(\n      \"inline-flex items-center justify-center whitespace-nowrap px-3 py-1.5 font-heading text-sm font-medium rounded-[var(--block-radius-suave,0.375rem)] transition-opacity focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground\",\n      className,\n    )}\n    {...props}\n  />\n);\n\nconst TabsContent = ({\n  className,\n  ...props\n}: React.ComponentProps<typeof TabsPrimitive.Content>) => (\n  <TabsPrimitive.Content\n    className={cn(\n      \"focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary\",\n      className,\n    )}\n    {...props}\n  />\n);\n\nexport { Tabs, TabsList, TabsTrigger, TabsContent };\n",
+      "type": "registry:ui",
+      "target": "@components/ui/tabs.tsx"
+    }
+  ],
+  "type": "registry:ui"
+}

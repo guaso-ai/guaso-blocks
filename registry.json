@@ -222,6 +222,39 @@
       ]
     },
     {
+      "name": "tabs",
+      "type": "registry:ui",
+      "title": "Tabs",
+      "description": "Copia vendorizada del tabs de shadcn (Radix Tabs) para el menú por categorías (#4291); colores por tokens de la kit. Target @components/ui/tabs.tsx (mismo path que shadcn).",
+      "dependencies": [
+        "@radix-ui/react-tabs"
+      ],
+      "files": [
+        {
+          "path": "registry/tabs/tabs.tsx",
+          "type": "registry:ui",
+          "target": "@components/ui/tabs.tsx"
+        }
+      ]
+    },
+    {
+      "name": "menu",
+      "type": "registry:component",
+      "title": "Menu",
+      "description": "Canonical Menu block (#4291) — menú por categorías kit-only: tabs (shadcn, Radix) con una categoría por tab y, por ítem, nombre + precio ya formateado por el host. Navegación por teclado (←/→, Home/End). Sin categorías válidas y sin título → público null, dueño placeholder.",
+      "registryDependencies": [
+        "@guaso/block-zone",
+        "@guaso/tabs"
+      ],
+      "files": [
+        {
+          "path": "registry/menu/menu.tsx",
+          "type": "registry:component",
+          "target": "@components/menu/menu.tsx"
+        }
+      ]
+    },
+    {
       "name": "testimonials",
       "type": "registry:component",
       "title": "Testimonials",

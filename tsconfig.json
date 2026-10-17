@@ -13,7 +13,8 @@
     "resolveJsonModule": true,
     "types": ["vitest/globals"],
     "paths": {
-      "@/components/ui/dialog": ["./registry/dialog/dialog.tsx"]
+      "@/components/ui/dialog": ["./registry/dialog/dialog.tsx"],
+      "@/components/ui/tabs": ["./registry/tabs/tabs.tsx"]
     }
   },
   "include": ["registry/**/*", "tests/**/*"]

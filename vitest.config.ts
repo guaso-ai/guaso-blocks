@@ -16,6 +16,11 @@ export default defineConfig({
         find: /^@\/components\/ui\/dialog$/,
         replacement: path.join(root, "registry/dialog/dialog.tsx"),
       },
+      // #4291: el tabs vendorizado vive en registry/tabs; al instalar es @components/ui/tabs.tsx.
+      {
+        find: /^@\/components\/ui\/tabs$/,
+        replacement: path.join(root, "registry/tabs/tabs.tsx"),
+      },
     ],
   },
   test: {

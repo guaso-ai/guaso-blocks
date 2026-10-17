@@ -192,6 +192,23 @@ export type PlanesData = {
   plans?: PlanItem[];
 };
 
+// Menú por categorías (#4291): tabs kit-only. `price` llega ya formateado por el host
+// (el kit no formatea moneda). Categoría sin nombre o sin ítems válidos se descarta.
+export type MenuItem = {
+  name?: string;
+  price?: string;
+};
+
+export type MenuCategory = {
+  name?: string;
+  items?: MenuItem[];
+};
+
+export type MenuData = {
+  title?: string;
+  categories?: MenuCategory[];
+};
+
 // ─── Variantes de bloque kit-once (#3882 WS1, #3883 WS2, #3884 WS3) ───────────
 // Closed-sets declarados UNA vez acá. El backend los espeja en
 // `_CANONICAL_BLOCKS` + `_validate_block_variant` (default + logger.warning);
