@@ -123,6 +123,12 @@ export function filterProducts(products: Product[], query: string | undefined): 
 export const CATALOG_SORTS = ["novedades", "precio_asc", "precio_desc", "nombre"] as const;
 export type CatalogSort = (typeof CATALOG_SORTS)[number];
 
+/** Piezas por página de la tienda (#4272). Múltiplo de 2, 3 y 4: filas completas en la grilla. */
+export const CATALOG_PAGE_SIZE = 12;
+
+/** Una página del listado ya filtrado y ordenado (#4272). */
+export type CatalogPage = { items: Product[]; page: number; totalPages: number };
+
 /** Filtros del listado (#4269). El host los parsea de `searchParams` con `parseCatalogFilters`. */
 export type CatalogFilters = {
   query?: string; // ?q=  (trim; vacío = sin filtro)
@@ -131,7 +137,19 @@ export type CatalogFilters = {
   maxPrice?: number; // ?precio_max=  (>= 0, inclusivo)
   onlyAvailable?: boolean; // ?disponible=1  (product.inStock === true)
   orden?: CatalogSort; // ?orden=  (undefined = novedades = orden del array) #4270
+  pagina?: number; // ?pagina=  (1-based; undefined = página 1) #4272
 };
+
+/** Página válida para la URL: entero seguro ≥ 2 (la 1 es la ausencia de `pagina`). */
+function pageNumber(value: number | undefined): number | undefined {
+  return value !== undefined && Number.isSafeInteger(value) && value >= 2 ? value : undefined;
+}
+
+/** `?pagina=` tras trim; vacío, no numérico, decimal o < 2 → undefined (página 1). #4272 */
+function parsePageParam(value: string | undefined): number | undefined {
+  const trimmed = (value ?? "").trim();
+  return trimmed ? pageNumber(Number(trimmed)) : undefined;
+}
 
 function firstParam(value: string | string[] | undefined): string | undefined {
   const raw = Array.isArray(value) ? value[0] : value;
@@ -159,13 +177,14 @@ function parseCatalogSort(value: string | undefined): CatalogSort | undefined {
     : undefined;
 }
 
-/** Parsea la URL del listado. Parámetros repetidos → primer valor. #4269 #4270 */
+/** Parsea la URL del listado. Parámetros repetidos → primer valor. #4269 #4270 #4272 */
 export function parseCatalogFilters(
   params: Record<string, string | string[] | undefined>,
 ): CatalogFilters {
   const query = (firstParam(params.q) ?? "").trim();
   const category = (firstParam(params.categoria) ?? "").trim();
   const orden = parseCatalogSort(firstParam(params.orden));
+  const pagina = parsePageParam(firstParam(params.pagina));
   return {
     ...(query ? { query } : {}),
     ...(category ? { category } : {}),
@@ -173,7 +192,21 @@ export function parseCatalogFilters(
     maxPrice: parsePriceParam(firstParam(params.precio_max)),
     onlyAvailable: firstParam(params.disponible) === "1",
     ...(orden ? { orden } : {}),
+    ...(pagina !== undefined ? { pagina } : {}),
   };
+}
+
+/**
+ * Corta el listado ya filtrado y ordenado en la página pedida (#4272). Pura, no muta.
+ * `pagina` fuera de rango → clamp a `[1, totalPages]`; no entero seguro → 1.
+ * Lista vacía → una página vacía.
+ */
+export function paginateProducts(products: Product[], pagina: number | undefined): CatalogPage {
+  const totalPages = Math.max(1, Math.ceil(products.length / CATALOG_PAGE_SIZE));
+  const requested = pagina !== undefined && Number.isSafeInteger(pagina) ? pagina : 1;
+  const page = Math.min(Math.max(requested, 1), totalPages);
+  const start = (page - 1) * CATALOG_PAGE_SIZE;
+  return { items: products.slice(start, start + CATALOG_PAGE_SIZE), page, totalPages };
 }
 
 /**
@@ -215,13 +248,16 @@ export function categoriesOf(products: Product[]): string[] {
 
 /**
  * Href del listado con los filtros activos (orden fijo q, categoria, precio_min,
- * precio_max, disponible, orden). `overrides` reemplaza campos; `undefined` los quita. #4269 #4270
+ * precio_max, disponible, orden, pagina). `overrides` reemplaza campos; `undefined` los quita.
+ * Cualquier override distinto de `pagina` vuelve a página 1, salvo que `pagina` venga explícito. #4269 #4270 #4272
  */
 export function catalogFilterHref(
   filters: CatalogFilters,
   overrides: Partial<CatalogFilters> = {},
 ): string {
-  const next = { ...filters, ...overrides };
+  const resetsPage =
+    Object.keys(overrides).some((key) => key !== "pagina") && !("pagina" in overrides);
+  const next = { ...filters, ...overrides, ...(resetsPage ? { pagina: undefined } : {}) };
   const params = new URLSearchParams();
   if (next.query?.trim()) params.set("q", next.query.trim());
   if (next.category?.trim()) params.set("categoria", next.category.trim());
@@ -229,6 +265,8 @@ export function catalogFilterHref(
   if (next.maxPrice !== undefined) params.set("precio_max", String(next.maxPrice));
   if (next.onlyAvailable) params.set("disponible", "1");
   if (next.orden) params.set("orden", next.orden);
+  const page = pageNumber(next.pagina);
+  if (page !== undefined) params.set("pagina", String(page));
   const qs = params.toString();
   return qs ? `?${qs}` : "?";
 }
