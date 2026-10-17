@@ -2,10 +2,12 @@ import { BLOCK_RADIUS_BUTTON_CLASS, BLOCK_RADIUS_CLASS } from "../block-zone/typ
 import { ProductCard } from "./product-card";
 import {
   applyCatalogFilters,
+  CATALOG_SORTS,
   catalogFilterHref,
   categoriesOf,
   isSameCategory,
   type CatalogFilters,
+  type CatalogSort,
   type Product,
 } from "./types";
 
@@ -18,6 +20,13 @@ type StoreCatalogProps = {
 
 const INPUT_CLASS =
   `${BLOCK_RADIUS_BUTTON_CLASS} border border-border bg-card px-4 py-2 text-foreground placeholder:text-muted-foreground`;
+
+const CATALOG_SORT_LABELS: Record<CatalogSort, string> = {
+  novedades: "Novedades",
+  precio_asc: "Precio: menor a mayor",
+  precio_desc: "Precio: mayor a menor",
+  nombre: "Nombre (A-Z)",
+};
 
 export function StoreCatalog({ products, currencySymbol, filters = {} }: StoreCatalogProps) {
   if (products.length === 0) {
@@ -58,6 +67,16 @@ export function StoreCatalog({ products, currencySymbol, filters = {} }: StoreCa
           <label className="flex items-center gap-2 py-2 text-sm text-foreground">
             <input type="checkbox" name="disponible" value="1" defaultChecked={filters.onlyAvailable} />
             Solo disponibles
+          </label>
+          <label className="flex flex-col gap-1 text-sm text-foreground">
+            Ordenar por
+            <select name="orden" defaultValue={filters.orden ?? "novedades"} className={INPUT_CLASS}>
+              {CATALOG_SORTS.map((sort) => (
+                <option key={sort} value={sort}>
+                  {CATALOG_SORT_LABELS[sort]}
+                </option>
+              ))}
+            </select>
           </label>
           <button
             type="submit"
