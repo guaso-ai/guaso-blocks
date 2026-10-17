@@ -20,6 +20,8 @@ export default defineConfig({
   },
   test: {
     environment: "jsdom",
+    // #4288: polyfills de jsdom que embla (Carousel) necesita al montar; solo rellenan lo que falta.
+    setupFiles: ["tests/setup/embla-jsdom.ts"],
     include: ["tests/**/*.{test,spec}.{ts,tsx}"],
   },
 });

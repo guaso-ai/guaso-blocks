@@ -1,4 +1,5 @@
 import type { TestimonialItem, TestimonialsData } from "../block-zone/types";
+import { Carousel, CarouselItem } from "../carousel/carousel";
 import {
   sectionHeadingClass,
   resolveTestimonialRating,
@@ -161,8 +162,7 @@ export default function Testimonials({
     );
   }
 
-  // Layout carrusel: fila con scroll-snap nativo (CSS only, sin JS).
-  // Región enfocable para que el scroll sea operable por teclado.
+  // Layout carrusel: primitivo del kit (embla, #4288) — flechas, teclado ←/→ y arrastre.
   if (layout === "carrusel") {
     return (
       <section aria-label={label} className={SECTION_ROOT_CLASS}>
@@ -172,22 +172,20 @@ export default function Testimonials({
           </h2>
         ) : null}
 
-        <div
-          role="region"
-          aria-roledescription="carrusel"
-          aria-label={label}
-          tabIndex={0}
-          className="flex snap-x snap-mandatory gap-6 overflow-x-auto pb-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-        >
+        <Carousel label={label}>
           {items.map((item, i) => (
-            <blockquote
+            <CarouselItem
               key={i}
-              className={`flex w-[85%] shrink-0 snap-start flex-col gap-4 ${BLOCK_RADIUS_CLASS} border border-border bg-card p-6 sm:w-[60%] lg:w-[31%]`}
+              className="basis-[85%] sm:basis-[60%] lg:basis-[31%]"
             >
-              <TestimonialQuote item={item} />
-            </blockquote>
+              <blockquote
+                className={`flex h-full flex-col gap-4 ${BLOCK_RADIUS_CLASS} border border-border bg-card p-6`}
+              >
+                <TestimonialQuote item={item} />
+              </blockquote>
+            </CarouselItem>
           ))}
-        </div>
+        </Carousel>
       </section>
     );
   }

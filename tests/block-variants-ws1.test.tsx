@@ -147,13 +147,15 @@ describe("Testimonials variants (#3882)", () => {
     expect(container.querySelector("div.grid")).toBeTruthy();
   });
 
-  it("layout=carrusel renderiza región con scroll-snap", () => {
+  it("layout=carrusel renderiza región con botones Anterior/Siguiente y data-index 0", () => {
     const { container } = render(
       <Testimonials data={{ items: ITEMS, layout: "carrusel" }} />,
     );
     const region = container.querySelector('[aria-roledescription="carrusel"]');
     expect(region).toBeTruthy();
-    expect(region?.className).toContain("overflow-x-auto");
+    expect(region?.getAttribute("data-index")).toBe("0");
+    expect(screen.getByRole("button", { name: "Anterior" })).toBeTruthy();
+    expect(screen.getByRole("button", { name: "Siguiente" })).toBeTruthy();
     expect(screen.getByText("Muy bueno")).toBeTruthy();
   });
 
