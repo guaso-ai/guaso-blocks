@@ -79,7 +79,7 @@ describe("filterProducts (#4268)", () => {
 describe("StoreCatalog con búsqueda (#4268)", () => {
   it("query sin match → mensaje con la query, enlace Ver todo y ninguna card", () => {
     const { container } = render(
-      <StoreCatalog products={catalog} currencySymbol="$" query="zzzz" />,
+      <StoreCatalog products={catalog} currencySymbol="$" filters={{ query: "zzzz" }} />,
     );
     expect(screen.getByText(/No encontramos piezas para “zzzz”/)).toBeTruthy();
     const verTodo = screen.getByRole("link", { name: "Ver todo" });
@@ -89,7 +89,7 @@ describe("StoreCatalog con búsqueda (#4268)", () => {
 
   it("query que matchea por tag → solo esa card", () => {
     const { container } = render(
-      <StoreCatalog products={catalog} currencySymbol="$" query="costa" />,
+      <StoreCatalog products={catalog} currencySymbol="$" filters={{ query: "costa" }} />,
     );
     const cards = container.querySelectorAll("article");
     expect(cards).toHaveLength(1);
@@ -99,14 +99,14 @@ describe("StoreCatalog con búsqueda (#4268)", () => {
 
   it("products vacío + query → null", () => {
     const { container } = render(
-      <StoreCatalog products={[]} currencySymbol="$" query="oxido" />,
+      <StoreCatalog products={[]} currencySymbol="$" filters={{ query: "oxido" }} />,
     );
     expect(container.innerHTML).toBe("");
   });
 
   it("renderiza form GET con input name=q y defaultValue = query", () => {
     const { container } = render(
-      <StoreCatalog products={catalog} currencySymbol="$" query="oxido" />,
+      <StoreCatalog products={catalog} currencySymbol="$" filters={{ query: "oxido" }} />,
     );
     const form = screen.getByRole("search");
     expect(form.tagName).toBe("FORM");

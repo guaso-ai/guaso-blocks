@@ -1,5 +1,5 @@
 import { describe, expect, it, vi, afterEach } from "vitest";
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, render, screen, within } from "@testing-library/react";
 import { ProductCard } from "../registry/gondola/product-card";
 import { StoreCatalog } from "../registry/gondola/store-catalog";
 import { ProductDetail } from "../registry/gondola/product-detail";
@@ -63,12 +63,16 @@ describe("gondola catalog UI", () => {
   });
 
   it("renders cards with product name and no cart chrome", () => {
-    render(<StoreCatalog products={[sample]} currencySymbol="$" />);
+    const { container } = render(<StoreCatalog products={[sample]} currencySymbol="$" />);
+    const card = container.querySelector("article") as HTMLElement | null;
+    expect(card).not.toBeNull();
     expect(screen.getByText("Óxido")).toBeTruthy();
-    expect(screen.getByText("Obra")).toBeTruthy();
+    // "Obra" también es el link de categoría (#4269): scope a la card.
+    expect(within(card as HTMLElement).getByText("Obra")).toBeTruthy();
     expect(screen.getByText("$180.000")).toBeTruthy();
     expect(screen.getByText("2 disponibles")).toBeTruthy();
-    expect(screen.queryByRole("button")).toBeNull();
+    // La barra de filtros tiene "Aplicar"; lo que no puede haber es carrito/agregar.
+    expect(screen.queryByRole("button", { name: /agregar|carrito/i })).toBeNull();
   });
 
   it("ProductCard links to /store/:slug", () => {
