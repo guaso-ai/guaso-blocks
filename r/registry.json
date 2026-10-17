@@ -255,6 +255,22 @@
       ]
     },
     {
+      "name": "timeline",
+      "type": "registry:component",
+      "title": "Timeline",
+      "description": "Canonical Timeline block (#4292) — línea de tiempo kit-only: lista ordenada (ol) de hitos con fecha, título y texto ya resueltos por el host. Ítem válido exige los tres campos; el orden es el del array. Sin hitos válidos y sin título → público null, dueño placeholder.",
+      "registryDependencies": [
+        "@guaso/block-zone"
+      ],
+      "files": [
+        {
+          "path": "registry/timeline/timeline.tsx",
+          "type": "registry:component",
+          "target": "@components/timeline/timeline.tsx"
+        }
+      ]
+    },
+    {
       "name": "testimonials",
       "type": "registry:component",
       "title": "Testimonials",
