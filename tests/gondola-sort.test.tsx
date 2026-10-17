@@ -203,7 +203,7 @@ describe("StoreCatalog con orden (#4270)", () => {
       "nombre",
     ]);
     expect(Array.from(select!.options).map((o) => o.textContent)).toEqual([
-      "Novedades",
+      "Orden de la tienda",
       "Precio: menor a mayor",
       "Precio: mayor a menor",
       "Nombre (A-Z)",
