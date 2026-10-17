@@ -267,6 +267,20 @@
           "target": "@components/gondola/product-detail.tsx"
         }
       ]
+    },
+    {
+      "name": "before-after",
+      "type": "registry:component",
+      "title": "BeforeAfter",
+      "description": "Comparación antes/después (#4289): dos imágenes con divisor arrastrable (pointer) y role=slider con ←/→ ±5, Home 0, End 100. Primitivo del kit, fuera del catálogo BlockZone; sin textos fijos salvo fallbacks de accesibilidad.",
+      "registryDependencies": ["@guaso/block-zone"],
+      "files": [
+        {
+          "path": "registry/before-after/before-after.tsx",
+          "type": "registry:component",
+          "target": "@components/before-after/before-after.tsx"
+        }
+      ]
     }
   ]
 }

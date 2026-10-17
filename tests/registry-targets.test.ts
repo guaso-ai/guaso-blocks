@@ -51,6 +51,7 @@ const REQUIRED_TARGETS = [
   "@components/gondola/store-catalog.tsx",
   "@components/gondola/product-detail.tsx",
   "@components/coming-soon/coming-soon.tsx",
+  "@components/before-after/before-after.tsx",
 ] as const;
 
 const BUILT_ITEM_NAMES = [
@@ -70,6 +71,7 @@ const BUILT_ITEM_NAMES = [
   "grilla",
   "gondola",
   "coming-soon",
+  "before-after",
 ] as const;
 
 const UI_ITEM_NAMES = [
