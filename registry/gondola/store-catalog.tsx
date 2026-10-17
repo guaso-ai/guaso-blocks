@@ -6,6 +6,7 @@ import {
   catalogFilterHref,
   categoriesOf,
   isSameCategory,
+  paginateProducts,
   type CatalogFilters,
   type CatalogSort,
   type Product,
@@ -28,6 +29,10 @@ const CATALOG_SORT_LABELS: Record<CatalogSort, string> = {
   nombre: "Nombre (A-Z)",
 };
 
+/** Chip de "Todas", categorías y números de página (#4272). */
+const CHIP_CLASS =
+  "inline-block rounded-full border border-border px-3 py-1 text-sm text-foreground aria-[current=page]:bg-primary aria-[current=page]:text-primary-foreground";
+
 export function StoreCatalog({ products, currencySymbol, filters = {} }: StoreCatalogProps) {
   if (products.length === 0) {
     return null;
@@ -35,6 +40,8 @@ export function StoreCatalog({ products, currencySymbol, filters = {} }: StoreCa
 
   const term = (filters.query ?? "").trim();
   const visible = applyCatalogFilters(products, filters);
+  const pageData = paginateProducts(visible, filters.pagina);
+  const pageNumbers = Array.from({ length: pageData.totalPages }, (_, i) => i + 1);
   const categories = categoriesOf(products);
   const hasOtherFilters =
     Boolean(filters.category) ||
@@ -92,7 +99,7 @@ export function StoreCatalog({ products, currencySymbol, filters = {} }: StoreCa
             <a
               href={catalogFilterHref(filters, { category: undefined })}
               aria-current={filters.category ? undefined : "page"}
-              className="inline-block rounded-full border border-border px-3 py-1 text-sm text-foreground aria-[current=page]:bg-primary aria-[current=page]:text-primary-foreground"
+              className={CHIP_CLASS}
             >
               Todas
             </a>
@@ -104,7 +111,7 @@ export function StoreCatalog({ products, currencySymbol, filters = {} }: StoreCa
                 <a
                   href={catalogFilterHref(filters, { category })}
                   aria-current={active ? "page" : undefined}
-                  className="inline-block rounded-full border border-border px-3 py-1 text-sm text-foreground aria-[current=page]:bg-primary aria-[current=page]:text-primary-foreground"
+                  className={CHIP_CLASS}
                 >
                   {category}
                 </a>
@@ -133,15 +140,31 @@ export function StoreCatalog({ products, currencySymbol, filters = {} }: StoreCa
           )}
         </div>
       ) : (
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {visible.map((product) => (
-            <ProductCard
-              key={product.slug}
-              product={product}
-              currencySymbol={currencySymbol}
-            />
-          ))}
-        </div>
+        <>
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {pageData.items.map((product) => (
+              <ProductCard
+                key={product.slug}
+                product={product}
+                currencySymbol={currencySymbol}
+              />
+            ))}
+          </div>
+          {pageData.totalPages > 1 ? (
+            <nav aria-label="Paginación" className="flex flex-wrap gap-2">
+              {pageNumbers.map((n) => (
+                <a
+                  key={n}
+                  href={catalogFilterHref(filters, { pagina: n })}
+                  aria-current={n === pageData.page ? "page" : undefined}
+                  className={CHIP_CLASS}
+                >
+                  {n}
+                </a>
+              ))}
+            </nav>
+          ) : null}
+        </>
       )}
     </div>
   );
