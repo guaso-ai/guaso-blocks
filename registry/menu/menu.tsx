@@ -60,7 +60,7 @@ export default function Menu({ data, isOwner = false }: MenuProps) {
       ) : null}
       {categories.length > 0 ? (
         <Tabs defaultValue="cat-0" className="mt-10">
-          <TabsList className="flex h-auto flex-wrap justify-start">
+          <TabsList className="h-auto flex-wrap">
             {categories.map((category, i) => (
               <TabsTrigger key={i} value={`cat-${i}`}>
                 {category.name}

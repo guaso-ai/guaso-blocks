@@ -122,6 +122,21 @@ describe("Menu sin datos válidos", () => {
     expect(screen.queryByText("Huérfano")).toBeNull();
   });
 
+  it("categoría con nombre solo de espacios se descarta", () => {
+    render(
+      <Menu
+        data={{
+          categories: [
+            { name: "   ", items: [{ name: "Fantasma", price: "$1" }] },
+            { name: "Real", items: [{ name: "Mate", price: "$500" }] },
+          ],
+        }}
+      />,
+    );
+    expect(tabs().map((t) => t.textContent)).toEqual(["Real"]);
+    expect(screen.queryByText("Fantasma")).toBeNull();
+  });
+
   it("entradas que no son objeto no rompen el render", () => {
     render(
       <Menu
