@@ -57,7 +57,7 @@ export default function GalleryLightbox({
       }}
     >
       <DialogContent
-        className="sm:max-w-4xl"
+        className="sm:max-w-[var(--block-container,72rem)]"
         onOpenAutoFocus={() => {
           const active = document.activeElement;
           openerRef.current = active instanceof HTMLElement ? active : null;
