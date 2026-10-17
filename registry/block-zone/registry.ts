@@ -6,6 +6,7 @@ import type {
   GalleryData,
   GrillaChild,
   GrillaData,
+  PlanesData,
   RichSectionData,
   StatsData,
   StepsData,
@@ -14,7 +15,7 @@ import type {
 
 // Full kit smoke: install BlockZone + all canonical renderers together.
 // Zone-alone without renderers is unsupported — paths assume sibling tree after
-// `npx shadcn add @guaso/block-zone @guaso/rich-section @guaso/cta @guaso/gallery @guaso/cards @guaso/testimonials @guaso/faq @guaso/stats @guaso/steps @guaso/grilla`.
+// `npx shadcn add @guaso/block-zone @guaso/rich-section @guaso/cta @guaso/gallery @guaso/cards @guaso/testimonials @guaso/faq @guaso/stats @guaso/steps @guaso/grilla @guaso/planes`.
 import RichSection from "../rich-section/rich-section";
 import Gallery from "../gallery/gallery";
 import Cards from "../cards/cards";
@@ -24,6 +25,7 @@ import FAQ from "../faq/faq";
 import Stats from "../stats/stats";
 import Steps from "../steps/steps";
 import Grilla from "../grilla/grilla";
+import Planes from "../planes/planes";
 
 export type BlockRenderer = ComponentType<{ data: unknown; isOwner?: boolean }>;
 
@@ -82,6 +84,9 @@ const REGISTRY_RAW: Record<string, RegistryEntry> = {
   Grilla: {
     Component: GrillaBlock,
   },
+  Planes: {
+    Component: Planes as ComponentType<{ data: PlanesData }>,
+  },
 };
 
 /** Lookup by block `type` (PascalCase). Unknown → undefined (forward-compat). */
@@ -101,4 +106,5 @@ export const SUPPORTED_BLOCK_TYPES = Object.keys(REGISTRY_RAW) as Array<
   | "Stats"
   | "Steps"
   | "Grilla"
+  | "Planes"
 >;

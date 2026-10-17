@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "planes",
+  "title": "Planes",
+  "description": "Canonical Planes block (#4290) — tabla de precios kit-only: una tarjeta por plan (name, price ya formateado por el host, highlighted → badge fijo 'Más elegido'). Apilado en mobile, en fila desde md. Sin props de layout en v1.",
+  "registryDependencies": [
+    "@guaso/block-zone"
+  ],
+  "files": [
+    {
+      "path": "registry/planes/planes.tsx",
+      "content": "import type { PlanesData, PlanItem } from \"../block-zone/types\";\nimport { SECTION_ROOT_CLASS, BLOCK_RADIUS_CLASS, sectionHeadingClass } from \"../block-zone/types\";\n\ntype PlanesProps = {\n  data: PlanesData;\n  isOwner?: boolean;\n};\n\nfunction filled(value?: string): string {\n  return typeof value === \"string\" ? value.trim() : \"\";\n}\n\n// Plan válido = tiene nombre o precio (mismo criterio que Stats: una cifra o un rótulo alcanza).\n// Entradas que no son objeto (null, strings sueltos) se descartan sin romper el render.\nfunction validPlans(data: PlanesData): PlanItem[] {\n  const raw: unknown[] = Array.isArray(data.plans) ? data.plans : [];\n  return raw.flatMap((item) => {\n    if (typeof item !== \"object\" || item === null) return [];\n    const plan = item as PlanItem;\n    return filled(plan.name) !== \"\" || filled(plan.price) !== \"\" ? [plan] : [];\n  });\n}\n\nfunction PlanesPlaceholder() {\n  return (\n    <section\n      aria-label=\"Planes\"\n      className={SECTION_ROOT_CLASS}\n    >\n      <div className={`${BLOCK_RADIUS_CLASS} border border-border bg-card px-8 py-12 text-center`}>\n        <p className=\"font-heading text-sm text-muted-foreground\">\n          Planes — agregá los planes por chat\n        </p>\n      </div>\n    </section>\n  );\n}\n\nexport default function Planes({ data, isOwner = false }: PlanesProps) {\n  const plans = validPlans(data);\n\n  if (plans.length === 0 && !filled(data.title)) {\n    return isOwner ? <PlanesPlaceholder /> : null;\n  }\n\n  return (\n    <section\n      aria-label={filled(data.title) || \"Planes\"}\n      className={SECTION_ROOT_CLASS}\n    >\n      {filled(data.title) ? (\n        <h2 className={sectionHeadingClass({})}>\n          {data.title}\n        </h2>\n      ) : null}\n      {plans.length > 0 ? (\n        <ul className=\"mt-10 flex flex-col gap-6 md:flex-row\">\n          {plans.map((plan, i) => {\n            const name = filled(plan.name);\n            const price = filled(plan.price);\n            return (\n              <li\n                key={i}\n                className={`relative flex min-w-0 flex-1 flex-col ${BLOCK_RADIUS_CLASS} border border-border bg-card p-6`}\n              >\n                {plan.highlighted === true ? (\n                  <span className=\"mb-4 self-start rounded-full bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground\">\n                    Más elegido\n                  </span>\n                ) : null}\n                {name ? (\n                  <h3 className=\"font-heading text-lg font-semibold text-foreground\">\n                    {plan.name}\n                  </h3>\n                ) : null}\n                {price ? (\n                  <p className=\"mt-2 font-heading text-3xl font-semibold tracking-tight text-foreground tabular-nums md:text-4xl\">\n                    {plan.price}\n                  </p>\n                ) : null}\n              </li>\n            );\n          })}\n        </ul>\n      ) : null}\n    </section>\n  );\n}\n",
+      "type": "registry:component",
+      "target": "@components/planes/planes.tsx"
+    }
+  ],
+  "type": "registry:component"
+}
