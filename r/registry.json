@@ -81,11 +81,25 @@
       ]
     },
     {
+      "name": "carousel",
+      "type": "registry:component",
+      "title": "Carousel",
+      "description": "Carrusel del kit (#4288) sobre embla-carousel-react: Carousel + CarouselItem. Flechas Anterior/Siguiente (deshabilitadas en los extremos, sin loop), ←/→ con el foco dentro, arrastre mouse/touch; sin autoplay.",
+      "dependencies": ["embla-carousel-react"],
+      "files": [
+        {
+          "path": "registry/carousel/carousel.tsx",
+          "type": "registry:component",
+          "target": "@components/carousel/carousel.tsx"
+        }
+      ]
+    },
+    {
       "name": "gallery",
       "type": "registry:component",
       "title": "Gallery",
-      "description": "Canonical Gallery block — tokenized baseline. Variants: columns 2|3|4 (default 3); style grilla|masonry|carrusel (default grilla). Cada imagen abre la vista ampliada (gallery-lightbox, #4287).",
-      "registryDependencies": ["@guaso/block-zone", "@guaso/gallery-lightbox"],
+      "description": "Canonical Gallery block — tokenized baseline. Variants: columns 2|3|4 (default 3); style grilla|masonry|carrusel (default grilla; carrusel = Carousel embla con flechas, ←/→ y arrastre, #4288). Cada imagen abre la vista ampliada (gallery-lightbox, #4287).",
+      "registryDependencies": ["@guaso/block-zone", "@guaso/gallery-lightbox", "@guaso/carousel"],
       "files": [
         {
           "path": "registry/gallery/gallery.tsx",
@@ -198,7 +212,7 @@
       "type": "registry:component",
       "title": "Testimonials",
       "description": "Canonical Testimonials block — tokenized baseline.",
-      "registryDependencies": ["@guaso/block-zone"],
+      "registryDependencies": ["@guaso/block-zone", "@guaso/carousel"],
       "files": [
         {
           "path": "registry/testimonials/testimonials.tsx",

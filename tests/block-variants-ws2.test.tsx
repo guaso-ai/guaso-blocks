@@ -95,13 +95,15 @@ describe("Gallery variants (#3883)", () => {
     expect(container.querySelector("div.grid")).toBeNull();
   });
 
-  it("style=carrusel renderiza región con overflow-x", () => {
+  it("style=carrusel renderiza región con botones Anterior/Siguiente y data-index 0", () => {
     const { container } = render(
       <Gallery data={{ images: IMAGES, style: "carrusel" }} />,
     );
     const region = container.querySelector('[aria-roledescription="carrusel"]');
     expect(region).toBeTruthy();
-    expect(region?.className).toContain("overflow-x-auto");
+    expect(region?.getAttribute("data-index")).toBe("0");
+    expect(screen.getByRole("button", { name: "Anterior" })).toBeTruthy();
+    expect(screen.getByRole("button", { name: "Siguiente" })).toBeTruthy();
     expect(screen.getByAltText("Foto B")).toBeTruthy();
   });
 

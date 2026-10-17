@@ -18,6 +18,7 @@ import {
   SECTION_ROOT_CLASS,
 } from "../block-zone/types";
 import GalleryLightbox from "../gallery-lightbox/gallery-lightbox";
+import { Carousel, CarouselItem } from "../carousel/carousel";
 
 type GalleryProps = {
   data: GalleryData;
@@ -175,8 +176,7 @@ export default function Gallery({ data, isOwner = false }: GalleryProps) {
     );
   }
 
-  // Carrusel: fila con scroll-snap nativo (CSS only, sin JS).
-  // Región enfocable para que el scroll sea operable por teclado.
+  // Carrusel: primitivo del kit (embla, #4288) — flechas, teclado ←/→ y arrastre.
   if (style === "carrusel") {
     return (
       <>
@@ -190,24 +190,21 @@ export default function Gallery({ data, isOwner = false }: GalleryProps) {
             </h2>
           ) : null}
 
-          <div
-            role="region"
-            aria-roledescription="carrusel"
-            aria-label={label}
-            tabIndex={0}
-            className="flex snap-x snap-mandatory gap-6 overflow-x-auto pb-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-          >
+          <Carousel label={label}>
             {images.map((image, i) => (
-              <GalleryFigure
-                presentation={data}
+              <CarouselItem
                 key={`${image.url}-${i}`}
-                image={image}
-                index={i}
-                className="w-[85%] shrink-0 snap-start sm:w-[45%] lg:w-[31%]"
-                onOpen={() => setOpenIndex(i)}
-              />
+                className="basis-[85%] sm:basis-[45%] lg:basis-[31%]"
+              >
+                <GalleryFigure
+                  presentation={data}
+                  image={image}
+                  index={i}
+                  onOpen={() => setOpenIndex(i)}
+                />
+              </CarouselItem>
             ))}
-          </div>
+          </Carousel>
         </section>
         {lightbox}
       </>
