@@ -234,6 +234,28 @@ export function applyCatalogFilters(products: Product[], filters: CatalogFilters
   return sortProducts(filtered, filters.orden);
 }
 
+/**
+ * Productos relacionados a la ficha (#4273): misma categoría (no vacía) o algún tag
+ * igual tras normalizar (sin tildes, mayúsculas ni espacios; igualdad, no substring).
+ * Candidato = catálogo sin el mismo `slug`. Orden = orden del catálogo. `limit` se
+ * normaliza antes de cortar (NaN, infinito, negativo → []). Pura, no muta.
+ */
+export function relatedProducts(product: Product, catalog: Product[], limit = 4): Product[] {
+  const n = Number.isFinite(limit) ? Math.max(0, Math.floor(limit)) : 0;
+  const ownCategory = product.category.trim() ? product.category : undefined;
+  const ownTags = new Set(
+    (product.tags ?? [])
+      .map((tag) => normalizeSearchText(tag.trim()))
+      .filter((tag) => tag !== ""),
+  );
+  const related = catalog.filter((candidate) => {
+    if (candidate.slug === product.slug) return false;
+    if (ownCategory !== undefined && isSameCategory(candidate.category, ownCategory)) return true;
+    return (candidate.tags ?? []).some((tag) => ownTags.has(normalizeSearchText(tag.trim())));
+  });
+  return related.slice(0, n);
+}
+
 /** Categorías únicas (sin tildes/mayúsculas), no vacías, orden es-AR. #4269 */
 export function categoriesOf(products: Product[]): string[] {
   const byKey = new Map<string, string>();

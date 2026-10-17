@@ -2,7 +2,14 @@
 
 import { useState, type ReactNode } from "react";
 import Link from "next/link";
-import { firstImageSrc, priceLabel, quantityLabel, type Product } from "./types";
+import {
+  firstImageSrc,
+  priceLabel,
+  quantityLabel,
+  relatedProducts,
+  type Product,
+} from "./types";
+import { ProductCard } from "./product-card";
 import {
   SECTION_PY_CLASS,
   SECTION_PX_CLASS,
@@ -17,6 +24,9 @@ type ProductDetailProps = {
   currencySymbol: string;
   storeNav?: string;
   children?: ReactNode;
+  // Colección del host (misma fuente que el listado). Sin valor → sin bloque
+  // de relacionados. #4273
+  catalog?: Product[];
   // Atributos opacos por zona editable (los calcula el template y los
   // pega el kit con spread). `{}` = no-op. El kit nunca importa `@/lib/*`
   // ni conoce el protocolo de slots.
@@ -30,10 +40,12 @@ export function ProductDetail({
   currencySymbol,
   storeNav,
   children,
+  catalog,
   imageSlot = {},
   nameSlot = {},
   priceSlot = {},
 }: ProductDetailProps) {
+  const related = catalog ? relatedProducts(product, catalog) : [];
   const cover = firstImageSrc(product.images);
   const images = (product.images ?? []).filter(function (img): img is string {
     return typeof img === "string" && img.trim().length !== 0;
@@ -136,6 +148,19 @@ export function ProductDetail({
           {children}
         </div>
       </div>
+
+      {related.length > 0 ? (
+        <div className="mt-16">
+          <h2 className="font-heading text-2xl font-semibold text-foreground">
+            Productos relacionados
+          </h2>
+          <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {related.map((item) => (
+              <ProductCard key={item.slug} product={item} currencySymbol={currencySymbol} />
+            ))}
+          </div>
+        </div>
+      ) : null}
     </section>
   );
 }
