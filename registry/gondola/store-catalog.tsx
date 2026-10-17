@@ -1,6 +1,5 @@
 import { ProductCard } from "./product-card";
 import { filterProducts, type Product } from "./types";
-import { BLOCK_RADIUS_BUTTON_CLASS, BLOCK_RADIUS_CLASS } from "../block-zone/types";
 
 type StoreCatalogProps = {
   products: Product[];
@@ -27,11 +26,11 @@ export function StoreCatalog({ products, currencySymbol, query }: StoreCatalogPr
           defaultValue={query}
           placeholder="Buscá por nombre o etiqueta"
           aria-label="Buscar en la tienda"
-          className={`w-full ${BLOCK_RADIUS_BUTTON_CLASS} border border-border bg-card px-4 py-2 text-foreground placeholder:text-muted-foreground`}
+          className="w-full rounded-[var(--block-radius-suave,0.375rem)] border border-border bg-card px-4 py-2 text-foreground placeholder:text-muted-foreground"
         />
       </form>
       {visible.length === 0 ? (
-        <div className={`flex flex-col items-start gap-3 ${BLOCK_RADIUS_CLASS} border border-border bg-card p-6`}>
+        <div className="flex flex-col items-start gap-3 rounded-[var(--block-radius-redondeado,0.5rem)] border border-border bg-card p-6">
           <p className="text-foreground">
             No encontramos piezas para “{term}”. Probá con otra palabra o mirá todo el catálogo.
           </p>
