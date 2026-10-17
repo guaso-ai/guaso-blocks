@@ -40,6 +40,25 @@ describe("Timeline render (#4292)", () => {
     expect(hitos[2].textContent).toContain("2024");
   });
 
+  it("array desordenado → el DOM sigue el orden del array (el kit no ordena por date)", () => {
+    const { container } = render(
+      <Timeline
+        data={{
+          items: [
+            { date: "2024", title: "Tienda online", text: "Lanzamos la venta por internet." },
+            { date: "2015", title: "Fundamos el local", text: "Abrimos la primera sucursal." },
+            { date: "2019", title: "Segunda sucursal", text: "Sumamos un local en la zona norte." },
+          ],
+        }}
+      />,
+    );
+    const hitos = container.querySelectorAll("li");
+    expect(hitos).toHaveLength(3);
+    expect(hitos[0].textContent).toContain("2024");
+    expect(hitos[1].textContent).toContain("2015");
+    expect(hitos[2].textContent).toContain("2019");
+  });
+
   it("descarta ítems incompletos o no-objeto; solo cuentan los válidos", () => {
     const { container } = render(
       <Timeline

@@ -1,5 +1,5 @@
 import type { MenuCategory, MenuData, MenuItem } from "../block-zone/types";
-import { SECTION_ROOT_CLASS, sectionHeadingClass } from "../block-zone/types";
+import { SECTION_ROOT_CLASS, filled, sectionHeadingClass } from "../block-zone/types";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 type MenuProps = {
@@ -9,10 +9,6 @@ type MenuProps = {
 
 type ValidItem = { name: string; price: string };
 type ValidCategory = { name: string; items: ValidItem[] };
-
-function filled(value?: string): string {
-  return typeof value === "string" ? value.trim() : "";
-}
 
 // Ítem válido = tiene nombre o precio. Categoría válida = tiene nombre y al menos un ítem válido
 // (un tab sin rótulo o vacío no se muestra). Entradas que no son objeto se descartan sin romper el render.

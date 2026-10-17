@@ -1,14 +1,10 @@
 import type { TimelineData, TimelineItem } from "../block-zone/types";
-import { NARROW_SECTION_ROOT_CLASS, BLOCK_RADIUS_CLASS, sectionHeadingClass } from "../block-zone/types";
+import { NARROW_SECTION_ROOT_CLASS, BLOCK_RADIUS_CLASS, filled, sectionHeadingClass } from "../block-zone/types";
 
 type TimelineProps = {
   data: TimelineData;
   isOwner?: boolean;
 };
-
-function filled(value?: string): string {
-  return typeof value === "string" ? value.trim() : "";
-}
 
 // Hito válido = fecha, título y texto no vacíos (AND: un hito sin fecha o sin texto no se lee como línea de tiempo).
 // Entradas que no son objeto (null, strings sueltos) se descartan sin romper el render.

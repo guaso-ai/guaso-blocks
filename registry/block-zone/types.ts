@@ -485,6 +485,11 @@ export function safeHref(url?: string): string | undefined {
   return undefined;
 }
 
+/** Texto recortado o "" si el valor no es string o está en blanco. Compartido por los bloques del kit (DRY 3+). */
+export function filled(value?: string): string {
+  return typeof value === "string" ? value.trim() : "";
+}
+
 // --- Presentación (#4266, corte B). Defaults = render actual: sin props, el DOM no cambia.
 // Tipografía (scale, emphasis) en los 8 bloques canónicos; imagen (aspect, frame, fit, focal)
 // en RichSection, CTA y Gallery. Fuera de closed-set → default, nunca explota.
