@@ -194,7 +194,7 @@ describe("StoreCatalog pagina numerada (#4272)", () => {
 
   it("round-trip: filtros con pagina → href → parse → mismo HTML", () => {
     const filters: CatalogFilters = { query: "pieza", onlyAvailable: false, pagina: 2 };
-    const parsed = parseCatalogFilters(paramsFrom(catalogFilterHref(filters).slice(1)));
+    const parsed = parseCatalogFilters(paramsFrom(catalogFilterHref({}, filters).slice(1)));
     expect(parsed).toEqual(filters);
     expect(ssr(catalog, parsed)).toBe(ssr(catalog, filters));
   });
