@@ -71,8 +71,8 @@ describe("gondola catalog UI", () => {
     expect(within(card as HTMLElement).getByText("Obra")).toBeTruthy();
     expect(screen.getByText("$180.000")).toBeTruthy();
     expect(screen.getByText("2 disponibles")).toBeTruthy();
-    // La barra de filtros tiene "Aplicar"; lo que no puede haber es carrito/agregar.
-    expect(screen.queryByRole("button", { name: /agregar|carrito/i })).toBeNull();
+    // La barra de filtros tiene "Aplicar" (fuera de la card): la card no puede tener ningún botón.
+    expect(within(card as HTMLElement).queryByRole("button")).toBeNull();
   });
 
   it("ProductCard links to /store/:slug", () => {
