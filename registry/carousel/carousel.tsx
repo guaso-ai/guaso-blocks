@@ -5,8 +5,9 @@
  * (estilo shadcn, vendorizado). Lo consumen `Gallery` (style=carrusel) y `Testimonials` (layout=carrusel).
  * Target: `@components/carousel/carousel.tsx` (hermano de `gallery/` y `testimonials/` al instalar).
  *
- * Navegación: ←/→ con el foco dentro del root; botones Anterior/Siguiente deshabilitados en los
- * extremos (sin loop); arrastre mouse/touch (`watchDrag`; embla v8 escucha mouse/touch, no pointer). Sin autoplay (sin setInterval, a11y).
+ * Navegación: ←/→ con el foco dentro del root; botones Anterior/Siguiente en `aria-disabled` en los
+ * extremos (sin loop; NO `disabled`: un botón deshabilitado pierde el foco y ←/→ deja de andar). El click
+ * en extremo se ignora. Arrastre mouse/touch (`watchDrag`; embla v8 escucha mouse/touch, no pointer). Sin autoplay (sin setInterval, a11y).
  * Sin lucide a propósito: los chevrons son SVG inline, así el item solo declara `embla-carousel-react`.
  * ⛔ literales de color: solo tokens semánticos.
  */
@@ -23,7 +24,7 @@ export type CarouselProps = {
 const EMBLA_OPTIONS = { align: "start" as const, loop: false, watchDrag: true };
 
 const NAV_BUTTON_CLASS =
-  "inline-flex size-10 items-center justify-center rounded-[var(--block-radius-suave,0.375rem)] border border-border bg-card text-foreground hover:opacity-80 disabled:pointer-events-none disabled:opacity-40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
+  "inline-flex size-10 items-center justify-center rounded-[var(--block-radius-suave,0.375rem)] border border-border bg-card text-foreground hover:opacity-80 aria-disabled:pointer-events-none aria-disabled:opacity-40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
 
 function Chevron({ direction }: { direction: "left" | "right" }) {
   return (
@@ -104,8 +105,10 @@ export function Carousel({ label, className, children }: CarouselProps) {
         <button
           type="button"
           aria-label="Anterior"
-          disabled={!canPrev}
-          onClick={() => emblaApi?.scrollPrev()}
+          aria-disabled={!canPrev}
+          onClick={() => {
+            if (canPrev) emblaApi?.scrollPrev();
+          }}
           className={NAV_BUTTON_CLASS}
         >
           <Chevron direction="left" />
@@ -113,8 +116,10 @@ export function Carousel({ label, className, children }: CarouselProps) {
         <button
           type="button"
           aria-label="Siguiente"
-          disabled={!canNext}
-          onClick={() => emblaApi?.scrollNext()}
+          aria-disabled={!canNext}
+          onClick={() => {
+            if (canNext) emblaApi?.scrollNext();
+          }}
           className={NAV_BUTTON_CLASS}
         >
           <Chevron direction="right" />

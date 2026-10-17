@@ -67,10 +67,10 @@ afterEach(() => {
 
 const ITEMS = ["Uno", "Dos", "Tres"];
 
-function Harness() {
+function Harness({ items = ITEMS }: { items?: string[] }) {
   return (
     <Carousel label="Demo">
-      {ITEMS.map((text) => (
+      {items.map((text) => (
         <CarouselItem key={text}>
           <p>{text}</p>
         </CarouselItem>
@@ -83,6 +83,8 @@ const root = () => screen.getByRole("region", { name: "Demo" });
 const index = () => Number(root().getAttribute("data-index"));
 const nextBtn = () => screen.getByRole("button", { name: "Siguiente" }) as HTMLButtonElement;
 const prevBtn = () => screen.getByRole("button", { name: "Anterior" }) as HTMLButtonElement;
+// Extremos: el botón queda aria-disabled (sigue enfocable), no `disabled` (que saca el foco del teclado).
+const isDisabled = (btn: HTMLElement) => btn.getAttribute("aria-disabled") === "true";
 // Viewport = el nodo que contiene el track `-ml-6` (embla lo mide con emblaRef). Ya no es focusable.
 const viewport = () => root().querySelector<HTMLElement>(".-ml-6")?.parentElement as HTMLElement;
 
@@ -95,10 +97,10 @@ describe("Carousel render (#4288)", () => {
     expect(index()).toBe(0);
   });
 
-  it("botones Anterior y Siguiente con nombre accesible; Anterior arranca deshabilitado", () => {
+  it("botones Anterior y Siguiente con nombre accesible; Anterior arranca en extremo (aria-disabled)", () => {
     render(<Harness />);
-    expect(prevBtn().disabled).toBe(true);
-    expect(nextBtn().disabled).toBe(false);
+    expect(isDisabled(prevBtn())).toBe(true);
+    expect(isDisabled(nextBtn())).toBe(false);
   });
 });
 
@@ -106,7 +108,7 @@ describe("Carousel render (#4288)", () => {
 // Límite: `renderToStaticMarkup` muestra el HTML SSR (embla sin init, emblaApi undefined); el paso a
 // overflow-hidden tras init se verifica con render() real (embla corre en jsdom). El arrastre no se prueba acá.
 describe("Carousel viewport SSR / init (#4288)", () => {
-  it("antes de init (HTML SSR) el viewport es overflow-x-auto y los botones nacen disabled sin desaparecer", () => {
+  it("antes de init (HTML SSR) el viewport es overflow-x-auto y los botones nacen aria-disabled sin desaparecer", () => {
     const html = renderToStaticMarkup(<Harness />);
     const doc = new DOMParser().parseFromString(html, "text/html");
     const ssrRoot = doc.querySelector<HTMLElement>('[aria-roledescription="carrusel"]') as HTMLElement;
@@ -115,7 +117,8 @@ describe("Carousel viewport SSR / init (#4288)", () => {
     expect(ssrViewport.classList.contains("overflow-hidden")).toBe(false);
     const buttons = Array.from(ssrRoot.querySelectorAll("button"));
     expect(buttons.map((b) => b.getAttribute("aria-label"))).toEqual(["Anterior", "Siguiente"]);
-    expect(buttons.every((b) => b.hasAttribute("disabled"))).toBe(true);
+    expect(buttons.every((b) => b.getAttribute("aria-disabled") === "true")).toBe(true);
+    expect(buttons.some((b) => b.hasAttribute("disabled"))).toBe(false);
   });
 
   it("tras init de embla el viewport pasa a overflow-hidden (mismo nodo)", () => {
@@ -141,22 +144,86 @@ describe("Carousel teclado (#4288)", () => {
     fireEvent.keyDown(nextBtn(), { key: "ArrowLeft" });
     expect(index()).toBe(0);
   });
+
+  // Fix del Revisor (#4288): sin preventDefault la flecha también desplaza el scroll del ancestro/página.
+  // fireEvent.keyDown devuelve false cuando el evento fue cancelado (defaultPrevented).
+  it("ArrowLeft y ArrowRight dentro del root llaman preventDefault; otras teclas no", () => {
+    render(<Harness />);
+    expect(fireEvent.keyDown(nextBtn(), { key: "ArrowRight" })).toBe(false);
+    expect(fireEvent.keyDown(nextBtn(), { key: "ArrowLeft" })).toBe(false);
+    expect(fireEvent.keyDown(nextBtn(), { key: "Tab" })).toBe(true);
+  });
+});
+
+// Fix del Revisor (#4288): reInit al cambiar la cantidad de ítems en edición en vivo. Sin el efecto
+// que llama reInit (o sin el listener que sincroniza el estado), los botones y el índice quedan stale.
+describe("Carousel reInit al cambiar la cantidad de ítems (#4288)", () => {
+  it("3 → 2 ítems: estando en el último, el índice se clampa al nuevo último y Siguiente queda en extremo", () => {
+    const { rerender } = render(<Harness />);
+    fireEvent.click(nextBtn());
+    fireEvent.click(nextBtn());
+    expect(index()).toBe(2);
+    expect(isDisabled(nextBtn())).toBe(true);
+    rerender(<Harness items={ITEMS.slice(0, 2)} />);
+    expect(index()).toBe(1);
+    expect(isDisabled(nextBtn())).toBe(true);
+    expect(isDisabled(prevBtn())).toBe(false);
+  });
+
+  it("3 → 4 ítems: estando en el último, Siguiente se habilita de nuevo y el ítem nuevo es navegable", () => {
+    const { rerender } = render(<Harness />);
+    fireEvent.click(nextBtn());
+    fireEvent.click(nextBtn());
+    expect(isDisabled(nextBtn())).toBe(true);
+    rerender(<Harness items={[...ITEMS, "Cuatro"]} />);
+    expect(index()).toBe(2);
+    expect(isDisabled(nextBtn())).toBe(false);
+    fireEvent.click(nextBtn());
+    expect(index()).toBe(3);
+    expect(isDisabled(nextBtn())).toBe(true);
+  });
 });
 
 describe("Carousel botones (#4288)", () => {
-  it("click en Siguiente y Anterior mueve el índice; extremos deshabilitados", () => {
+  it("click en Siguiente y Anterior mueve el índice; en los extremos el click no mueve nada", () => {
     render(<Harness />);
     fireEvent.click(nextBtn());
     expect(index()).toBe(1);
-    expect(prevBtn().disabled).toBe(false);
+    expect(isDisabled(prevBtn())).toBe(false);
     fireEvent.click(nextBtn());
     expect(index()).toBe(2);
-    expect(nextBtn().disabled).toBe(true);
+    expect(isDisabled(nextBtn())).toBe(true);
+    fireEvent.click(nextBtn());
+    expect(index()).toBe(2);
     fireEvent.click(prevBtn());
     expect(index()).toBe(1);
     fireEvent.click(prevBtn());
     expect(index()).toBe(0);
-    expect(prevBtn().disabled).toBe(true);
+    expect(isDisabled(prevBtn())).toBe(true);
+    fireEvent.click(prevBtn());
+    expect(index()).toBe(0);
+  });
+
+  // Fix del Revisor (#4288): con `disabled`, al llegar al extremo el botón enfocado perdía el foco y
+  // ←/→ (handler en el root) dejaba de andar. Con aria-disabled el botón sigue enfocable.
+  it("con foco en Siguiente, llegar al último ítem no le quita el foco y ←/→ sigue moviendo el índice", () => {
+    render(<Harness />);
+    nextBtn().focus();
+    expect(document.activeElement).toBe(nextBtn());
+    fireEvent.keyDown(nextBtn(), { key: "ArrowRight" });
+    fireEvent.keyDown(nextBtn(), { key: "ArrowRight" });
+    expect(index()).toBe(2);
+    expect(isDisabled(nextBtn())).toBe(true);
+    // Límite: jsdom no reproduce el focus fixup del navegador (enfoca un `disabled` sin quejarse), así que
+    // el foco real se verifica a mano. Acá se afirma la causa: el botón no puede ser `disabled` nativo.
+    expect(nextBtn().hasAttribute("disabled")).toBe(false);
+    expect(document.activeElement).toBe(nextBtn());
+    // Enfocable en el extremo: volver con Tab/foco programático tiene que funcionar.
+    nextBtn().blur();
+    nextBtn().focus();
+    expect(document.activeElement).toBe(nextBtn());
+    fireEvent.keyDown(document.activeElement as Element, { key: "ArrowLeft" });
+    expect(index()).toBe(1);
   });
 });
 
