@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "timeline",
+  "title": "Timeline",
+  "description": "Canonical Timeline block (#4292) — línea de tiempo kit-only: lista ordenada (ol) de hitos con fecha, título y texto ya resueltos por el host. Ítem válido exige los tres campos; el orden es el del array. Sin hitos válidos y sin título → público null, dueño placeholder.",
+  "registryDependencies": [
+    "@guaso/block-zone"
+  ],
+  "files": [
+    {
+      "path": "registry/timeline/timeline.tsx",
+      "content": "import type { TimelineData, TimelineItem } from \"../block-zone/types\";\nimport { NARROW_SECTION_ROOT_CLASS, BLOCK_RADIUS_CLASS, filled, sectionHeadingClass } from \"../block-zone/types\";\n\ntype TimelineProps = {\n  data: TimelineData;\n  isOwner?: boolean;\n};\n\n// Hito válido = fecha, título y texto no vacíos (AND: un hito sin fecha o sin texto no se lee como línea de tiempo).\n// Entradas que no son objeto (null, strings sueltos) se descartan sin romper el render.\n// El kit no parsea ni ordena `date`: el orden de render es el del array.\nfunction validItems(data: TimelineData): TimelineItem[] {\n  const raw: unknown[] = Array.isArray(data.items) ? data.items : [];\n  return raw.flatMap((item) => {\n    if (typeof item !== \"object\" || item === null) return [];\n    const hito = item as TimelineItem;\n    return filled(hito.date) !== \"\" && filled(hito.title) !== \"\" && filled(hito.text) !== \"\"\n      ? [hito]\n      : [];\n  });\n}\n\nfunction TimelinePlaceholder() {\n  return (\n    <section\n      aria-label=\"Línea de tiempo\"\n      className={NARROW_SECTION_ROOT_CLASS}\n    >\n      <div className={`${BLOCK_RADIUS_CLASS} border border-border bg-card px-8 py-12 text-center`}>\n        <p className=\"font-heading text-sm text-muted-foreground\">\n          Línea de tiempo — agregá los hitos por chat\n        </p>\n      </div>\n    </section>\n  );\n}\n\nexport default function Timeline({ data, isOwner = false }: TimelineProps) {\n  const items = validItems(data);\n\n  if (items.length === 0 && !filled(data.title)) {\n    return isOwner ? <TimelinePlaceholder /> : null;\n  }\n\n  return (\n    <section\n      aria-label={filled(data.title) || \"Línea de tiempo\"}\n      className={NARROW_SECTION_ROOT_CLASS}\n    >\n      {filled(data.title) ? (\n        <h2 className={sectionHeadingClass({})}>\n          {data.title}\n        </h2>\n      ) : null}\n      {items.length > 0 ? (\n        <ol className=\"mt-10 flex flex-col gap-0\">\n          {items.map((hito, i) => (\n            <li key={i} className=\"grid grid-cols-[auto_1fr] gap-x-5 border-l border-border py-5 pl-0\">\n              <span\n                aria-hidden=\"true\"\n                className=\"-ml-[0.3rem] mt-2 h-2.5 w-2.5 rounded-full bg-primary\"\n              />\n              <div className=\"-mt-0.5\">\n                <p className=\"font-heading text-xs font-semibold uppercase tracking-wide text-muted-foreground\">\n                  {hito.date}\n                </p>\n                <h3 className=\"mt-1 font-heading text-lg font-semibold tracking-tight text-foreground text-balance\">\n                  {hito.title}\n                </h3>\n                <p className=\"mt-1 text-sm leading-relaxed text-muted-foreground break-words\">\n                  {hito.text}\n                </p>\n              </div>\n            </li>\n          ))}\n        </ol>\n      ) : null}\n    </section>\n  );\n}\n",
+      "type": "registry:component",
+      "target": "@components/timeline/timeline.tsx"
+    }
+  ],
+  "type": "registry:component"
+}

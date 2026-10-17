@@ -209,6 +209,10 @@ export type MenuData = {
   categories?: MenuCategory[];
 };
 
+// Línea de tiempo (#4292): kit-only. `date` llega ya formateado por el host (el kit no parsea ni ordena).
+export type TimelineItem = { date?: string; title?: string; text?: string };
+export type TimelineData = { title?: string; items?: TimelineItem[] };
+
 // ─── Variantes de bloque kit-once (#3882 WS1, #3883 WS2, #3884 WS3) ───────────
 // Closed-sets declarados UNA vez acá. El backend los espeja en
 // `_CANONICAL_BLOCKS` + `_validate_block_variant` (default + logger.warning);
@@ -479,6 +483,11 @@ export function safeHref(url?: string): string | undefined {
   }
 
   return undefined;
+}
+
+/** Texto recortado o "" si el valor no es string o está en blanco. Compartido por los bloques del kit (DRY 3+). */
+export function filled(value?: string): string {
+  return typeof value === "string" ? value.trim() : "";
 }
 
 // --- Presentación (#4266, corte B). Defaults = render actual: sin props, el DOM no cambia.

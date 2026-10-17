@@ -1,14 +1,10 @@
 import type { FAQData } from "../block-zone/types";
-import { NARROW_SECTION_ROOT_CLASS, BLOCK_RADIUS_CLASS, sectionHeadingClass } from "../block-zone/types";
+import { NARROW_SECTION_ROOT_CLASS, BLOCK_RADIUS_CLASS, filled, sectionHeadingClass } from "../block-zone/types";
 
 type FAQProps = {
   data: FAQData;
   isOwner?: boolean;
 };
-
-function filled(value?: string): string {
-  return typeof value === "string" ? value.trim() : "";
-}
 
 function FAQPlaceholder() {
   return (

@@ -1,14 +1,10 @@
 import type { PlanesData, PlanItem } from "../block-zone/types";
-import { SECTION_ROOT_CLASS, BLOCK_RADIUS_CLASS, sectionHeadingClass } from "../block-zone/types";
+import { SECTION_ROOT_CLASS, BLOCK_RADIUS_CLASS, filled, sectionHeadingClass } from "../block-zone/types";
 
 type PlanesProps = {
   data: PlanesData;
   isOwner?: boolean;
 };
-
-function filled(value?: string): string {
-  return typeof value === "string" ? value.trim() : "";
-}
 
 // Plan válido = tiene nombre o precio (mismo criterio que Stats: una cifra o un rótulo alcanza).
 // Entradas que no son objeto (null, strings sueltos) se descartan sin romper el render.
