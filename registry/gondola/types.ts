@@ -98,3 +98,23 @@ export function normalizeProducts(raw: unknown): Product[] {
   }
   return out;
 }
+
+/** Minúsculas y sin tildes, para comparar búsquedas ("Óxido" ≡ "oxido"). #4268 */
+function normalizeSearchText(text: string): string {
+  return text.normalize("NFD").replace(/\p{M}/gu, "").toLowerCase();
+}
+
+/**
+ * Filtra por substring sobre `name` y cada `tags[]` (sin tildes ni mayúsculas).
+ * Query vacío o solo espacios → mismo array. Sin tokenización: "remera azul"
+ * solo matchea si esas palabras aparecen contiguas. #4268
+ */
+export function filterProducts(products: Product[], query: string | undefined): Product[] {
+  const q = normalizeSearchText((query ?? "").trim());
+  if (!q) return products;
+  return products.filter(
+    (product) =>
+      normalizeSearchText(product.name).includes(q) ||
+      product.tags.some((tag) => normalizeSearchText(tag).includes(q)),
+  );
+}
