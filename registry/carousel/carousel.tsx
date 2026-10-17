@@ -92,8 +92,11 @@ export function Carousel({ label, className, children }: CarouselProps) {
     >
       <div
         ref={emblaRef}
-        tabIndex={0}
-        className="overflow-hidden focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+        className={[
+          // Sin embla (SSR / antes de hidratar) el track se scrollea nativo; con embla, overflow-hidden.
+          emblaApi ? "overflow-hidden" : "overflow-x-auto",
+          "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
+        ].join(" ")}
       >
         <div className="-ml-6 flex">{children}</div>
       </div>

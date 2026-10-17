@@ -6,6 +6,7 @@
  */
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { renderToStaticMarkup } from "react-dom/server";
 import useEmblaCarousel from "embla-carousel-react";
 import { Carousel, CarouselItem } from "../registry/carousel/carousel";
 
@@ -82,7 +83,8 @@ const root = () => screen.getByRole("region", { name: "Demo" });
 const index = () => Number(root().getAttribute("data-index"));
 const nextBtn = () => screen.getByRole("button", { name: "Siguiente" }) as HTMLButtonElement;
 const prevBtn = () => screen.getByRole("button", { name: "Anterior" }) as HTMLButtonElement;
-const viewport = () => root().querySelector<HTMLElement>('[tabindex="0"]') as HTMLElement;
+// Viewport = el nodo que contiene el track `-ml-6` (embla lo mide con emblaRef). Ya no es focusable.
+const viewport = () => root().querySelector<HTMLElement>(".-ml-6")?.parentElement as HTMLElement;
 
 describe("Carousel render (#4288)", () => {
   it("region con aria-roledescription carrusel y aria-label; N ítems; índice inicial 0", () => {
@@ -100,14 +102,43 @@ describe("Carousel render (#4288)", () => {
   });
 });
 
+// Fix del Revisor (#4288): el viewport nacía con overflow-hidden y sin embla no había scroll (SSR / sin JS).
+// Límite: `renderToStaticMarkup` muestra el HTML SSR (embla sin init, emblaApi undefined); el paso a
+// overflow-hidden tras init se verifica con render() real (embla corre en jsdom). El arrastre no se prueba acá.
+describe("Carousel viewport SSR / init (#4288)", () => {
+  it("antes de init (HTML SSR) el viewport es overflow-x-auto y los botones nacen disabled sin desaparecer", () => {
+    const html = renderToStaticMarkup(<Harness />);
+    const doc = new DOMParser().parseFromString(html, "text/html");
+    const ssrRoot = doc.querySelector<HTMLElement>('[aria-roledescription="carrusel"]') as HTMLElement;
+    const ssrViewport = ssrRoot.querySelector<HTMLElement>(".-ml-6")?.parentElement as HTMLElement;
+    expect(ssrViewport.classList.contains("overflow-x-auto")).toBe(true);
+    expect(ssrViewport.classList.contains("overflow-hidden")).toBe(false);
+    const buttons = Array.from(ssrRoot.querySelectorAll("button"));
+    expect(buttons.map((b) => b.getAttribute("aria-label"))).toEqual(["Anterior", "Siguiente"]);
+    expect(buttons.every((b) => b.hasAttribute("disabled"))).toBe(true);
+  });
+
+  it("tras init de embla el viewport pasa a overflow-hidden (mismo nodo)", () => {
+    render(<Harness />);
+    expect(viewport().classList.contains("overflow-hidden")).toBe(true);
+    expect(viewport().classList.contains("overflow-x-auto")).toBe(false);
+  });
+
+  it("ningún elemento del carrusel tiene tabindex (el viewport no es focusable; ←/→ vive en el root)", () => {
+    render(<Harness />);
+    expect(root().querySelector("[tabindex]")).toBeNull();
+  });
+});
+
 describe("Carousel teclado (#4288)", () => {
   it("ArrowRight con foco dentro avanza; ArrowLeft vuelve; ArrowLeft en el primero no baja de 0", () => {
     render(<Harness />);
-    fireEvent.keyDown(viewport(), { key: "ArrowRight" });
+    // Foco dentro del root: el botón Siguiente es el único elemento enfocable del carrusel.
+    fireEvent.keyDown(nextBtn(), { key: "ArrowRight" });
     expect(index()).toBe(1);
-    fireEvent.keyDown(viewport(), { key: "ArrowLeft" });
+    fireEvent.keyDown(nextBtn(), { key: "ArrowLeft" });
     expect(index()).toBe(0);
-    fireEvent.keyDown(viewport(), { key: "ArrowLeft" });
+    fireEvent.keyDown(nextBtn(), { key: "ArrowLeft" });
     expect(index()).toBe(0);
   });
 });
