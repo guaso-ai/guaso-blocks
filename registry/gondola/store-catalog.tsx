@@ -1,4 +1,4 @@
-import { BLOCK_RADIUS_BUTTON_CLASS } from "../block-zone/types";
+import { BLOCK_RADIUS_BUTTON_CLASS, BLOCK_RADIUS_CLASS } from "../block-zone/types";
 import { ProductCard } from "./product-card";
 import {
   applyCatalogFilters,
@@ -17,7 +17,7 @@ type StoreCatalogProps = {
 };
 
 const INPUT_CLASS =
-  "rounded-[var(--block-radius-suave,0.375rem)] border border-border bg-card px-4 py-2 text-foreground placeholder:text-muted-foreground";
+  `${BLOCK_RADIUS_BUTTON_CLASS} border border-border bg-card px-4 py-2 text-foreground placeholder:text-muted-foreground`;
 
 export function StoreCatalog({ products, currencySymbol, filters = {} }: StoreCatalogProps) {
   if (products.length === 0) {
@@ -95,7 +95,7 @@ export function StoreCatalog({ products, currencySymbol, filters = {} }: StoreCa
         </ul>
       </nav>
       {visible.length === 0 ? (
-        <div className="flex flex-col items-start gap-3 rounded-[var(--block-radius-redondeado,0.5rem)] border border-border bg-card p-6">
+        <div className={`${BLOCK_RADIUS_CLASS} flex flex-col items-start gap-3 border border-border bg-card p-6`}>
           {term ? (
             <>
               <p className="text-foreground">
