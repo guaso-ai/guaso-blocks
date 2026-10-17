@@ -35,6 +35,8 @@ Configure `components.json` registries:
 | `@guaso/testimonials` | `Testimonials` | Quote/author/role grid |
 | `@guaso/cta` | `CTA` | Headline/subtext/button |
 
+Primitivo del kit fuera del catálogo (#4289): `npx shadcn@latest add @guaso/before-after` — `BeforeAfter` (comparación antes/después con divisor `role="slider"`). No es un `type` de bloque: el host lo monta directamente, sin `BlockZone`.
+
 Unknown `type` → ignored (forward-compat). Empty content + `isOwner` → placeholder; public empty → null.
 
 ## Data shapes
