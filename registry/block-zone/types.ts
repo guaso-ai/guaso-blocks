@@ -179,6 +179,19 @@ export type StepsData = LayoutProps & TypoProps & {
   steps?: StepItem[];
 };
 
+// Planes (#4290): tabla de precios kit-only. `price` llega ya formateado por el host
+// (el kit no formatea moneda). `highlighted` = badge fijo "Más elegido" (sin copy por plan).
+export type PlanItem = {
+  name?: string;
+  price?: string;
+  highlighted?: boolean;
+};
+
+export type PlanesData = {
+  title?: string;
+  plans?: PlanItem[];
+};
+
 // ─── Variantes de bloque kit-once (#3882 WS1, #3883 WS2, #3884 WS3) ───────────
 // Closed-sets declarados UNA vez acá. El backend los espeja en
 // `_CANONICAL_BLOCKS` + `_validate_block_variant` (default + logger.warning);

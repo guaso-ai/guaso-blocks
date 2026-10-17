@@ -208,6 +208,20 @@
       ]
     },
     {
+      "name": "planes",
+      "type": "registry:component",
+      "title": "Planes",
+      "description": "Canonical Planes block (#4290) — tabla de precios kit-only: una tarjeta por plan (name, price ya formateado por el host, highlighted → badge fijo 'Más elegido'). Apilado en mobile, en fila desde md. Sin props de layout en v1.",
+      "registryDependencies": ["@guaso/block-zone"],
+      "files": [
+        {
+          "path": "registry/planes/planes.tsx",
+          "type": "registry:component",
+          "target": "@components/planes/planes.tsx"
+        }
+      ]
+    },
+    {
       "name": "testimonials",
       "type": "registry:component",
       "title": "Testimonials",
