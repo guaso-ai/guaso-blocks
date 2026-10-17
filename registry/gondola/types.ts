@@ -119,6 +119,10 @@ export function filterProducts(products: Product[], query: string | undefined): 
   );
 }
 
+/** Orden del listado (#4270). `novedades` = orden del array que entrega el host. */
+export const CATALOG_SORTS = ["novedades", "precio_asc", "precio_desc", "nombre"] as const;
+export type CatalogSort = (typeof CATALOG_SORTS)[number];
+
 /** Filtros del listado (#4269). El host los parsea de `searchParams` con `parseCatalogFilters`. */
 export type CatalogFilters = {
   query?: string; // ?q=  (trim; vacío = sin filtro)
@@ -126,6 +130,7 @@ export type CatalogFilters = {
   minPrice?: number; // ?precio_min=  (>= 0, inclusivo)
   maxPrice?: number; // ?precio_max=  (>= 0, inclusivo)
   onlyAvailable?: boolean; // ?disponible=1  (product.inStock === true)
+  orden?: CatalogSort; // ?orden=  (undefined = novedades = orden del array) #4270
 };
 
 function firstParam(value: string | string[] | undefined): string | undefined {
@@ -146,31 +151,54 @@ export function isSameCategory(a: string, b: string): boolean {
   return normalizeSearchText(a.trim()) === normalizeSearchText(b.trim());
 }
 
-/** Parsea la URL del listado. Parámetros repetidos → primer valor. #4269 */
+/** Match exacto tras trim (igual que el resto de la URL); desconocido → undefined. #4270 */
+function parseCatalogSort(value: string | undefined): CatalogSort | undefined {
+  const trimmed = (value ?? "").trim();
+  return (CATALOG_SORTS as readonly string[]).includes(trimmed)
+    ? (trimmed as CatalogSort)
+    : undefined;
+}
+
+/** Parsea la URL del listado. Parámetros repetidos → primer valor. #4269 #4270 */
 export function parseCatalogFilters(
   params: Record<string, string | string[] | undefined>,
 ): CatalogFilters {
   const query = (firstParam(params.q) ?? "").trim();
   const category = (firstParam(params.categoria) ?? "").trim();
+  const orden = parseCatalogSort(firstParam(params.orden));
   return {
     ...(query ? { query } : {}),
     ...(category ? { category } : {}),
     minPrice: parsePriceParam(firstParam(params.precio_min)),
     maxPrice: parsePriceParam(firstParam(params.precio_max)),
     onlyAvailable: firstParam(params.disponible) === "1",
+    ...(orden ? { orden } : {}),
   };
 }
 
-/** Aplica todos los filtros activos (AND). `precio_min > precio_max` → []. #4269 */
+/**
+ * Ordena una copia del listado. `undefined` o `novedades` → mismo array (misma
+ * referencia). Empates conservan el orden del array. Nunca muta el input. #4270
+ */
+function sortProducts(products: Product[], orden: CatalogSort | undefined): Product[] {
+  if (orden === undefined || orden === "novedades") return products;
+  const copy = [...products];
+  if (orden === "precio_asc") return copy.sort((a, b) => a.price - b.price);
+  if (orden === "precio_desc") return copy.sort((a, b) => b.price - a.price);
+  return copy.sort((a, b) => a.name.localeCompare(b.name, "es-AR"));
+}
+
+/** Aplica todos los filtros activos (AND) y luego el orden. `precio_min > precio_max` → []. #4269 #4270 */
 export function applyCatalogFilters(products: Product[], filters: CatalogFilters): Product[] {
   const category = filters.category?.trim() ? filters.category : undefined;
-  return filterProducts(products, filters.query).filter(
+  const filtered = filterProducts(products, filters.query).filter(
     (product) =>
       (category === undefined || isSameCategory(product.category, category)) &&
       (filters.minPrice === undefined || product.price >= filters.minPrice) &&
       (filters.maxPrice === undefined || product.price <= filters.maxPrice) &&
       (!filters.onlyAvailable || product.inStock === true),
   );
+  return sortProducts(filtered, filters.orden);
 }
 
 /** Categorías únicas (sin tildes/mayúsculas), no vacías, orden es-AR. #4269 */
@@ -187,7 +215,7 @@ export function categoriesOf(products: Product[]): string[] {
 
 /**
  * Href del listado con los filtros activos (orden fijo q, categoria, precio_min,
- * precio_max, disponible). `overrides` reemplaza campos; `undefined` los quita. #4269
+ * precio_max, disponible, orden). `overrides` reemplaza campos; `undefined` los quita. #4269 #4270
  */
 export function catalogFilterHref(
   filters: CatalogFilters,
@@ -200,6 +228,7 @@ export function catalogFilterHref(
   if (next.minPrice !== undefined) params.set("precio_min", String(next.minPrice));
   if (next.maxPrice !== undefined) params.set("precio_max", String(next.maxPrice));
   if (next.onlyAvailable) params.set("disponible", "1");
+  if (next.orden) params.set("orden", next.orden);
   const qs = params.toString();
   return qs ? `?${qs}` : "?";
 }
