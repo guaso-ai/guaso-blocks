@@ -135,12 +135,12 @@ describe("gondola relatedProducts (#4273)", () => {
     expect(relatedProducts(product, catalog, 0)).toEqual([]);
   });
 
-  it("limit negativo, NaN o infinito → []", () => {
+  it("limit negativo o NaN → []; infinito = sin tope", () => {
     const product = mk("p");
     const catalog = [product, mk("a"), mk("b")];
     expect(relatedProducts(product, catalog, -1)).toEqual([]);
     expect(relatedProducts(product, catalog, Number.NaN)).toEqual([]);
-    expect(relatedProducts(product, catalog, Number.POSITIVE_INFINITY)).toEqual([]);
+    expect(relatedProducts(product, catalog, Number.POSITIVE_INFINITY)).toHaveLength(2);
   });
 
   it("limit fraccionario se trunca (2.7 → 2)", () => {
