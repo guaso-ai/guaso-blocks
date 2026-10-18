@@ -213,7 +213,8 @@ describe("gondola ProductDetail gallery (#3888)", () => {
       ".aspect-square.overflow-hidden img",
     ) as HTMLImageElement | null;
     expect(main?.getAttribute("src")).toBe("https://example.com/cover.jpg");
-    const thumbs = screen.getAllByRole("button");
+    // La principal (#4621) también es botón: se filtra por "Ver foto" (miniaturas).
+    const thumbs = screen.getAllByRole("button", { name: /^Ver foto/ });
     expect(thumbs).toHaveLength(2);
     fireEvent.click(thumbs[1]);
     const mainAfter = container.querySelector(
@@ -229,6 +230,6 @@ describe("gondola ProductDetail gallery (#3888)", () => {
         currencySymbol="$"
       />,
     );
-    expect(screen.queryByRole("button")).toBeNull();
+    expect(screen.queryByRole("button", { name: /^Ver foto/ })).toBeNull();
   });
 });
