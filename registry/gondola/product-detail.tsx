@@ -16,6 +16,7 @@ import {
   BLOCK_RADIUS_PRODUCT_CLASS,
   BLOCK_RADIUS_THUMB_CLASS,
 } from "../block-zone/types";
+import GalleryLightbox from "../gallery-lightbox/gallery-lightbox";
 
 type SlotAttrs = { "data-guaso-slot": string } | Record<string, never>;
 
@@ -51,8 +52,22 @@ export function ProductDetail({
     return typeof img === "string" && img.trim().length !== 0;
   });
   // Destacada = images[0] (#3888). Tap en una miniatura cambia la grande.
+  // Estado único: el lightbox (#4621) navega sobre el mismo `selected`.
   const [selected, setSelected] = useState(0);
-  const current = images[Math.min(selected, images.length - 1)] ?? cover;
+  const [zoomOpen, setZoomOpen] = useState(false);
+  const index = Math.min(selected, Math.max(images.length - 1, 0));
+  const current = images[index] ?? cover;
+
+  const mainImage = current ? (
+    <img
+      src={current}
+      alt={product.name}
+      width={1200}
+      height={1200}
+      className="size-full object-cover"
+      {...imageSlot}
+    />
+  ) : null;
 
   return (
     <section className={`mx-auto max-w-[var(--block-container,80rem)] ${SECTION_PX_CLASS} ${SECTION_PY_CLASS}`}>
@@ -70,16 +85,23 @@ export function ProductDetail({
       <div className="mt-8 grid gap-12 md:grid-cols-2">
         <div className="space-y-4">
           <div className={`relative aspect-square overflow-hidden ${BLOCK_RADIUS_PRODUCT_CLASS} bg-card`}>
-            {current ? (
-              <img
-                src={current}
-                alt={product.name}
-                width={1200}
-                height={1200}
-                className="size-full object-cover"
-                {...imageSlot}
-              />
-            ) : null}
+            {images.length > 0 ? (
+              <button
+                type="button"
+                aria-haspopup="dialog"
+                aria-label={`Ampliar foto de ${product.name}`}
+                onClick={(event) => {
+                  // Foco explícito: Safari no enfoca botones con click y el lightbox devuelve el foco acá al cerrar.
+                  event.currentTarget.focus();
+                  setZoomOpen(true);
+                }}
+                className="block size-full cursor-zoom-in focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary"
+              >
+                {mainImage}
+              </button>
+            ) : (
+              mainImage
+            )}
           </div>
           {images.length > 1 ? (
             <div className="grid grid-cols-4 gap-3">
@@ -89,9 +111,9 @@ export function ProductDetail({
                   type="button"
                   onClick={() => setSelected(i)}
                   aria-label={`Ver foto ${i + 1} de ${product.name}`}
-                  aria-current={i === selected}
+                  aria-current={i === index}
                   className={`relative aspect-square overflow-hidden ${BLOCK_RADIUS_THUMB_CLASS} bg-card ${
-                    i === selected ? "ring-2 ring-primary ring-offset-2" : ""
+                    i === index ? "ring-2 ring-primary ring-offset-2" : ""
                   }`}
                 >
                   <img
@@ -106,6 +128,13 @@ export function ProductDetail({
             </div>
           ) : null}
         </div>
+
+        <GalleryLightbox
+          images={images.map((url, i) => ({ url, alt: `${product.name} ${i + 1}` }))}
+          index={zoomOpen ? index : null}
+          onIndexChange={setSelected}
+          onClose={() => setZoomOpen(false)}
+        />
 
         <div className="flex flex-col justify-center">
           {product.category ? (
