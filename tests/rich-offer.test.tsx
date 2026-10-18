@@ -130,12 +130,32 @@ describe("RichSection offer slot (#4599)", () => {
   });
 
   describe("bloque sin texto propio", () => {
-    it("offer sin title ni body = no renderiza el bloque (early return intacto)", () => {
+    it("offer sin title ni body = renderiza la oferta (h3 + precio), #4604", () => {
       const c = render(
         <RichSection data={{ offer }} />,
       ).container;
+      expect(c.querySelector("h3")?.textContent).toBe("Remera negra");
+      expect(screen.getByText("$ 12.500")).toBeTruthy();
+      expect(c.querySelector(`img[src="${IMG}"]`)).not.toBeNull();
+      expect(c.querySelector('a[href="/store/remera-negra"]')).not.toBeNull();
+    });
+
+    it("offer vacía sin title ni body = público no renderiza nada (innerHTML vacío)", () => {
+      const c = render(
+        <RichSection data={{ offer: { name: "", priceLabel: "", imageUrl: "", href: "", ctaLabel: "" } }} />,
+      ).container;
       expect(c.innerHTML).toBe("");
-      expect(screen.queryByText("$ 12.500")).toBeNull();
+    });
+
+    it("offer vacía sin title ni body = owner ve el placeholder", () => {
+      render(
+        <RichSection
+          isOwner
+          data={{ offer: { name: "", priceLabel: "", imageUrl: "", href: "", ctaLabel: "" } }}
+        />,
+      );
+      expect(screen.getByText(/agregá el contenido por chat/)).toBeTruthy();
+      expect(screen.queryByRole("heading", { level: 3 })).toBeNull();
     });
   });
 });

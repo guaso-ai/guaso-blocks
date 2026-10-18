@@ -48,10 +48,6 @@ export default function RichSection({
   data,
   isOwner = false,
 }: RichSectionProps) {
-  if (!data.title && !data.body) {
-    return isOwner ? <RichSectionPlaceholder /> : null;
-  }
-
   // Banda marquee (#4284): el title es el texto; body/CTA/media quedan en data sin render.
   // Sin title no hay banda vacía: cae al render normal.
   const marqueeText = typeof data.title === "string" ? data.title.trim() : "";
@@ -99,6 +95,12 @@ export default function RichSection({
   const showOffer = Boolean(
     offerImageUrl || offerName || offerPrice || showOfferCta,
   );
+
+  // Sin texto propio ni oferta que pintar: nada que renderizar (placeholder al owner).
+  // Va después de `showOffer` para consultar el mismo predicado que el pintado de la oferta (#4604).
+  if (!data.title && !data.body && !showOffer) {
+    return isOwner ? <RichSectionPlaceholder /> : null;
+  }
 
   // Tokens del cuerpo: default byte-idénticos a hoy; hero = tono inverso sobre el overlay.
   const bodyToneClass = isHero
