@@ -25,6 +25,10 @@ type GalleryProps = {
   isOwner?: boolean;
 };
 
+// `hero_mosaico` (#4606): rango de imágenes del mosaico; por encima de MAX se corta.
+const MOSAIC_MIN = 3;
+const MOSAIC_MAX = 5;
+
 function GalleryPlaceholder() {
   return (
     <section
@@ -50,18 +54,21 @@ function GalleryFigure({
   className,
   presentation,
   onOpen,
+  fill = false,
 }: {
   image: GalleryImage;
   presentation: ImageProps;
   index: number;
   className?: string;
   onOpen?: () => void;
+  // Mosaico (#4606): la figura llena la celda de la grilla; la altura la fija la fila, no el aspect.
+  fill?: boolean;
 }) {
   const frame = (
     <div
       className={[
         "relative",
-        imageAspectClass(presentation, DEFAULT_GALLERY_ASPECT),
+        fill ? "h-full" : imageAspectClass(presentation, DEFAULT_GALLERY_ASPECT),
         "w-full overflow-hidden",
         BLOCK_RADIUS_CLASS,
         imageFrameClass(presentation),
@@ -82,8 +89,15 @@ function GalleryFigure({
     </div>
   );
 
+  const figureClass = [
+    fill ? "flex h-full min-w-0 flex-col" : "",
+    className ?? "min-w-0",
+  ]
+    .filter(Boolean)
+    .join(" ");
+
   return (
-    <figure className={className ?? "min-w-0"}>
+    <figure className={figureClass}>
       {onOpen ? (
         <button
           type="button"
@@ -93,7 +107,7 @@ function GalleryFigure({
             event.currentTarget.focus();
             onOpen();
           }}
-          className={`block w-full cursor-zoom-in ${BLOCK_RADIUS_CLASS} focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary`}
+          className={`block w-full ${fill ? "min-h-0 flex-1 " : ""}cursor-zoom-in ${BLOCK_RADIUS_CLASS} focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary`}
         >
           {frame}
         </button>
@@ -101,7 +115,9 @@ function GalleryFigure({
         frame
       )}
       {image.caption ? (
-        <figcaption className="mt-2 text-sm text-muted-foreground break-words">
+        <figcaption
+          className={`mt-2 text-sm text-muted-foreground break-words${fill ? " shrink-0" : ""}`}
+        >
           {image.caption}
         </figcaption>
       ) : null}
@@ -121,10 +137,23 @@ const MASONRY_CLASS = {
   "4": "columns-1 sm:columns-2 lg:columns-4 gap-6",
 } as const;
 
+// Mosaico (#4606): filas fijas + spans por índice. Clases literales (Tailwind las detecta).
+// `data.columns` no aplica en mosaico: la grilla es de 2 columnas (mobile) o 4 (md+).
+const MOSAIC_GRID_CLASS =
+  "grid grid-cols-2 md:grid-cols-4 auto-rows-[11rem] md:auto-rows-[15rem] gap-3 md:gap-4";
+
+// Spans sin huecos para 3, 4 y 5 celdas (ver plan #4606, D5).
+function mosaicSpanClass(index: number, count: number): string {
+  if (index === 0) return "col-span-2 md:row-span-2";
+  if (count === 4 && index === 1) return "row-span-2";
+  if (count === 3) return "col-span-2";
+  return "";
+}
+
 export default function Gallery({ data, isOwner = false }: GalleryProps) {
   const raw = Array.isArray(data.images) ? data.images : [];
   const images = raw.filter(hasImageUrl);
-  // Índice (sobre `images` ya filtradas) de la imagen abierta en el lightbox; null = cerrado (#4287).
+  // Índice (sobre las imágenes visibles) de la imagen abierta en el lightbox; null = cerrado (#4287).
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   if (images.length === 0) {
@@ -135,15 +164,49 @@ export default function Gallery({ data, isOwner = false }: GalleryProps) {
   const columns = resolveGalleryColumns(data.columns);
   const style = resolveGalleryStyle(data.style);
   const label = data.title ?? "Galería de imágenes";
+  // Cap del mosaico (#4606): 6+ → 5 antes del render y del lightbox, así el contador dice "x de 5".
+  const shown = style === "hero_mosaico" ? images.slice(0, MOSAIC_MAX) : images;
 
   const lightbox = (
     <GalleryLightbox
-      images={images}
+      images={shown}
       index={openIndex}
       onIndexChange={setOpenIndex}
       onClose={() => setOpenIndex(null)}
     />
   );
+
+  if (style === "hero_mosaico" && shown.length >= MOSAIC_MIN) {
+    return (
+      <>
+        <section
+          aria-label={label}
+          className={SECTION_ROOT_CLASS}
+        >
+          {data.title ? (
+            <h2 className={`mb-10 ${sectionHeadingClass(data)}`}>
+              {data.title}
+            </h2>
+          ) : null}
+
+          <div data-layout="hero-mosaico" className={MOSAIC_GRID_CLASS}>
+            {shown.map((image, i) => (
+              <GalleryFigure
+                presentation={data}
+                key={`${image.url}-${i}`}
+                image={image}
+                index={i}
+                className={`min-w-0 ${mosaicSpanClass(i, shown.length)}`.trim()}
+                fill
+                onOpen={() => setOpenIndex(i)}
+              />
+            ))}
+          </div>
+        </section>
+        {lightbox}
+      </>
+    );
+  }
 
   if (style === "masonry") {
     return (
@@ -159,7 +222,7 @@ export default function Gallery({ data, isOwner = false }: GalleryProps) {
           ) : null}
 
           <div className={MASONRY_CLASS[columns]}>
-            {images.map((image, i) => (
+            {shown.map((image, i) => (
               <GalleryFigure
                 presentation={data}
                 key={`${image.url}-${i}`}
@@ -191,7 +254,7 @@ export default function Gallery({ data, isOwner = false }: GalleryProps) {
           ) : null}
 
           <Carousel label={label}>
-            {images.map((image, i) => (
+            {shown.map((image, i) => (
               <CarouselItem
                 key={`${image.url}-${i}`}
                 className="basis-[85%] sm:basis-[45%] lg:basis-[31%]"
@@ -224,7 +287,7 @@ export default function Gallery({ data, isOwner = false }: GalleryProps) {
         ) : null}
 
         <div className={COLUMNS_CLASS[columns]}>
-          {images.map((image, i) => (
+          {shown.map((image, i) => (
             <GalleryFigure
               presentation={data}
               key={`${image.url}-${i}`}

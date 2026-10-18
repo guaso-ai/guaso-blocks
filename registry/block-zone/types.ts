@@ -222,7 +222,8 @@ export type CardsColumns = "2" | "3" | "4";
 export type CardsStyle = "grid" | "feature" | "minimal";
 export type TestimonialsLayout = "grilla" | "destacado" | "carrusel" | "minimal";
 export type GalleryColumns = "2" | "3" | "4";
-export type GalleryStyle = "grilla" | "masonry" | "carrusel";
+// `hero_mosaico` (#4606): 3–5 imágenes en mosaico; 6+ se cortan a 5; 1–2 caen a grilla.
+export type GalleryStyle = "grilla" | "masonry" | "carrusel" | "hero_mosaico";
 export type RichImageSide = "left" | "right";
 export type RichMode = "split" | "centrado" | "checklist";
 export type RichFondo = "normal" | "completo";
@@ -271,7 +272,10 @@ export function resolveGalleryColumns(value: unknown): GalleryColumns {
 }
 
 export function resolveGalleryStyle(value: unknown): GalleryStyle {
-  return value === "grilla" || value === "masonry" || value === "carrusel"
+  return value === "grilla" ||
+    value === "masonry" ||
+    value === "carrusel" ||
+    value === "hero_mosaico"
     ? value
     : DEFAULT_GALLERY_STYLE;
 }
