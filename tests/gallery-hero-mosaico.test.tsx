@@ -87,4 +87,30 @@ describe("Gallery hero_mosaico (#4606)", () => {
     expect(mosaic(container)).toBeNull();
     expect(figures(container)).toHaveLength(6);
   });
+
+  it("data.columns no cambia la grilla del mosaico", () => {
+    const { container: c2 } = render(
+      <Gallery data={{ images: imagesN(3), style: "hero_mosaico", columns: "2" }} />,
+    );
+    const cls2 = mosaic(c2)?.getAttribute("class");
+    const { container: c4 } = render(
+      <Gallery data={{ images: imagesN(3), style: "hero_mosaico", columns: "4" }} />,
+    );
+    const cls4 = mosaic(c4)?.getAttribute("class");
+    expect(cls2).toBeTruthy();
+    expect(cls4).toBe(cls2);
+  });
+
+  it("las URLs vacías se filtran antes del cap: 6 válidas + 2 vacías muestran 5 válidas", () => {
+    const images: GalleryImage[] = [
+      { url: "", alt: "vacía 1" },
+      { url: "   ", alt: "vacía 2" },
+      ...imagesN(6),
+    ];
+    const { container } = render(<Gallery data={{ images, style: "hero_mosaico" }} />);
+    expect(mosaic(container)).not.toBeNull();
+    expect(figures(container)).toHaveLength(5);
+    expect(screen.getByAltText("Foto 1")).toBeTruthy();
+    expect(screen.queryByAltText("Foto 6")).toBeNull();
+  });
 });
